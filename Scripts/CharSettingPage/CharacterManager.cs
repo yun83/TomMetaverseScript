@@ -32,6 +32,7 @@ public class CharacterManager : MonoBehaviour
     {
         bool SetItemCheck = true;
         info_Costume temp = null;
+        string DebugMsg = "item Equipment Check";
 
         _Data.printData();
 
@@ -82,6 +83,7 @@ public class CharacterManager : MonoBehaviour
                 SetItemCheck = false;
                 temp = DataInfo.ins.CoustumList[1][i];
                 mShirt.GetChild(temp.Path).gameObject.SetActive(true);
+                DebugMsg += ("\nShirt Equipment Item Id[" + temp.ItemID + "]");
                 break;
             }
         }
@@ -94,6 +96,7 @@ public class CharacterManager : MonoBehaviour
                 {
                     temp = DataInfo.ins.CoustumList[4][i];
                     mSet.GetChild(temp.Path).gameObject.SetActive(true);
+                    DebugMsg += ("\nSet Item Equipment Item Id[" + temp.ItemID + "]");
                     break;
                 }
             }
@@ -109,6 +112,7 @@ public class CharacterManager : MonoBehaviour
                     temp = DataInfo.ins.CoustumList[2][i];
                     mPants.GetChild(temp.Path).gameObject.SetActive(true);
                     //Debug.Log("바지 아이디 " + i);
+                    DebugMsg += ("\nPants Equipment Item Id[" + temp.ItemID + "]");
                     break;
                 }
             }
@@ -119,6 +123,7 @@ public class CharacterManager : MonoBehaviour
             {
                 temp = DataInfo.ins.CoustumList[3][i];
                 mShoes.GetChild(temp.Path).gameObject.SetActive(true);
+                DebugMsg += ("\nShoes Equipment Item Id[" + temp.ItemID + "]");
                 break;
             }
         }
@@ -132,9 +137,12 @@ public class CharacterManager : MonoBehaviour
                 {
                     temp = DataInfo.ins.CoustumList[4][i];
                     mAccessory.GetChild(temp.Path).gameObject.SetActive(true);
+                    DebugMsg += ("\nAccessory Equipment Item Id[" + temp.ItemID +"]");
                     break;
                 }
             }
         }
+
+        Debug.Log(DebugMsg);
     }
 }

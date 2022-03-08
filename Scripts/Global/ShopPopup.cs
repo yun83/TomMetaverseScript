@@ -28,10 +28,13 @@ public class ShopPopup : MonoBehaviour
     int State = -1;
     int subState = -1;
     int sumMoney = 0;
+    private bool PurchaseUse = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        PurchaseUse = false;
+
         ShopButton[0].onClick.RemoveAllListeners();
         ShopButton[0].onClick.AddListener(OnClick_Suggestion);
         ShopButton[1].onClick.RemoveAllListeners();
@@ -49,9 +52,12 @@ public class ShopPopup : MonoBehaviour
         });
 
         PurchaseBuy.onClick.RemoveAllListeners();
-        PurchaseBuy.onClick.AddListener(OnClick_purchaseBuy);
+        PurchaseBuy.onClick.AddListener(() => { 
+            if(!PurchaseUse)
+                StartCoroutine(OnClick_purchaseBuy()); 
+        });
     }
-
+    
     private void OnEnable()
     {
         if (!DataInfo.ins.SaveData.Equals("") && DataInfo.ins.SaveData != null)
@@ -329,13 +335,18 @@ public class ShopPopup : MonoBehaviour
 
     }
 
-    void OnClick_purchaseBuy()
+    IEnumerator OnClick_purchaseBuy()
     {
+        //연속 클릭 방지
+        PurchaseUse = true;
         //구매처리
         string savetrunk = "";
 
         for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
         {
+            if (DataInfo.ins.BuyItemSaveList[i].inGameUse == 0)
+                continue;
+
             //DataInfo.ins.BuyItemSaveList 의 아이템을 구매 한다
             info_Costume itemTrunk = DataInfo.ins.BuyItemSaveList[i];
 
@@ -366,6 +377,8 @@ public class ShopPopup : MonoBehaviour
             }
         }
 
+        yield return null;
+
         DataInfo.ins.BuyItemId = DataInfo.ins.BuyItemId.Distinct().ToList();
 
         for (int i = 0; i < DataInfo.ins.BuyItemId.Count; i++)
@@ -377,23 +390,42 @@ public class ShopPopup : MonoBehaviour
         BuyPopup.SetActive(false);
         setScroll.gameObject.SetActive(false);
 
+        yield return null;
+
         if (DataInfo.ins.CharacterMain.Money >= sumMoney)
             DataInfo.ins.CharacterMain.Money -= sumMoney;
 
 
         MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
 
+        yield return null;
+
+        DataInfo.ins.BuyItemSaveList.Clear();
         switch (State)
         {
             case 1:
+                State = -1;
                 OnClick_Item();
                 break;
             case 2:
+                State = -1;
                 OnClick_Gesture();
                 break;
             default:
+                State = -1;
                 OnClick_Suggestion();
                 break;
         }
+
+        PurchaseText.text = "Purcharse";
+
+        yield return null;
+
+        PurchaseUse = false;
+    }
+
+    public void OnClick_Exit()
+    {
+
     }
 }

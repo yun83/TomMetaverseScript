@@ -87,6 +87,7 @@ public class ControllerManager : MonoBehaviour
     {
         if (PlayerObject == null)
             PlayerObject = GameObject.FindGameObjectWithTag("Player").transform;
+
         PlayerObject.GetComponent<CharacterManager>().itemEquipment(DataInfo.ins.CharacterMain);
         _controller = PlayerObject.GetComponent<CharacterController>();
 

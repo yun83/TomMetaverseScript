@@ -22,6 +22,8 @@ public class UiButtonController : MonoBehaviour
     public PopupController popupController;
     public UiMessage ToastMes;
 
+    private int UiPopupState = 0;
+
     void Awake()
     {
         if (myPlayer == null)
@@ -64,6 +66,15 @@ public class UiButtonController : MonoBehaviour
 
     public void OnClick_CloseAllPopup()
     {
+        switch (UiPopupState)
+        {//종료시의 분기 설정
+            case 1:
+                //아이템 샵에서의 팝업 종료시 케릭터의 의상 변경
+                StartCoroutine(ShopItemSetting());
+                break;
+        }
+
+        UiPopupState = 0;
         //all popup clase
         GestureScroll.SetActive(false);
         OptionPopup.SetActive(false);
@@ -99,6 +110,9 @@ public class UiButtonController : MonoBehaviour
         OnClick_CloseAllPopup();
         ShopPopup.SetActive(true);
         CharObj.SetActive(true);
+
+        UiPopupState = 1;
+
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
     }
     public void OnClick_Quest() { }
@@ -146,5 +160,112 @@ public class UiButtonController : MonoBehaviour
         setGestureScroll.totalCount = DataInfo.ins.TriggerName.Length;
 
         setGestureScroll.InitScrollCall();
+    }
+
+    IEnumerator ShopItemSetting()
+    {
+        bool SetItemCheck = false;
+
+        //헬멧 ID로 Item찾기
+        for (int i = 0; i < DataInfo.ins.CoustumList[0].Count; i++)
+        {
+            if (DataInfo.ins.CoustumList[0][i].ItemID == DataInfo.ins.CharacterSub.Hair)
+            {
+                if(DataInfo.ins.CoustumList[0][i].State == 1)
+                {// 아이템을 보유 중일 경우 해당 아이템을 케릭터에 대입한다
+                    DataInfo.ins.CharacterMain.Hair = DataInfo.ins.CoustumList[0][i].ItemID;
+                }
+                break;
+            }
+        }
+
+        yield return null;
+
+        //셔츠 검사
+        for (int i = 0; i < DataInfo.ins.CoustumList[1].Count; i++)
+        {
+            //셔츠의 아이템 아이디가 검색시 없을경우 세트 템으로
+            SetItemCheck = true;
+
+            if (DataInfo.ins.CoustumList[1][i].ItemID == DataInfo.ins.CharacterSub.Shirt)
+            {
+                SetItemCheck = false;
+                if (DataInfo.ins.CoustumList[1][i].State == 1) { 
+                    DataInfo.ins.CharacterMain.Shirt = DataInfo.ins.CoustumList[1][i].ItemID;
+                }
+                break;
+            }
+        }
+        if (SetItemCheck)
+        {
+            //세트 템검사
+            for (int i = 0; i < DataInfo.ins.CoustumList[4].Count; i++)
+            {
+                if (DataInfo.ins.CoustumList[4][i].ItemID == DataInfo.ins.CharacterSub.Shirt)
+                {
+                    if (DataInfo.ins.CoustumList[4][i].State == 1)
+                    {
+                        DataInfo.ins.CharacterMain.Shirt = DataInfo.ins.CoustumList[4][i].ItemID;
+                    }
+                    break;
+                }
+            }
+        }
+
+        yield return null;
+
+        //바지 검사
+        for (int i = 0; i < DataInfo.ins.CoustumList[2].Count; i++)
+        {
+            if (DataInfo.ins.CoustumList[2][i].ItemID == DataInfo.ins.CharacterSub.Pants)
+            {
+                if (DataInfo.ins.CoustumList[2][i].State == 1)
+                {
+                    DataInfo.ins.CharacterMain.Pants = DataInfo.ins.CoustumList[2][i].ItemID;
+                }
+                break;
+            }
+        }
+
+        yield return null;
+
+        //신발 검사
+        for (int i = 0; i < DataInfo.ins.CoustumList[3].Count; i++)
+        {
+            if (DataInfo.ins.CoustumList[3][i].ItemID == DataInfo.ins.CharacterSub.Shoes)
+            {
+                if (DataInfo.ins.CoustumList[3][i].State == 1)
+                {
+                    DataInfo.ins.CharacterMain.Shoes = DataInfo.ins.CoustumList[3][i].ItemID;
+                }
+                break;
+            }
+        }
+
+        //악세서리 착용시.
+        if (DataInfo.ins.CharacterSub.Accessory > 0)
+        {
+            for (int i = 0; i < DataInfo.ins.CoustumList[4].Count; i++)
+            {
+                if (DataInfo.ins.CoustumList[5][i].ItemID == DataInfo.ins.CharacterSub.Accessory)
+                {
+
+                    if (DataInfo.ins.CoustumList[5][i].State == 1)
+                    {
+                        DataInfo.ins.CharacterMain.Accessory = DataInfo.ins.CoustumList[5][i].ItemID;
+                    }
+                    break;
+                }
+            }
+        }
+
+        yield return null;
+
+        DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterMain);
+
+        yield return null;
+
+        myPlayer.itemEquipment(DataInfo.ins.CharacterMain);
+
     }
 }

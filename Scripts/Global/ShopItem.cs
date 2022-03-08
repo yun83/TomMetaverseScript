@@ -30,6 +30,17 @@ public class ShopItem : MonoBehaviour
         NowButton.onClick.AddListener(OnClick_Evenet);
     }
 
+    void OnEnable()
+    {
+        for (int i = 0; i < DataInfo.ins.BuyItemId.Count; i++)
+        {
+            if(NowItem.ItemID == DataInfo.ins.BuyItemId[i])
+            {
+                NowItem.State = 1;
+            }
+        }
+    }
+
     void OnClick_Evenet()
     {
         if (mIndex >= 0)
