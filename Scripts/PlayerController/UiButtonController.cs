@@ -19,6 +19,7 @@ public class UiButtonController : MonoBehaviour
     RectTransform rtGestureScroll;
     InitScroll setGestureScroll;
     public GameObject ShopPopup;
+    public GameObject InvenPopup;
     public PopupController popupController;
     public UiMessage ToastMes;
 
@@ -72,6 +73,16 @@ public class UiButtonController : MonoBehaviour
                 //아이템 샵에서의 팝업 종료시 케릭터의 의상 변경
                 StartCoroutine(ShopItemSetting());
                 break;
+            case 2:
+                //인벤 토리의 팝업 종료시 케릭터 의상 변경점
+                DataInfo.ins.CharacterMain.Hair = DataInfo.ins.CharacterSub.Hair;
+                DataInfo.ins.CharacterMain.Shirt = DataInfo.ins.CharacterSub.Shirt;
+                DataInfo.ins.CharacterMain.Pants = DataInfo.ins.CharacterSub.Pants;
+                DataInfo.ins.CharacterMain.Shoes = DataInfo.ins.CharacterSub.Shoes;
+                DataInfo.ins.CharacterMain.Accessory = DataInfo.ins.CharacterSub.Accessory;
+                DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterMain);
+                myPlayer.itemEquipment(DataInfo.ins.CharacterMain);
+                break;
         }
 
         UiPopupState = 0;
@@ -80,6 +91,7 @@ public class UiButtonController : MonoBehaviour
         OptionPopup.SetActive(false);
         popupController.gameObject.SetActive(false);
         ShopPopup.SetActive(false);
+        InvenPopup.SetActive(false);
         CharObj.SetActive(false);
     }
 
@@ -103,7 +115,12 @@ public class UiButtonController : MonoBehaviour
     public void OnClick_Inven()
     {
         OnClick_CloseAllPopup();
+        InvenPopup.SetActive(true);
         CharObj.SetActive(true);
+
+        UiPopupState = 2;
+
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
     }
     public void OnClick_Shop()
     {
@@ -115,7 +132,8 @@ public class UiButtonController : MonoBehaviour
 
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
     }
-    public void OnClick_Quest() { }
+    public void OnClick_Quest() {
+    }
     public void OnClick_Option()
     {
         OnClick_CloseAllPopup();

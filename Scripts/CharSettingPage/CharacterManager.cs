@@ -143,6 +143,6 @@ public class CharacterManager : MonoBehaviour
             }
         }
 
-        Debug.Log(DebugMsg);
+        //Debug.Log(DebugMsg);
     }
 }

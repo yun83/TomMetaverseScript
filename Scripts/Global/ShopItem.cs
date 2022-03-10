@@ -43,29 +43,29 @@ public class ShopItem : MonoBehaviour
 
     void OnClick_Evenet()
     {
-        if (mIndex >= 0)
+        switch (NowItem.Type)
         {
-            switch (NowItem.Type)
-            {
-                case 0: //¸Ó¸®
-                    DataInfo.ins.CharacterSub.Hair = NowItem.ItemID;
-                    break;
-                case 1: //¼ÅÃ÷
-                case 4: //¼¼Æ®
-                    DataInfo.ins.CharacterSub.Shirt = NowItem.ItemID;
-                    break;
-                case 2: //¹ÙÁö
-                    DataInfo.ins.CharacterSub.Pants = NowItem.ItemID;
-                    break;
-                case 3: //½Å¹ß
-                    DataInfo.ins.CharacterSub.Shoes = NowItem.ItemID;
-                    break;
-                case 5: // ¾Ç¼¼»ç¸®
-                    DataInfo.ins.CharacterSub.Accessory = NowItem.ItemID;
-                    break;
-            }
-            DataInfo.ins.CharacterChangeCheck = true;
+            case 0: //¸Ó¸®
+                DataInfo.ins.CharacterSub.Hair = NowItem.ItemID;
+                break;
+            case 1: //¼ÅÃ÷
+            case 4: //¼¼Æ®
+                DataInfo.ins.CharacterSub.Shirt = NowItem.ItemID;
+                break;
+            case 2: //¹ÙÁö
+                DataInfo.ins.CharacterSub.Pants = NowItem.ItemID;
+                break;
+            case 3: //½Å¹ß
+                DataInfo.ins.CharacterSub.Shoes = NowItem.ItemID;
+                break;
+            case 5: // ¾Ç¼¼»ç¸®
+                DataInfo.ins.CharacterSub.Accessory = NowItem.ItemID;
+                break;
+            case 100:
+                DataInfo.ins.SubCharAnimator.SetInteger("Emotion", NowItem.Path);
+                break;
         }
+        DataInfo.ins.CharacterChangeCheck = true;
     }
 
     //PurchaseItemSetting();

@@ -56,6 +56,9 @@ public class ShopPopup : MonoBehaviour
             if(!PurchaseUse)
                 StartCoroutine(OnClick_purchaseBuy()); 
         });
+
+        State = -1;
+        SuggestonSetting();
     }
     
     private void OnEnable()
@@ -69,6 +72,7 @@ public class ShopPopup : MonoBehaviour
         NicName.text = DataInfo.ins.CharacterSub.NicName;
 
         ShopCharacter.itemEquipment(DataInfo.ins.CharacterSub);
+        DataInfo.ins.SubCharAnimator = ShopCharacter.GetComponentInChildren<Animator>();
 
         MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
 
@@ -200,30 +204,37 @@ public class ShopPopup : MonoBehaviour
             //이전에 클릭된 버튼이 존재한다
             if (subState >= 0)
                 ShopButton[subState].GetComponent<Image>().color = Color.white;
-            ShopButton[State].GetComponent<Image>().color = Color.yellow;
-            subState = State;
 
-            setScroll.totalCount = 0;
-            //아이템 리스트 셋팅
-            DataInfo.ins.CostumeScrollList.Clear();
-            for (int i = 0; i < DataInfo.ins.CoustumList.Length; i++)
+            SuggestonSetting();
+
+            subState = State;
+        }
+    }
+
+    void SuggestonSetting()
+    {
+        ShopButton[State].GetComponent<Image>().color = Color.yellow;
+
+        setScroll.totalCount = 0;
+        //아이템 리스트 셋팅
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int i = 0; i < DataInfo.ins.CoustumList.Length; i++)
+        {
+            for (int k = 0; k < DataInfo.ins.CoustumList[i].Count; k++)
             {
-                for (int k = 0; k < DataInfo.ins.CoustumList[i].Count; k++)
+                //아이템 데이터에 추천 항목 축가 하여 추천 검사
+                if (DataInfo.ins.CoustumList[i][k].Suggestion == 1)
                 {
-                    //아이템 데이터에 추천 항목 축가 하여 추천 검사
-                    if (DataInfo.ins.CoustumList[i][k].Suggestion == 1)
+                    if (DataInfo.ins.CoustumList[i][k].Sex == DataInfo.ins.CharacterSub.Sex
+                        || DataInfo.ins.CoustumList[i][k].Sex == 2)
                     {
-                        if (DataInfo.ins.CoustumList[i][k].Sex == DataInfo.ins.CharacterSub.Sex
-                            || DataInfo.ins.CoustumList[i][k].Sex == 2)
-                        {
-                            DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[i][k]);
-                        }
+                        DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[i][k]);
                     }
                 }
             }
-
-            StartCoroutine(ScrollViewSetting());
         }
+
+        StartCoroutine(ScrollViewSetting());
     }
 
     public void OnClick_Item()
@@ -269,22 +280,15 @@ public class ShopPopup : MonoBehaviour
             setScroll.totalCount = 0;
             //아이템 리스트 셋팅
             DataInfo.ins.CostumeScrollList.Clear();
-            for (int i = 0; i < DataInfo.ins.CoustumList.Length; i++)
+
+            for (int i = 0; i < DataInfo.ins.EctItemData.Count; i++)
             {
-                for (int k = 0; k < DataInfo.ins.CoustumList[i].Count; k++)
+                //아이템 데이터에 추천 항목 축가 하여 추천 검사
+                if (DataInfo.ins.EctItemData[i].Type == 100)
                 {
-                    //아이템 데이터에 추천 항목 축가 하여 추천 검사
-                    if (DataInfo.ins.CoustumList[i][k].Type == 100)
-                    {
-                        if (DataInfo.ins.CoustumList[i][k].Sex == DataInfo.ins.CharacterSub.Sex
-                            || DataInfo.ins.CoustumList[i][k].Sex == 2)
-                        {
-                            DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[i][k]);
-                        }
-                    }
+                    DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.EctItemData[i]);
                 }
             }
-
             StartCoroutine(ScrollViewSetting());
         }
     }

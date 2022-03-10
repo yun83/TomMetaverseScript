@@ -38,6 +38,7 @@ public class DataInfo : Single<DataInfo>
     public int RightTId = -1;
 
     public Animator MyPlayerAnimator;
+    public Animator SubCharAnimator;
 
     //저장할 메인 케릭터 정보
     public Info_Char CharacterMain = new Info_Char();
@@ -130,9 +131,10 @@ public class DataInfo : Single<DataInfo>
             temp.price = System.Convert.ToInt32(itemCsvDic[i]["price"]);
             temp.Path = System.Convert.ToInt32(itemCsvDic[i]["Path"]);
             temp.Suggestion = System.Convert.ToInt32(itemCsvDic[i]["Suggestion"]);
+            //temp.Route = System.Convert.ToString(itemCsvDic[i]["Route"]);
 
             //구매된 아이템 체크
-            for(int j = 0; j < BuyItemId.Count; j++)
+            for (int j = 0; j < BuyItemId.Count; j++)
             {
                 if(temp.ItemID == BuyItemId[j])
                 {//구매 되었음을 표기
