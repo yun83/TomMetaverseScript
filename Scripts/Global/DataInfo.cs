@@ -60,21 +60,6 @@ public class DataInfo : Single<DataInfo>
     public List<info_Costume> BuyItemSaveList = new List<info_Costume>();
     public bool TotlaMoneySumCheck = false;
 
-    //ÀÌ¸ð¼Ç
-    public string[] TriggerName =
-    {
-        "Dance",
-        "Angry",
-        "Cry",
-        "Happy",
-        "Laugh",
-        "Greet",
-        "handshake",
-        "Pant",
-        "SayNo",
-        "SayYes",
-    };
-
     private void Awake()
     {
         Application.targetFrameRate = 1000;

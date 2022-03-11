@@ -8,21 +8,26 @@ public class GestureButtonItem : MonoBehaviour
     public int ButtonId = -1;
     Button NowButton;
     Text getText;
+
+    info_Costume ItemInfo;
     public void ScrollCellIndex(int idx)
     {
         ButtonId = idx;
+        
+        ItemInfo = DataInfo.ins.CostumeScrollList[ButtonId];
+
         NowButton = GetComponent<Button>();
         getText = GetComponentInChildren<Text>();
 
         NowButton.onClick.RemoveAllListeners();
         NowButton.onClick.AddListener(OnClick_Evenet);
 
-        getText.text = DataInfo.ins.TriggerName[ButtonId];
+        getText.text = ItemInfo.Name + "\n" + ItemInfo.Description;
     }
 
     public void OnClick_Evenet()
     {
         //Debug.Log(" ButtonClickEvnet " + ButtonId);
-        DataInfo.ins.MyPlayerAnimator.SetInteger("Emotion", ButtonId + 1);
+        DataInfo.ins.MyPlayerAnimator.SetInteger("Emotion", ItemInfo.Path);
     }
 }

@@ -43,6 +43,7 @@ public class ShopItem : MonoBehaviour
 
     void OnClick_Evenet()
     {
+        bool itemUse = false;
         switch (NowItem.Type)
         {
             case 0: //머리
@@ -62,7 +63,28 @@ public class ShopItem : MonoBehaviour
                 DataInfo.ins.CharacterSub.Accessory = NowItem.ItemID;
                 break;
             case 100:
-                DataInfo.ins.SubCharAnimator.SetInteger("Emotion", NowItem.Path);
+                {
+                    DataInfo.ins.SubCharAnimator.SetInteger("Emotion", NowItem.Path);
+                    itemUse = false;
+
+                    for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
+                    {
+                        //
+                        if (NowItem.ItemID == DataInfo.ins.BuyItemSaveList[i].ItemID) {
+                            //저장 되었던 코스튬의 데이터 제거
+                            DataInfo.ins.BuyItemSaveList.RemoveAt(i);
+                            itemUse = true;
+                            break;
+                        }
+                    }
+
+                    if (!itemUse)
+                    {//저장 되어 있지 않으면 저장
+                        info_Costume temp = NowItem;
+                        temp.inGameUse = 1;
+                        DataInfo.ins.BuyItemSaveList.Add(NowItem);
+                    }
+                }
                 break;
         }
         DataInfo.ins.CharacterChangeCheck = true;

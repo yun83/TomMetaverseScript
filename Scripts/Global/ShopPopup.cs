@@ -57,7 +57,7 @@ public class ShopPopup : MonoBehaviour
                 StartCoroutine(OnClick_purchaseBuy()); 
         });
 
-        State = -1;
+        State = 0;
         SuggestonSetting();
     }
     
@@ -65,7 +65,6 @@ public class ShopPopup : MonoBehaviour
     {
         if (!DataInfo.ins.SaveData.Equals("") && DataInfo.ins.SaveData != null)
         {
-            Debug.Log(" ------------- Shop Popup Character Loding ------------- ");
             DataInfo.ins.CharacterSub = JsonUtility.FromJson<Info_Char>(DataInfo.ins.SaveData);
         }
 
@@ -207,13 +206,13 @@ public class ShopPopup : MonoBehaviour
 
             SuggestonSetting();
 
-            subState = State;
         }
     }
 
     void SuggestonSetting()
     {
         ShopButton[State].GetComponent<Image>().color = Color.yellow;
+        subState = State;
 
         setScroll.totalCount = 0;
         //아이템 리스트 셋팅
@@ -390,7 +389,7 @@ public class ShopPopup : MonoBehaviour
             savetrunk += DataInfo.ins.BuyItemId[i] + ",";
         }
         DataInfo.ins.saveBuyItem = savetrunk;
-        Debug.Log(savetrunk);
+        //Debug.Log(savetrunk);
         BuyPopup.SetActive(false);
         setScroll.gameObject.SetActive(false);
 

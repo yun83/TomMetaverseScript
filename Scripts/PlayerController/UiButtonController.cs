@@ -20,10 +20,13 @@ public class UiButtonController : MonoBehaviour
     InitScroll setGestureScroll;
     public GameObject ShopPopup;
     public GameObject InvenPopup;
+    public GameObject QuestPopup;
     public PopupController popupController;
     public UiMessage ToastMes;
 
     private int UiPopupState = 0;
+
+    public List<info_Costume> GestureItem = new List<info_Costume>();
 
     void Awake()
     {
@@ -90,6 +93,7 @@ public class UiButtonController : MonoBehaviour
         GestureScroll.SetActive(false);
         OptionPopup.SetActive(false);
         popupController.gameObject.SetActive(false);
+        QuestPopup.SetActive(false);
         ShopPopup.SetActive(false);
         InvenPopup.SetActive(false);
         CharObj.SetActive(false);
@@ -132,7 +136,10 @@ public class UiButtonController : MonoBehaviour
 
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
     }
-    public void OnClick_Quest() {
+    public void OnClick_Quest()
+    {
+        OnClick_CloseAllPopup();
+        QuestPopup.SetActive(true);
     }
     public void OnClick_Option()
     {
@@ -168,14 +175,17 @@ public class UiButtonController : MonoBehaviour
     {
         int Size = rtGestureScroll.childCount;
 
-        for (int i = Size - 1; i >= 0; i--)
-        {
-            Destroy(rtGestureScroll.GetChild(i).gameObject);
-        }
-
         yield return new WaitForEndOfFrame();
-        //yield return new WaitForSeconds(1.0f);
-        setGestureScroll.totalCount = DataInfo.ins.TriggerName.Length;
+
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int i = 0; i < DataInfo.ins.EctItemData.Count; i++)
+        {
+            if (DataInfo.ins.EctItemData[i].State == 1) {
+                info_Costume temp = DataInfo.ins.EctItemData[i];
+                DataInfo.ins.CostumeScrollList.Add(temp);
+            }
+        }
+        setGestureScroll.totalCount = DataInfo.ins.CostumeScrollList.Count;
 
         setGestureScroll.InitScrollCall();
     }

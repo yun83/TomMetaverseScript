@@ -37,7 +37,6 @@ public class InvenPopup : MonoBehaviour
     {
         if (!DataInfo.ins.SaveData.Equals("") && DataInfo.ins.SaveData != null)
         {
-            Debug.Log(" ------------- Shop Popup Character Loding ------------- ");
             DataInfo.ins.CharacterSub = JsonUtility.FromJson<Info_Char>(DataInfo.ins.SaveData);
         }
 
