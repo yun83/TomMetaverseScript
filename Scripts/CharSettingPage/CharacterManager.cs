@@ -12,20 +12,54 @@ public class CharacterManager : MonoBehaviour
 
     public string NectSceneName = "97_moveScene";
 
-    public Canvas PlayUiCanvas;
+    public WorldInteraction WoIn = null;
+    private bool nicCheck = false;
 
     void Awake()
     {
         DataInfo.ins.LodingCheck = true;
+
+        if (WoIn == null)
+        {
+            WoIn = gameObject.AddComponent<WorldInteraction>();
+            WoIn.nowType = InteractionType.NicName;
+            WoIn.Pos = new Vector3(0, 1.5f, 0);
+            WoIn.InitWorldInteraction();
+        }
     }
 
     private void FixedUpdate()
     {
+        if(nicCheck != DataInfo.ins.OptionInfo.NicNameOpen)
+        {
+            nicCheck = DataInfo.ins.OptionInfo.NicNameOpen;
+            if (nicCheck)
+            {
+                CreateNicName();
+            }
+            else
+            {
+                if (WoIn.EventObj != null)
+                {
+                    Destroy(WoIn.EventObj);
+                    WoIn.EventObj = null;
+                }
+            }
+        }
     }
 
     public void OnClick_SceneChanger()
     {
         LoadingPage.LoadScene(NectSceneName);
+    }
+
+    void CreateNicName()
+    {
+        if (WoIn.EventObj == null)
+        {
+            WoIn.InitWorldInteraction();
+            WoIn.InCanvas.NicText.text = DataInfo.ins.CharacterMain.NicName;
+        }
     }
 
     public void itemEquipment(Info_Char _Data)

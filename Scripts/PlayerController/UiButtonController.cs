@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class UiButtonController : MonoBehaviour
 {
+    public delegate void Callback();
+
     [Header("ÄÉ¸¯ÅÍ")]
     public CharacterManager myPlayer;
     private Animator myAnimator;
@@ -21,6 +23,7 @@ public class UiButtonController : MonoBehaviour
     public GameObject ShopPopup;
     public GameObject InvenPopup;
     public GameObject QuestPopup;
+    public OutRoomPopup OR_Popup;
     public PopupController popupController;
     public UiMessage ToastMes;
 
@@ -55,7 +58,7 @@ public class UiButtonController : MonoBehaviour
         UiButton[4].onClick.AddListener(OnClick_Option);
         UiButton[5].onClick.AddListener(OnClick_Exit);
 
-        //all popup clase
+        //all popup clase    
         OnClick_CloseAllPopup();
     }
 
@@ -97,6 +100,7 @@ public class UiButtonController : MonoBehaviour
         ShopPopup.SetActive(false);
         InvenPopup.SetActive(false);
         CharObj.SetActive(false);
+        OR_Popup.gameObject.SetActive(false);
     }
 
     #region UI Button Click Setting
@@ -168,6 +172,11 @@ public class UiButtonController : MonoBehaviour
             });
     }
 
+    public void OnClick_OutRoomPopup(List<ButtonClass> array)
+    {
+        OR_Popup.gameObject.SetActive(true);
+        OR_Popup.InitOutRoomPopup(array);
+    }
     #endregion
 
 

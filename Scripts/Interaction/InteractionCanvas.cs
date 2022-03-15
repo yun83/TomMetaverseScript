@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player3DUi : MonoBehaviour
+
+public class InteractionCanvas : MonoBehaviour
 {
-    public Text NicName;
+    public Text NicText;
+    public Button UseButton;
     private Transform MainCam;
 
-    void OnEnable()
+    void Awake()
     {
         MainCam = Camera.main.transform;
     }
-
     private void FixedUpdate()
     {
         if(MainCam != null)

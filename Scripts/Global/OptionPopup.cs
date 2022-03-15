@@ -14,6 +14,7 @@ public class OptionPopup : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         for(int i = 0; i < SwitchButton.Length; i++)
         {
             int tryI = i;
@@ -56,7 +57,9 @@ public class OptionPopup : MonoBehaviour
                 else
                     Com.ins.BgmStop();
                 break;
-            case 2: DataInfo.ins.OptionInfo.NicNameOpen = (DataInfo.ins.OptionInfo.NicNameOpen == true) ? false : true; ; break;
+            case 2:
+                DataInfo.ins.OptionInfo.NicNameOpen = (DataInfo.ins.OptionInfo.NicNameOpen == true) ? false : true;
+                break;
         }
 
         //Debug.Log("Click Check [ " + idx + " ] :: " + tempCheck);

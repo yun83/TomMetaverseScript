@@ -69,12 +69,15 @@ public class ControllerManager : MonoBehaviour
     public bool JumpKey = false;
 
     public CinemachineVirtualCamera cvc;
+    private Camera _camera;
 
     private void Awake()
     {
         JumpKey = false;
         BoostKey = false;
         DataInfo.ins.RightTId = -1;
+
+        _camera = Camera.main;
     }
 
     // Start is called before the first frame update
@@ -259,6 +262,8 @@ public class ControllerManager : MonoBehaviour
         vector3.y = _verticalVelocity;
         _controller.Move(vector3);
         Axis.position = PlayerObject.position;
+
+        RayCastEvent();
     }
 
     private void FixedUpdate()
@@ -277,6 +282,23 @@ public class ControllerManager : MonoBehaviour
         }
         // 중력의 영향을 받아 아래쪽으로 하강합니다.
         _verticalVelocity -= Gravity * Time.deltaTime;
+    }
+
+    RaycastHit rayHit;
+    void RayCastEvent()
+    {
+        float distance = 50f;
+        int layerMask = 1 << LayerMask.NameToLayer("TouchLayer");  // FindObject 레이어만 충돌 체크함
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out rayHit, distance, layerMask))
+            {
+                GameObject temp = rayHit.transform.gameObject;
+                Debug.Log("Hit Check Name [<color=blue>" + temp.name + "</color>] Tag [<color=yellow>" + temp.tag + "</color>]");
+            }
+        }
     }
 
     private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
