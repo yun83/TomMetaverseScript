@@ -12,6 +12,7 @@ public class CharacterManager : MonoBehaviour
 
     public string NectSceneName = "97_moveScene";
 
+    public bool NicNameUse = false;
     public WorldInteraction WoIn = null;
     private bool nicCheck = false;
 
@@ -19,30 +20,53 @@ public class CharacterManager : MonoBehaviour
     {
         DataInfo.ins.LodingCheck = true;
 
-        if (WoIn == null)
+        if (NicNameUse)
         {
-            WoIn = gameObject.AddComponent<WorldInteraction>();
-            WoIn.nowType = InteractionType.NicName;
-            WoIn.Pos = new Vector3(0, 1.5f, 0);
-            WoIn.InitWorldInteraction();
+            if (WoIn == null)
+            {
+                WoIn = gameObject.AddComponent<WorldInteraction>();
+                WoIn.nowType = InteractionType.NicName;
+                WoIn.IconPos = new Vector3(0, 1.5f, 0);
+                WoIn.InitWorldInteraction();
+            }
         }
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
-        if(nicCheck != DataInfo.ins.OptionInfo.NicNameOpen)
+        nicOnOff();
+    }
+
+    void nicOnOff()
+    {
+        if (NicNameUse)
         {
-            nicCheck = DataInfo.ins.OptionInfo.NicNameOpen;
-            if (nicCheck)
+            if (nicCheck != DataInfo.ins.OptionInfo.NicNameOpen)
             {
-                CreateNicName();
-            }
-            else
-            {
-                if (WoIn.EventObj != null)
+                nicCheck = DataInfo.ins.OptionInfo.NicNameOpen;
+                if (nicCheck)
                 {
-                    Destroy(WoIn.EventObj);
-                    WoIn.EventObj = null;
+                    if (WoIn.EventObj == null)
+                    {
+                        WoIn.InitWorldInteraction();
+                    }
+                    else
+                    {
+                        if (WoIn.EventObj != null)
+                        {
+                            Destroy(WoIn.EventObj);
+                            WoIn.EventObj = null;
+                        }
+                        WoIn.InitWorldInteraction();
+                    }
+                }
+                else
+                {
+                    if (WoIn.EventObj != null)
+                    {
+                        Destroy(WoIn.EventObj);
+                        WoIn.EventObj = null;
+                    }
                 }
             }
         }
@@ -53,14 +77,6 @@ public class CharacterManager : MonoBehaviour
         LoadingPage.LoadScene(NectSceneName);
     }
 
-    void CreateNicName()
-    {
-        if (WoIn.EventObj == null)
-        {
-            WoIn.InitWorldInteraction();
-            WoIn.InCanvas.NicText.text = DataInfo.ins.CharacterMain.NicName;
-        }
-    }
 
     public void itemEquipment(Info_Char _Data)
     {

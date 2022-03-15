@@ -10,6 +10,14 @@ public class DataInfo : Single<DataInfo>
     public float ScreenW = 1280;
     public float ScreenH = 720;
 
+    //현재 위치하고 있는 곳에 따른 스테이트
+    /// <summary>
+    /// 0:케릭터 생성
+    /// 1:마이룸
+    /// 2:월드맵
+    /// </summary>
+    public int State = 0;
+
     //세이브 파일
     public string SaveData
     {
@@ -47,6 +55,8 @@ public class DataInfo : Single<DataInfo>
     public Info_Char CharacterSub = new Info_Char();
     public bool CharacterChangeCheck = false;
 
+    public List<ButtonClass> OutRoomButton = new List<ButtonClass>();
+
     //아이템 리스트의 데이터 로딩
     public List<info_Costume>[] CoustumList = new List<info_Costume>[6];
     public List<info_Costume> EctItemData = new List<info_Costume>();
@@ -59,6 +69,7 @@ public class DataInfo : Single<DataInfo>
     //삽에서 구입할 아이템 리스트 작성
     public List<info_Costume> BuyItemSaveList = new List<info_Costume>();
     public bool TotlaMoneySumCheck = false;
+
 
     private void Awake()
     {
@@ -155,5 +166,60 @@ public class DataInfo : Single<DataInfo>
         }
 
         return null;
+    }
+
+    public void RoomOutButtonSetting()
+    {
+        UiButtonController ubc = GameObject.FindObjectOfType<UiButtonController>();
+        OutRoomButton.Clear();
+
+        ButtonClass item1 = new ButtonClass();
+        item1.text = "World Map";
+        item1.addEvent = (() => {
+            LoadingPage.LoadScene("World_A");
+        });
+
+        ButtonClass item2 = new ButtonClass();
+        item2.text = "Quit Game";
+        item2.addEvent = (() => {
+            ubc.OnClick_Exit();
+        });
+
+        OutRoomButton.Add(item1);
+        OutRoomButton.Add(item2);
+        ubc.OnClick_OutRoomPopup(OutRoomButton);
+
+        ubc.OR_Popup.Title.text = "leave the Room";
+    }
+
+    public void WorldMapOutButtonSetting()
+    {
+        UiButtonController ubc = GameObject.FindObjectOfType<UiButtonController>();
+        OutRoomButton.Clear();
+
+        ButtonClass item1 = new ButtonClass();
+        item1.text = "My Room";
+        item1.addEvent = (() => {
+            LoadingPage.LoadScene("Room_A");
+        });
+
+        ButtonClass item2 = new ButtonClass();
+        item2.text = "Char Setting Page";
+        item2.addEvent = (() => {
+            LoadingPage.LoadScene("01_CharacterWindow");
+        });
+
+        ButtonClass item3 = new ButtonClass();
+        item3.text = "Quit Game";
+        item3.addEvent = (() => {
+            ubc.OnClick_Exit();
+        });
+
+        OutRoomButton.Add(item1);
+        OutRoomButton.Add(item2);
+        OutRoomButton.Add(item3);
+        ubc.OnClick_OutRoomPopup(OutRoomButton);
+
+        ubc.OR_Popup.Title.text = "leave the Room";
     }
 }

@@ -1,22 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-
-public class InteractionCanvas : MonoBehaviour
+public class LookCamera : MonoBehaviour
 {
-    public Text NicText;
-    public Button UseButton;
     private Transform MainCam;
-
-    void Awake()
+    // Start is called before the first frame update
+    void Start()
     {
         MainCam = Camera.main.transform;
     }
-    private void FixedUpdate()
+
+    // Update is called once per frame
+    void Update()
     {
-        if(MainCam != null)
+        if (MainCam != null)
             transform.LookAt(MainCam.position);
     }
 }

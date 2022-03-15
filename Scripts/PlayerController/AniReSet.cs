@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class AniReSet : StateMachineBehaviour
 {
+    public string IntegerName = "Emotion";
     //OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         //Debug.Log("에니메이션 시작시");
 
         //트리거 형태처럼 만들어 주기 위해서 스테이터스 초기화
-        animator.SetInteger("Emotion", 0);
+        animator.SetInteger(IntegerName, 0);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

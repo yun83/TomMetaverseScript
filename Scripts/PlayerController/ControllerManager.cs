@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Cinemachine;
+using UnityEditor.Animations;
 
 public class ControllerManager : MonoBehaviour
 {
@@ -59,7 +60,6 @@ public class ControllerManager : MonoBehaviour
     public LayerMask GroundLayers;
 
     private Vector2 AxisRtt;
-    private Animator mAnimator = null;
     private int MoveAniState = -1;
     private float moveSpeedSum = 0;
     private float deltaMagnitudeDiff = 0;
@@ -68,8 +68,13 @@ public class ControllerManager : MonoBehaviour
     public bool BoostKey = false;
     public bool JumpKey = false;
 
+    private Animator mAnimator = null;
+    public AnimatorController[] AniType;
+
     public CinemachineVirtualCamera cvc;
     private Camera _camera;
+    public WorldInteraction EvnetTrans;
+    private int EventState = 0;
 
     private void Awake()
     {
@@ -103,6 +108,11 @@ public class ControllerManager : MonoBehaviour
 
         if (mAnimator == null)
             mAnimator = PlayerObject.GetComponentInChildren<Animator>();
+
+        if (DataInfo.ins.CharacterMain.Sex == 0)
+            mAnimator.runtimeAnimatorController = AniType[0];
+        else
+            mAnimator.runtimeAnimatorController = AniType[1];
     }
 
     // Update is called once per frame
@@ -110,6 +120,11 @@ public class ControllerManager : MonoBehaviour
     {
         MoveUpdate();
         GroundedCheck();
+        RayCastEventLogic();
+    }
+
+    private void FixedUpdate()
+    {
     }
 
     void MoveUpdate()
@@ -123,6 +138,13 @@ public class ControllerManager : MonoBehaviour
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
 
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (RayCastEvent(Input.mousePosition))
+            {
+                return;
+            }
+        }
         if (Input.GetMouseButton(1))
         {
             AxisRtt.y += Input.GetAxis("Mouse X"); // 마우스의 좌우 이동량을 xmove 에 누적합니다.
@@ -176,6 +198,10 @@ public class ControllerManager : MonoBehaviour
                     switch (tempTouch.phase)
                     {
                         case TouchPhase.Began:
+                            if (RayCastEvent(tempTouch.position))
+                            {
+                                return;
+                            }
                             if (DataInfo.ins.RightTId == -1)
                             {
                                 DataInfo.ins.RightTId = tempTouch.fingerId;
@@ -240,7 +266,6 @@ public class ControllerManager : MonoBehaviour
         v3Rotation.eulerAngles = new Vector3(minRttX, AxisRtt.y, 0.0f);
         Axis.rotation = v3Rotation;
 
-
         //카메라 방향에 따른 케릭터 방향
         float offset = Time.deltaTime * moveSpeedSum;
         if (moveH != 0 || moveV != 0)
@@ -253,50 +278,97 @@ public class ControllerManager : MonoBehaviour
             Vector3 sumAngles = (tempAngles + plusAngles);
             //이동
             PlayerObject.eulerAngles = sumAngles;
+
+            if (EvnetTrans != null)
+            {
+                EvnetTrans.EventObj.SetActive(true);
+                EventState = 0;
+            }
         }
-        //PlayerObject.position += PlayerObject.forward * offset;
+
         transform.position = PlayerObject.position;
-
-        // move the player
-        Vector3 vector3 = PlayerObject.forward * offset;
-        vector3.y = _verticalVelocity;
-        _controller.Move(vector3);
-        Axis.position = PlayerObject.position;
-
-        RayCastEvent();
-    }
-
-    private void FixedUpdate()
-    {
+        if (EventState == 0)
+        {
+            // move the player
+            Vector3 MoveVec3 = PlayerObject.forward * offset;
+            MoveVec3.y = _verticalVelocity;
+            _controller.Move(MoveVec3);
+            Axis.position = PlayerObject.position;
+        }
     }
 
     private void GroundedCheck()
     {
-        // set sphere position, with offset
-        Vector3 spherePosition = new Vector3(PlayerObject.position.x, PlayerObject.position.y - GroundedOffset, PlayerObject.position.z);
-        Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
-
-        if (Grounded)
+        if (EventState == 0)
         {
-            JumpKey = false;
+            // set sphere position, with offset
+            Vector3 spherePosition = new Vector3(PlayerObject.position.x, PlayerObject.position.y - GroundedOffset, PlayerObject.position.z);
+            Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+
+            if (Grounded)
+            {
+                JumpKey = false;
+            }
+            // 중력의 영향을 받아 아래쪽으로 하강합니다.
+            _verticalVelocity -= Gravity * Time.deltaTime;
         }
-        // 중력의 영향을 받아 아래쪽으로 하강합니다.
-        _verticalVelocity -= Gravity * Time.deltaTime;
     }
 
     RaycastHit rayHit;
-    void RayCastEvent()
+    bool RayCastEvent(Vector3 inPos)
     {
+        bool ret = false;
         float distance = 50f;
         int layerMask = 1 << LayerMask.NameToLayer("TouchLayer");  // FindObject 레이어만 충돌 체크함
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = _camera.ScreenPointToRay(inPos);
 
-            if (Physics.Raycast(ray, out rayHit, distance, layerMask))
+
+        if (Physics.Raycast(ray, out rayHit, distance, layerMask))
+        {
+            if (rayHit.transform.parent.TryGetComponent<WorldInteraction>(out var temp))
             {
-                GameObject temp = rayHit.transform.gameObject;
-                Debug.Log("Hit Check Name [<color=blue>" + temp.name + "</color>] Tag [<color=yellow>" + temp.tag + "</color>]");
+                if (EvnetTrans != null)
+                {
+                    EvnetTrans.EventObj.SetActive(true);
+                }
+                Debug.Log("Ray Cast Event Trigger [<color=blue>" + temp.name + "</color>] Tag [<color=yellow>" + temp.nowType.ToString() + "</color>]");
+                EvnetTrans = temp;
+                EventState = 1;
+            }
+            ret = true;
+        }
+        return ret;
+    }
+
+    void RayCastEventLogic()
+    {
+        if (EventState > 0 && EventState < 3)
+        {
+            switch (EvnetTrans.nowType)
+            {
+                case InteractionType.OutRoom:
+                    DataInfo.ins.RoomOutButtonSetting();
+                    break;
+                case InteractionType.OnChair:
+                    if (EventState == 1)
+                    {
+                        mAnimator.SetInteger("Interaction", 1);
+                    }
+                    PlayerObject.position = EvnetTrans.PlayerPos;
+                    PlayerObject.eulerAngles = EvnetTrans.PlayerRotation;
+                    break;
+                case InteractionType.Meditate:
+                    if (EventState == 1)
+                    {
+                        mAnimator.SetInteger("Interaction", 2);
+                    }
+                    PlayerObject.position = EvnetTrans.PlayerPos;
+                    break;
+            }
+            EventState ++;
+            if (EventState < 3)
+            {
+                EvnetTrans.EventObj.SetActive(false);
             }
         }
     }

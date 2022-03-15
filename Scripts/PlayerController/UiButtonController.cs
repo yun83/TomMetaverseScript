@@ -56,10 +56,42 @@ public class UiButtonController : MonoBehaviour
         UiButton[2].onClick.AddListener(OnClick_Shop);
         UiButton[3].onClick.AddListener(OnClick_Quest);
         UiButton[4].onClick.AddListener(OnClick_Option);
-        UiButton[5].onClick.AddListener(OnClick_Exit);
+        UiButton[5].onClick.AddListener(() =>
+        {
+            OnClick_CloseAllPopup();
+            switch (DataInfo.ins.State)
+            {
+                case 0:
+                    OnClick_Exit();
+                    break;
+                case 1:
+                    DataInfo.ins.RoomOutButtonSetting();
+                    break;
+                case 2:
+                    DataInfo.ins.WorldMapOutButtonSetting();
+                    break;
+            }
+        });
 
         //all popup clase    
         OnClick_CloseAllPopup();
+    }
+
+    void OnEnable()
+    {
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        switch (sceneName)
+        {
+            default:
+                DataInfo.ins.State = -1;
+                break;
+            case "Room_A":
+                DataInfo.ins.State = 1;
+                break;
+            case "World_A":
+                DataInfo.ins.State = 2;
+                break;
+        }
     }
 
     void Update()

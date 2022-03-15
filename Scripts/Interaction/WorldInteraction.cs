@@ -7,16 +7,22 @@ public class WorldInteraction : MonoBehaviour
 {
     public InteractionType nowType = InteractionType.OutRoom;
     public GameObject EventObj;
-    public Vector3 Pos;
-    public InteractionCanvas InCanvas;
+    public Vector3 IconPos;
 
-    public List<ButtonClass> callBackList = new List<ButtonClass>();
+    [Tooltip("명확한 좌표 설정을 위해서 따로 명시해준다")]
+    public Vector3 PlayerPos;
+    public Vector3 PlayerRotation;
 
+    public TextMesh NicName;
+    private SpriteRenderer EventIcon;
+    private Transform Player;
 
     void Awake()
     {
         InitWorldInteraction();
+        Player = GameObject.FindGameObjectWithTag("Player").transform;
     }
+
     public void InitWorldInteraction()
     {
         if (EventObj != null)
@@ -26,48 +32,44 @@ public class WorldInteraction : MonoBehaviour
             EventObj = null;
         }
 
-        switch (nowType)
+        if(nowType == InteractionType.NicName)
         {
-            case InteractionType.NicName:
-                EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/InteractionCanvas"));
-
-                EventObj.GetComponent<Canvas>().worldCamera = Camera.main;
-                InCanvas = EventObj.GetComponent<InteractionCanvas>();
-                break;
-            case InteractionType.OutRoom:
-                //방 나가는 문
-                EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
-                break;
+            EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/NicName3DText"));
+            NicName = EventObj.GetComponentInChildren<TextMesh>();
+            NicName.text = DataInfo.ins.CharacterMain.NicName;
+        }
+        else
+        {
+            EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
+            EventIcon = EventObj.GetComponentInChildren<SpriteRenderer>();
         }
 
-        EventObj.name = "WoIn";
+        switch (nowType)
+        {
+            case InteractionType.OnChair: EventIcon.sprite = Resources.Load<Sprite>("Icon/CHAIR"); break;
+            //default: EventIcon.sprite = Resources.Load<Sprite>("Icon/SignOut"); break;
+            case InteractionType.Meditate: EventIcon.sprite = Resources.Load<Sprite>("Icon/DESK"); break;
+        }
+
+        EventObj.name = "상호작용";
         EventObj.transform.parent = transform;
-        EventObj.transform.localPosition = Pos;
+        EventObj.transform.localPosition = IconPos;
     }
 
-    void OnClick_RomOutPopupCall()
+    public void RayCastEventTrigger()
     {
-        UiButtonController ubc = GameObject.FindObjectOfType <UiButtonController> ();
-        callBackList.Clear ();
-
-        ButtonClass item1 = new ButtonClass();
-        item1.text = "World Map";
-        item1.addEvent = (() => {
-            LoadingPage.LoadScene("World_A");
-        });
-
-        ButtonClass item2 = new ButtonClass();
-        item2.text = "Quit Game";
-        item2.addEvent = (() => {
-            ubc.OnClick_Exit();
-        });
-
-        callBackList.Add(item1);
-        callBackList.Add(item2);
-        ubc.OnClick_OutRoomPopup(callBackList);
-
-        ubc.OR_Popup.Title.text = "leave the Room";
+        Debug.Log("Ray Cast Event Trigger [<color=blue>" + transform.name + "</color>] Tag [<color=yellow>" + nowType.ToString() + "</color>]");
+        switch (nowType)
+        {
+            case InteractionType.OutRoom:
+                DataInfo.ins.RoomOutButtonSetting();
+                break;
+            case InteractionType.OnChair:
+                Player.position = transform.position;
+                break;
+        }
     }
+
 }
 
 //데모 버전에서 한글 변수 테스트
@@ -75,4 +77,7 @@ public enum InteractionType
 {
     NicName = 0,
     OutRoom = 1,
+    OnChair,
+    Meditate,
+    Pickup,
 }

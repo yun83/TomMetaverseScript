@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,21 +12,24 @@ public class LoadingPage : MonoBehaviour
     
     private void Start()
     {
+        progressBar.fillAmount = 0;
         if (progressBar == null)
             progressBar = GameObject.Find("ProgressBar").GetComponent<Image>();
         StartCoroutine(LoadScene());
     }
 
     public static void LoadScene(string sceneName) {
-        nextScene = sceneName; 
-        SceneManager.LoadScene(nextScene); 
+        nextScene = sceneName;
+        SceneManager.LoadScene("99_LoadingScene");
+        //SceneManager.LoadScene(sceneName);
     }
 
     IEnumerator LoadScene()
     {
         yield return null;
 
-        AsyncOperation op = SceneManager.LoadSceneAsync(nextScene); 
+        AsyncOperation op;
+        op = SceneManager.LoadSceneAsync(nextScene); 
         op.allowSceneActivation = false; 
 
         float timer = 0.0f; 
