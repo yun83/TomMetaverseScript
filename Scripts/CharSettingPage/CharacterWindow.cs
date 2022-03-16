@@ -88,7 +88,8 @@ public class CharacterWindow : MonoBehaviour
         SetterEndButton.onClick.AddListener(OpenPopup);
 
         CloseButton.onClick.RemoveAllListeners();
-        CloseButton.onClick.AddListener(OpenQuitPopupObj);
+        //CloseButton.onClick.AddListener(OpenQuitPopupObj);
+        CloseButton.onClick.AddListener(OpenPopup);
 
         ExitPopupObj.SetActive(false);
         QuitPopupObj.SetActive(false);

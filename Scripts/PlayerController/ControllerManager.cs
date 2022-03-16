@@ -73,8 +73,10 @@ public class ControllerManager : MonoBehaviour
 
     public CinemachineVirtualCamera cvc;
     private Camera _camera;
-    public WorldInteraction EvnetTrans;
+    private WorldInteraction EvnetTrans;
     private int EventState = 0;
+
+    public RandomRespawn RRSpawn;
 
     private void Awake()
     {
@@ -113,6 +115,8 @@ public class ControllerManager : MonoBehaviour
             mAnimator.runtimeAnimatorController = AniType[0];
         else
             mAnimator.runtimeAnimatorController = AniType[1];
+
+        RRSpawn = GameObject.FindObjectOfType<RandomRespawn>();
     }
 
     // Update is called once per frame
@@ -282,13 +286,18 @@ public class ControllerManager : MonoBehaviour
             if (EvnetTrans != null)
             {
                 EvnetTrans.EventObj.SetActive(true);
-                EventState = 0;
+                if (EvnetTrans.mCollider != null)
+                {
+                    EvnetTrans.mCollider.isTrigger = false;
+                }
             }
+            EventState = 0;
         }
 
         transform.position = PlayerObject.position;
         if (EventState == 0)
         {
+            //PlayerObject.position += PlayerObject.forward * offset;
             // move the player
             Vector3 MoveVec3 = PlayerObject.forward * offset;
             MoveVec3.y = _verticalVelocity;
@@ -330,6 +339,10 @@ public class ControllerManager : MonoBehaviour
                 if (EvnetTrans != null)
                 {
                     EvnetTrans.EventObj.SetActive(true);
+                    if (EvnetTrans.mCollider != null)
+                    {
+                        EvnetTrans.mCollider.isTrigger = false;
+                    }
                 }
                 Debug.Log("Ray Cast Event Trigger [<color=blue>" + temp.name + "</color>] Tag [<color=yellow>" + temp.nowType.ToString() + "</color>]");
                 EvnetTrans = temp;
@@ -344,10 +357,18 @@ public class ControllerManager : MonoBehaviour
     {
         if (EventState > 0 && EventState < 3)
         {
+            if (EvnetTrans.mCollider != null)
+            {
+                EvnetTrans.mCollider.isTrigger = true;
+            }
+
             switch (EvnetTrans.nowType)
             {
                 case InteractionType.OutRoom:
                     DataInfo.ins.RoomOutButtonSetting();
+                    break;
+                case InteractionType.WorldMapOut:
+                    DataInfo.ins.WorldMapOutButtonSetting();
                     break;
                 case InteractionType.OnChair:
                     if (EventState == 1)
@@ -361,6 +382,14 @@ public class ControllerManager : MonoBehaviour
                     if (EventState == 1)
                     {
                         mAnimator.SetInteger("Interaction", 2);
+                    }
+                    PlayerObject.position = EvnetTrans.PlayerPos;
+                    break;
+                case InteractionType.Gift:
+                    if (EventState == 1)
+                    {
+                        mAnimator.SetInteger("Interaction", 3);
+                        RRSpawn.ItemDelet(EvnetTrans);
                     }
                     PlayerObject.position = EvnetTrans.PlayerPos;
                     break;

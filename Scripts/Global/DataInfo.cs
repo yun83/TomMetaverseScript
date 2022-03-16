@@ -180,13 +180,20 @@ public class DataInfo : Single<DataInfo>
         });
 
         ButtonClass item2 = new ButtonClass();
-        item2.text = "Quit Game";
+        item2.text = "Char Setting Page";
         item2.addEvent = (() => {
+            LoadingPage.LoadScene("01_CharacterWindow");
+        });
+
+        ButtonClass item3 = new ButtonClass();
+        item3.text = "Quit Game";
+        item3.addEvent = (() => {
             ubc.OnClick_Exit();
         });
 
         OutRoomButton.Add(item1);
         OutRoomButton.Add(item2);
+        OutRoomButton.Add(item3);
         ubc.OnClick_OutRoomPopup(OutRoomButton);
 
         ubc.OR_Popup.Title.text = "leave the Room";
@@ -204,20 +211,13 @@ public class DataInfo : Single<DataInfo>
         });
 
         ButtonClass item2 = new ButtonClass();
-        item2.text = "Char Setting Page";
+        item2.text = "Quit Game";
         item2.addEvent = (() => {
-            LoadingPage.LoadScene("01_CharacterWindow");
-        });
-
-        ButtonClass item3 = new ButtonClass();
-        item3.text = "Quit Game";
-        item3.addEvent = (() => {
             ubc.OnClick_Exit();
         });
 
         OutRoomButton.Add(item1);
         OutRoomButton.Add(item2);
-        OutRoomButton.Add(item3);
         ubc.OnClick_OutRoomPopup(OutRoomButton);
 
         ubc.OR_Popup.Title.text = "leave the Room";

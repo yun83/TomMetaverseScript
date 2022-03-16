@@ -16,11 +16,19 @@ public class WorldInteraction : MonoBehaviour
     public TextMesh NicName;
     private SpriteRenderer EventIcon;
     private Transform Player;
+    public Collider mCollider;
+
+    public int ItemId = -1;
 
     void Awake()
     {
         InitWorldInteraction();
         Player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        if(gameObject.TryGetComponent<Collider>(out var Col))
+        {
+            mCollider = Col;
+        }
     }
 
     public void InitWorldInteraction()
@@ -37,39 +45,25 @@ public class WorldInteraction : MonoBehaviour
             EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/NicName3DText"));
             NicName = EventObj.GetComponentInChildren<TextMesh>();
             NicName.text = DataInfo.ins.CharacterMain.NicName;
+            EventObj.name = "닉네임";
         }
         else
         {
             EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
             EventIcon = EventObj.GetComponentInChildren<SpriteRenderer>();
+            EventObj.name = "상호작용";
         }
 
         switch (nowType)
         {
             case InteractionType.OnChair: EventIcon.sprite = Resources.Load<Sprite>("Icon/CHAIR"); break;
-            //default: EventIcon.sprite = Resources.Load<Sprite>("Icon/SignOut"); break;
             case InteractionType.Meditate: EventIcon.sprite = Resources.Load<Sprite>("Icon/DESK"); break;
+            case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
         }
 
-        EventObj.name = "상호작용";
         EventObj.transform.parent = transform;
         EventObj.transform.localPosition = IconPos;
     }
-
-    public void RayCastEventTrigger()
-    {
-        Debug.Log("Ray Cast Event Trigger [<color=blue>" + transform.name + "</color>] Tag [<color=yellow>" + nowType.ToString() + "</color>]");
-        switch (nowType)
-        {
-            case InteractionType.OutRoom:
-                DataInfo.ins.RoomOutButtonSetting();
-                break;
-            case InteractionType.OnChair:
-                Player.position = transform.position;
-                break;
-        }
-    }
-
 }
 
 //데모 버전에서 한글 변수 테스트
@@ -77,7 +71,9 @@ public enum InteractionType
 {
     NicName = 0,
     OutRoom = 1,
+    WorldMapOut,
     OnChair,
     Meditate,
     Pickup,
+    Gift,
 }
