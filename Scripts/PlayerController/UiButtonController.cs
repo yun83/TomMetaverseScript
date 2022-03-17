@@ -15,6 +15,7 @@ public class UiButtonController : MonoBehaviour
     public Button[] UiButton;
 
     [Header("∞‘¿”Ui")]
+    public Text MoneyText;
     public GameObject CharObj;
     public GameObject GestureScroll;
     public GameObject OptionPopup;
@@ -23,6 +24,7 @@ public class UiButtonController : MonoBehaviour
     public GameObject ShopPopup;
     public GameObject InvenPopup;
     public GameObject QuestPopup;
+    public GameObject RoulettePopup;
     public OutRoomPopup OR_Popup;
     public PopupController popupController;
     public UiMessage ToastMes;
@@ -101,6 +103,8 @@ public class UiButtonController : MonoBehaviour
             Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
             OnClick_CloseAllPopup();
         }
+
+        MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
     }
 
     public void OnClick_CloseAllPopup()
@@ -132,6 +136,7 @@ public class UiButtonController : MonoBehaviour
         ShopPopup.SetActive(false);
         InvenPopup.SetActive(false);
         CharObj.SetActive(false);
+        RoulettePopup.SetActive(false);
         OR_Popup.gameObject.SetActive(false);
     }
 
@@ -209,6 +214,12 @@ public class UiButtonController : MonoBehaviour
         OR_Popup.gameObject.SetActive(true);
         OR_Popup.InitOutRoomPopup(array);
     }
+
+    public void OnClick_Roulette()
+    {
+        RoulettePopup.SetActive(true);
+    }
+
     #endregion
 
 

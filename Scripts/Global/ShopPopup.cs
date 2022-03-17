@@ -10,7 +10,6 @@ public class ShopPopup : MonoBehaviour
     public InitScroll setScroll;
 
     public Text NicName;
-    public Text MoneyText;
 
     private Vector2 nowPos, prePos;
     private Vector2 movePosDiff;
@@ -72,8 +71,6 @@ public class ShopPopup : MonoBehaviour
 
         ShopCharacter.itemEquipment(DataInfo.ins.CharacterSub);
         DataInfo.ins.SubCharAnimator = ShopCharacter.GetComponentInChildren<Animator>();
-
-        MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
 
         DataInfo.ins.BuyItemSaveList.Clear();
         PurchaseText = Purchase.GetComponentInChildren<Text>();
@@ -398,8 +395,6 @@ public class ShopPopup : MonoBehaviour
         if (DataInfo.ins.CharacterMain.Money >= sumMoney)
             DataInfo.ins.CharacterMain.Money -= sumMoney;
 
-
-        MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
 
         yield return null;
 

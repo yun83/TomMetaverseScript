@@ -75,6 +75,7 @@ public class ControllerManager : MonoBehaviour
     private Camera _camera;
     private WorldInteraction EvnetTrans;
     private int EventState = 0;
+    private UiButtonController UIController;
 
     public RandomRespawn RRSpawn;
 
@@ -117,6 +118,7 @@ public class ControllerManager : MonoBehaviour
             mAnimator.runtimeAnimatorController = AniType[1];
 
         RRSpawn = GameObject.FindObjectOfType<RandomRespawn>();
+        UIController = GetComponentInChildren<UiButtonController>();
     }
 
     // Update is called once per frame
@@ -348,6 +350,10 @@ public class ControllerManager : MonoBehaviour
                 EvnetTrans = temp;
                 EventState = 1;
             }
+            else
+            {
+                Debug.Log("Ray Cast Event Trigger [<color=blue>" + rayHit.transform.name + "</color>] Tag [<color=yellow>" + rayHit.transform.tag + "</color>]");
+            }
             ret = true;
         }
         return ret;
@@ -390,6 +396,7 @@ public class ControllerManager : MonoBehaviour
                     {
                         mAnimator.SetInteger("Interaction", 3);
                         RRSpawn.ItemDelet(EvnetTrans);
+                        UIController.OnClick_Roulette();
                     }
                     PlayerObject.position = EvnetTrans.PlayerPos;
                     break;
@@ -400,6 +407,11 @@ public class ControllerManager : MonoBehaviour
                 EvnetTrans.EventObj.SetActive(false);
             }
         }
+    }
+
+    public void RouletteEndEvent()
+    {
+        UIController.OnClick_CloseAllPopup();
     }
 
     private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
