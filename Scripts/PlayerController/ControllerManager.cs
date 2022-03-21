@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Cinemachine;
-using UnityEditor.Animations;
 
 public class ControllerManager : MonoBehaviour
 {
@@ -15,13 +14,9 @@ public class ControllerManager : MonoBehaviour
     [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
     public Transform Axis;
 
-    [Tooltip("카메라 따라오는 속도")]
-    public float manMoveSpeed = 1f;     // 플레이어를 따라오는 카메라 맨의 스피드.
     [Tooltip("카메라 회전 속도")]
-    [Range(0.1f, 5f)]
     public float rotateSpeed = 0.65f;
     [Tooltip("카메라 확대 축소 속도")]
-    [Range(0.01f, 2f)]
     public float ZoomSpeed = 0.5f;            // 줌 스피드.
     [Tooltip("카메라와의 거리")]
     [Range(25f, 50f)]
@@ -38,6 +33,9 @@ public class ControllerManager : MonoBehaviour
     [Tooltip("카메라 각도 최대 제한")]
     [Range(0, 80)]
     public float RotationDisMax = 70;
+
+    public bool BoostKey = false;
+    public bool JumpKey = false;
 
     [Header("Player")]
     public Transform PlayerObject;
@@ -65,19 +63,22 @@ public class ControllerManager : MonoBehaviour
     private float deltaMagnitudeDiff = 0;
     private float _verticalVelocity = 0;
 
-    public bool BoostKey = false;
-    public bool JumpKey = false;
-
     private Animator mAnimator = null;
-    public AnimatorController[] AniType;
+    //public AnimatorController[] AniType;
 
     public CinemachineVirtualCamera cvc;
     private Camera _camera;
-    private WorldInteraction EvnetTrans;
-    private int EventState = 0;
     private UiButtonController UIController;
 
+    [Header("Gift Item")]
     public RandomRespawn RRSpawn;
+    public WorldInteraction EvnetTrans;
+    public int EventState = 0;
+
+    [Header("Pet System")]
+    public GameObject[] PetObject;
+    private GameObject insPetObj;
+    private PetMoveController intPetScript;
 
     private void Awake()
     {
@@ -112,13 +113,19 @@ public class ControllerManager : MonoBehaviour
         if (mAnimator == null)
             mAnimator = PlayerObject.GetComponentInChildren<Animator>();
 
-        if (DataInfo.ins.CharacterMain.Sex == 0)
-            mAnimator.runtimeAnimatorController = AniType[0];
-        else
-            mAnimator.runtimeAnimatorController = AniType[1];
+        //if (DataInfo.ins.CharacterMain.Sex == 0)
+        //    mAnimator.runtimeAnimatorController = AniType[0];
+        //else
+        //    mAnimator.runtimeAnimatorController = AniType[1];
 
         RRSpawn = GameObject.FindObjectOfType<RandomRespawn>();
         UIController = GetComponentInChildren<UiButtonController>();
+
+        insPetObj = Instantiate(PetObject[0]);
+        intPetScript = insPetObj.AddComponent<PetMoveController>();
+        intPetScript.myPlayerTrans = transform;
+        intPetScript.PlayerMoveSpeed = moveSpeed;
+        insPetObj.name = "펫";
     }
 
     // Update is called once per frame
@@ -282,7 +289,7 @@ public class ControllerManager : MonoBehaviour
             tempAngles.z = Axis.eulerAngles.z;
             Vector3 plusAngles = new Vector3(0, Mathf.Atan2(moveH, moveV) * Mathf.Rad2Deg, 0);
             Vector3 sumAngles = (tempAngles + plusAngles);
-            //이동
+            //회전
             PlayerObject.eulerAngles = sumAngles;
 
             if (EvnetTrans != null)
@@ -299,8 +306,8 @@ public class ControllerManager : MonoBehaviour
         transform.position = PlayerObject.position;
         if (EventState == 0)
         {
+            //이동
             //PlayerObject.position += PlayerObject.forward * offset;
-            // move the player
             Vector3 MoveVec3 = PlayerObject.forward * offset;
             MoveVec3.y = _verticalVelocity;
             _controller.Move(MoveVec3);
@@ -336,7 +343,21 @@ public class ControllerManager : MonoBehaviour
 
         if (Physics.Raycast(ray, out rayHit, distance, layerMask))
         {
-            if (rayHit.transform.parent.TryGetComponent<WorldInteraction>(out var temp))
+            WorldInteraction temp = null;
+            Transform Truk = rayHit.transform;
+
+            Debug.Log("Ray Cast Event Trigger [<color=blue> Name : " + Truk.name + "</color> ] [<color=yellow> Tag : " + Truk.tag + "</color> ]");
+
+            try
+            {
+                temp = Truk.parent.GetComponent<WorldInteraction>();
+            }
+            catch (System.Exception e)
+            {
+                //Debug.Log(e.ToString());
+            }
+
+            if (temp != null)
             {
                 if (EvnetTrans != null)
                 {
@@ -346,20 +367,38 @@ public class ControllerManager : MonoBehaviour
                         EvnetTrans.mCollider.isTrigger = false;
                     }
                 }
-                Debug.Log("Ray Cast Event Trigger [<color=blue>" + temp.name + "</color>] Tag [<color=yellow>" + temp.nowType.ToString() + "</color>]");
                 EvnetTrans = temp;
                 EventState = 1;
             }
             else
             {
-                Debug.Log("Ray Cast Event Trigger [<color=blue>" + rayHit.transform.name + "</color>] Tag [<color=yellow>" + rayHit.transform.tag + "</color>]");
+                if (Truk.tag == "Pet")
+                {
+                    intPetScript.PetInteraction();
+                }
+                else
+                {
+                    switch (Truk.name)
+                    {
+                        case "PI_0":
+                            intPetScript.OnClick_Evnet_0();
+                            break;
+                        case "PI_1":
+                            intPetScript.OnClick_Evnet_1();
+                            break;
+                        case "PI_2":
+                            intPetScript.OnClick_Evnet_2();
+                            break;
+                    }
+                }
             }
+
             ret = true;
         }
         return ret;
     }
 
-    void RayCastEventLogic()
+    public void RayCastEventLogic()
     {
         if (EventState > 0 && EventState < 3)
         {
@@ -379,7 +418,7 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.OnChair:
                     if (EventState == 1)
                     {
-                        mAnimator.SetInteger("Interaction", 1);
+                        Com.ins.AniSetInt(mAnimator, "Interaction", 1);
                     }
                     PlayerObject.position = EvnetTrans.PlayerPos;
                     PlayerObject.eulerAngles = EvnetTrans.PlayerRotation;
@@ -387,16 +426,16 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.Meditate:
                     if (EventState == 1)
                     {
-                        mAnimator.SetInteger("Interaction", 2);
+                        Com.ins.AniSetInt(mAnimator, "Interaction", 2);
                     }
                     PlayerObject.position = EvnetTrans.PlayerPos;
                     break;
                 case InteractionType.Gift:
                     if (EventState == 1)
                     {
-                        mAnimator.SetInteger("Interaction", 3);
+                        Com.ins.AniSetInt(mAnimator, "Interaction", 3);
                         RRSpawn.ItemDelet(EvnetTrans);
-                        UIController.OnClick_Roulette();
+                        //UIController.OnClick_Roulette();
                     }
                     PlayerObject.position = EvnetTrans.PlayerPos;
                     break;
@@ -465,19 +504,19 @@ public class ControllerManager : MonoBehaviour
             {
                 case 0:
                     moveSpeedSum = 0;
-                    mAnimator.SetInteger("MoveState", 0);
+                    Com.ins.AniSetInt(mAnimator, "MoveState", 0);
                     break;
                 case 1:
                     moveSpeedSum = moveSpeed;
-                    mAnimator.SetInteger("MoveState", 1);
+                    Com.ins.AniSetInt(mAnimator, "MoveState", 1);
                     break;
                 case 2:
                     moveSpeedSum = moveSpeed + moveSpeed;
-                    mAnimator.SetInteger("MoveState", 2);
+                    Com.ins.AniSetInt(mAnimator, "MoveState", 2);
                     break;
                 case 3:
                     moveSpeedSum = moveSpeed + moveSpeed * moveSpeed;
-                    mAnimator.SetInteger("MoveState", 3);
+                    Com.ins.AniSetInt(mAnimator, "MoveState", 3);
                     break;
             }
         }

@@ -15,6 +15,9 @@ public class ShopPopup : MonoBehaviour
     private Vector2 movePosDiff;
 
     public Button[] ShopButton;
+    public GameObject SubButton;
+    public GameObject[] SelectDetailedMenu;
+
     [Header("결제 팝업")]
     public Button Purchase;
     Text PurchaseText;
@@ -27,12 +30,14 @@ public class ShopPopup : MonoBehaviour
     int State = -1;
     int subState = -1;
     int sumMoney = 0;
+
     private bool PurchaseUse = false;
 
     // Start is called before the first frame update
     void Start()
     {
         PurchaseUse = false;
+        SubButton.SetActive(false);
 
         ShopButton[0].onClick.RemoveAllListeners();
         ShopButton[0].onClick.AddListener(OnClick_Suggestion);
@@ -78,6 +83,9 @@ public class ShopPopup : MonoBehaviour
         PurchaseText.text = "Purchase";
 
         BuyPopup.SetActive(false);
+        
+        if(State != 1)
+            SubButton.SetActive(false);
     }
 
     void FixedUpdate()
@@ -229,6 +237,7 @@ public class ShopPopup : MonoBehaviour
                 }
             }
         }
+        SubButton.SetActive(false);
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -258,9 +267,147 @@ public class ShopPopup : MonoBehaviour
                 }
             }
 
+            SubButton.SetActive(true);
+            ClickCheckClose(0);
+
             StartCoroutine(ScrollViewSetting());
         }
     }
+
+    #region detailed Menu Button Setting
+    void ClickCheckClose(int idx)
+    {
+        for(int i = 0; i < SelectDetailedMenu.Length; i++)
+        {
+            SelectDetailedMenu[i].SetActive(false);
+        }
+        SelectDetailedMenu[idx].SetActive(true);
+    }
+
+    public void OnClick_detailedMenu_All()
+    {
+        ClickCheckClose(0);
+        //아이템 리스트 셋팅
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int i = 0; i < DataInfo.ins.CoustumList.Length; i++)
+        {
+            for (int k = 0; k < DataInfo.ins.CoustumList[i].Count; k++)
+            {
+                //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
+                if (DataInfo.ins.CoustumList[i][k].Sex == DataInfo.ins.CharacterSub.Sex
+                    || DataInfo.ins.CoustumList[i][k].Sex == 2)
+                {
+                    DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[i][k]);
+                }
+            }
+        }
+
+        StartCoroutine(ScrollViewSetting());
+    }
+    public void OnClick_detailedMenu_Hair()
+    {
+        ClickCheckClose(1);
+        //아이템 리스트 셋팅
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int k = 0; k < DataInfo.ins.CoustumList[0].Count; k++)
+        {
+            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
+            if (DataInfo.ins.CoustumList[0][k].Sex == DataInfo.ins.CharacterSub.Sex
+                || DataInfo.ins.CoustumList[0][k].Sex == 2)
+            {
+                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[0][k]);
+            }
+        }
+
+        StartCoroutine(ScrollViewSetting());
+    }
+    public void OnClick_detailedMenu_Shirt()
+    {
+        ClickCheckClose(2);
+        //아이템 리스트 셋팅
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int k = 0; k < DataInfo.ins.CoustumList[1].Count; k++)
+        {
+            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
+            if (DataInfo.ins.CoustumList[1][k].Sex == DataInfo.ins.CharacterSub.Sex
+                || DataInfo.ins.CoustumList[1][k].Sex == 2)
+            {
+                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[1][k]);
+            }
+        }
+
+        StartCoroutine(ScrollViewSetting());
+    }
+    public void OnClick_detailedMenu_Pants()
+    {
+        ClickCheckClose(3);
+        //아이템 리스트 셋팅
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int k = 0; k < DataInfo.ins.CoustumList[2].Count; k++)
+        {
+            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
+            if (DataInfo.ins.CoustumList[2][k].Sex == DataInfo.ins.CharacterSub.Sex
+                || DataInfo.ins.CoustumList[2][k].Sex == 2)
+            {
+                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[2][k]);
+            }
+        }
+
+        StartCoroutine(ScrollViewSetting());
+    }
+    public void OnClick_detailedMenu_Shoes()
+    {
+        ClickCheckClose(4);
+        //아이템 리스트 셋팅
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int k = 0; k < DataInfo.ins.CoustumList[3].Count; k++)
+        {
+            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
+            if (DataInfo.ins.CoustumList[3][k].Sex == DataInfo.ins.CharacterSub.Sex
+                || DataInfo.ins.CoustumList[3][k].Sex == 2)
+            {
+                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[3][k]);
+            }
+        }
+
+        StartCoroutine(ScrollViewSetting());
+    }
+    public void OnClick_detailedMenu_Set()
+    {
+        ClickCheckClose(5);
+        //아이템 리스트 셋팅
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int k = 0; k < DataInfo.ins.CoustumList[4].Count; k++)
+        {
+            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
+            if (DataInfo.ins.CoustumList[4][k].Sex == DataInfo.ins.CharacterSub.Sex
+                || DataInfo.ins.CoustumList[4][k].Sex == 2)
+            {
+                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[4][k]);
+            }
+        }
+
+        StartCoroutine(ScrollViewSetting());
+    }
+    public void OnClick_detailedMenu_Accessory()
+    {
+        ClickCheckClose(6);
+        //아이템 리스트 셋팅
+        DataInfo.ins.CostumeScrollList.Clear();
+        for (int k = 0; k < DataInfo.ins.CoustumList[5].Count; k++)
+        {
+            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
+            if (DataInfo.ins.CoustumList[5][k].Sex == DataInfo.ins.CharacterSub.Sex
+                || DataInfo.ins.CoustumList[5][k].Sex == 2)
+            {
+                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[5][k]);
+            }
+        }
+
+        StartCoroutine(ScrollViewSetting());
+    }
+    #endregion
+
 
     public void OnClick_Gesture()
     {
@@ -276,6 +423,7 @@ public class ShopPopup : MonoBehaviour
             setScroll.totalCount = 0;
             //아이템 리스트 셋팅
             DataInfo.ins.CostumeScrollList.Clear();
+            SubButton.SetActive(false);
 
             for (int i = 0; i < DataInfo.ins.EctItemData.Count; i++)
             {

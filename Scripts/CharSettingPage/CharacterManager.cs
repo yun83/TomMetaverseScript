@@ -16,6 +16,8 @@ public class CharacterManager : MonoBehaviour
     public WorldInteraction WoIn = null;
     private bool nicCheck = false;
 
+    public ControllerManager cmLogic;
+
     void Awake()
     {
         DataInfo.ins.LodingCheck = true;
@@ -30,6 +32,8 @@ public class CharacterManager : MonoBehaviour
                 WoIn.InitWorldInteraction();
             }
         }
+
+        cmLogic = FindObjectOfType<ControllerManager>();
     }
 
     private void LateUpdate()
@@ -192,7 +196,17 @@ public class CharacterManager : MonoBehaviour
                 }
             }
         }
-
         //Debug.Log(DebugMsg);
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit cchit)
+    {
+        if (cchit.transform.tag.Equals("GiftBox"))
+        {
+            Debug.Log("On Controller Collider Hit[<color=blue>" + cchit.transform.name + "</color>] Tag [<color=yellow>" + cchit.transform.tag + "</color>]");
+            cmLogic.EvnetTrans = cchit.transform.GetComponent<WorldInteraction>();
+            cmLogic.EventState = 1;
+            cmLogic.RayCastEventLogic();
+        }
     }
 }

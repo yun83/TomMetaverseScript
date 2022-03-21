@@ -17,6 +17,7 @@ public class WorldInteraction : MonoBehaviour
     private SpriteRenderer EventIcon;
     private Transform Player;
     public Collider mCollider;
+    private float area = 10;
 
     public int ItemId = -1;
 
@@ -28,6 +29,20 @@ public class WorldInteraction : MonoBehaviour
         if(gameObject.TryGetComponent<Collider>(out var Col))
         {
             mCollider = Col;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (area > Vector3.Distance(Player.position, transform.position))
+        {
+            if(!EventObj.activeSelf)
+                EventObj.SetActive(true);
+        }
+        else
+        {
+            if (EventObj.activeSelf)
+                EventObj.SetActive(false);
         }
     }
 
@@ -76,4 +91,7 @@ public enum InteractionType
     Meditate,
     Pickup,
     Gift,
+    Pet_Idx0,
+    Pet_Idx1,
+    Pet_Idx2,
 }
