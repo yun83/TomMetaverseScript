@@ -126,3 +126,43 @@ public class OptionData
     public bool BgmSound = true;
     public bool NicNameOpen = true;
 }
+
+
+[System.Serializable] 
+public class QuestData
+{
+    /// <summary>
+    /// 퀘스트 아이디
+    /// </summary>
+    public int ID = -1;
+    /// <summary>
+    /// 퀘스트 종류
+    /// </summary>
+    public int QuestID = 0;
+    /// <summary>
+    /// 퀘스트 갯수
+    /// </summary>
+    public int State = 0;
+    /// <summary>
+    /// 퀘스트 이름 Id 0:일일퀘스트
+    /// </summary>
+    public int NameID = 0;
+    public string nameText = "";
+    /// <summary>
+    /// 골드보상
+    /// </summary>
+    public int GoldReward = 0;
+    /// <summary>
+    /// 퀘스트 의견
+    /// </summary>
+    public string Description = "";
+
+    /// <summary>
+    /// 퀘스트 종류
+    /// </summary>
+    public List<int> QuiteListId = new List<int>();
+    /// <summary>
+    /// 종류에 따른 진행 사항
+    /// </summary>
+    public List<int> QuiteListState = new List<int>();
+}

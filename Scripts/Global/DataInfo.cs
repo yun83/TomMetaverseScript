@@ -70,6 +70,10 @@ public class DataInfo : Single<DataInfo>
     public List<info_Costume> BuyItemSaveList = new List<info_Costume>();
     public bool TotlaMoneySumCheck = false;
 
+    //퀘스트 데이터 로딩
+    public List<QuestData> QuestList = new List<QuestData>();
+    List<Dictionary<string, object>> TestData;
+    public QuestData dailyQuest = new QuestData();
 
     private void Awake()
     {
@@ -101,7 +105,7 @@ public class DataInfo : Single<DataInfo>
         }
         #endregion
 
-        #region Costum Item Data Loding
+        #region 아이템 데이터 로딩
 
         List<Dictionary<string, object>> itemCsvDic = CSVReader.Read("Doc/CostumItem");
 
@@ -113,38 +117,96 @@ public class DataInfo : Single<DataInfo>
         }
         EctItemData.Clear();
 
-        for (var i = 0; i < itemCsvDic.Count; i++)
+        if (itemCsvDic != null)
         {
-            //print("ItemID " + data[i]["ItemID"] + " " + "Type " + data[i]["Type"] + " " + "State " + data[i]["State"] + " " + "Name " + data[i]["Name"] + " " +  "resourcesPath " + data[i]["resourcesPath"] );
-            info_Costume temp = new info_Costume();
-
-            temp.ItemID = System.Convert.ToInt32(itemCsvDic[i]["ItemID"]);
-            temp.Type = System.Convert.ToInt32(itemCsvDic[i]["Type"]);
-            temp.State = System.Convert.ToInt32(itemCsvDic[i]["State"]);
-            temp.Sex = System.Convert.ToInt32(itemCsvDic[i]["Sex"]);
-            temp.Name = System.Convert.ToString(itemCsvDic[i]["Name"]);
-            temp.Description = System.Convert.ToString(itemCsvDic[i]["Description"]);
-            temp.price = System.Convert.ToInt32(itemCsvDic[i]["price"]);
-            temp.Path = System.Convert.ToInt32(itemCsvDic[i]["Path"]);
-            temp.Suggestion = System.Convert.ToInt32(itemCsvDic[i]["Suggestion"]);
-            //temp.Route = System.Convert.ToString(itemCsvDic[i]["Route"]);
-
-            //구매된 아이템 체크
-            for (int j = 0; j < BuyItemId.Count; j++)
+            for (var i = 0; i < itemCsvDic.Count; i++)
             {
-                if(temp.ItemID == BuyItemId[j])
-                {//구매 되었음을 표기
-                    temp.State = 1;
-                }
-            }
+                //print("ItemID " + data[i]["ItemID"] + " " + "Type " + data[i]["Type"] + " " + "State " + data[i]["State"] + " " + "Name " + data[i]["Name"] + " " +  "resourcesPath " + data[i]["resourcesPath"] );
+                info_Costume temp = new info_Costume();
 
-            if(temp.Type < 6)
-                CoustumList[temp.Type].Add(temp);
-            else
-                EctItemData.Add(temp);
+                temp.ItemID = System.Convert.ToInt32(itemCsvDic[i]["ItemID"]);
+                temp.Type = System.Convert.ToInt32(itemCsvDic[i]["Type"]);
+                temp.State = System.Convert.ToInt32(itemCsvDic[i]["State"]);
+                temp.Sex = System.Convert.ToInt32(itemCsvDic[i]["Sex"]);
+                temp.Name = System.Convert.ToString(itemCsvDic[i]["Name"]);
+                temp.Description = System.Convert.ToString(itemCsvDic[i]["Description"]);
+                temp.price = System.Convert.ToInt32(itemCsvDic[i]["price"]);
+                temp.Path = System.Convert.ToInt32(itemCsvDic[i]["Path"]);
+                temp.Suggestion = System.Convert.ToInt32(itemCsvDic[i]["Suggestion"]);
+                //temp.Route = System.Convert.ToString(itemCsvDic[i]["Route"]);
+
+                //구매된 아이템 체크
+                for (int j = 0; j < BuyItemId.Count; j++)
+                {
+                    if (temp.ItemID == BuyItemId[j])
+                    {//구매 되었음을 표기
+                        temp.State = 1;
+                    }
+                }
+
+                if (temp.Type < 6)
+                    CoustumList[temp.Type].Add(temp);
+                else
+                    EctItemData.Add(temp);
+            }
         }
         #endregion
 
+        #region 퀘스트 데이터 로딩
+        List<Dictionary<string, object>> QuestData = CSVReader.Read("Doc/QuestData");
+        TestData = CSVReader.Read("Doc/TestData");
+
+        QuestList.Clear();
+
+        //중복 퀘스트 방지
+        int[] indData = new int[TestData.Count];
+        for (int i = 0; i < indData.Length; i++)
+        {
+            indData[i] = i;
+        }
+
+        List<int> dailyCheck = new List<int>();
+        dailyCheck.Clear();
+
+        if (QuestData != null)
+        {
+            for (int i = 0; i < QuestData.Count; i++)
+            {
+                QuestData temp = new QuestData();
+                temp.ID = System.Convert.ToInt32(QuestData[i]["ID"]); ;
+                temp.QuestID = System.Convert.ToInt32(QuestData[i]["QuestID"]);
+                temp.State = System.Convert.ToInt32(QuestData[i]["State"]);
+                temp.NameID = System.Convert.ToInt32(QuestData[i]["Name"]);
+
+                switch (temp.NameID)
+                {
+                    case 0:
+                        temp.nameText = "일일 퀘스트";
+                        dailyCheck.Add(temp.ID);
+                        break;
+                }
+
+                temp.GoldReward = System.Convert.ToInt32(QuestData[i]["GoldReward"]);
+
+                temp.Description = System.Convert.ToString(QuestData[i]["Description"]);
+
+                temp.QuiteListId.Clear();
+                temp.QuiteListState.Clear();
+
+                Com.ins.ShuffleArray(indData);
+
+                for (int j = 0; j < temp.State; j++)
+                {
+                    temp.QuiteListId.Add(indData[j]);
+                    temp.QuiteListState.Add(0);
+                }
+
+                QuestList.Add(temp);
+            }
+        }
+
+        dailyQuest = QuestList[dailyCheck[Random.Range(0, dailyCheck.Count)]];
+        #endregion
 
         Com.ins.BgmSoundPlay(Resources.Load<AudioClip>("BGM/Progress"));
     }

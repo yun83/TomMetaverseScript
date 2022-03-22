@@ -14,6 +14,7 @@ public class PetMoveController : MonoBehaviour
     public float PlayerMoveSpeed = 2;
     private float SumSpeed = 0;
     private GameObject InteractionObj = null;
+    Vector3 movePos;
 
     public bool ShowObject  = false;
     // Start is called before the first frame update
@@ -33,6 +34,7 @@ public class PetMoveController : MonoBehaviour
         InteractionObj.transform.position = new Vector3(0, 0.8f, 0);
         InteractionObj.SetActive(false);
 
+        movePos = transform.position;
         aniMoveState = 0;
     }
 
@@ -100,7 +102,9 @@ public class PetMoveController : MonoBehaviour
         if (aniMoveState != 0)
         {
             float offset = Time.deltaTime * SumSpeed;
-            transform.position += transform.forward * offset;
+            movePos += transform.forward * offset;
+            movePos.y = 0.05f;
+            transform.position = movePos;
         }
     }
 
@@ -122,12 +126,16 @@ public class PetMoveController : MonoBehaviour
         ShowObject = (ShowObject == false) ? true : false;
     }
 
-    public void OnClick_Evnet_0() {
+    public void OnClick_Evnet_0()
+    {
+        Com.ins.AniSetInt(PetAni, "Touch", 1);
     }
     public void OnClick_Evnet_1()
     {
+        Com.ins.AniSetInt(PetAni, "Touch", 2);
     }
     public void OnClick_Evnet_2()
     {
+        Com.ins.AniSetInt(PetAni, "Touch", 3);
     }
 }
