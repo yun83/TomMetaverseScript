@@ -9,6 +9,7 @@ public class CharacterManager : MonoBehaviour
     public Transform mShoes;
     public Transform mSet;
     public Transform mAccessory;
+    public Transform PickupTrans;
 
     public string NectSceneName = "97_moveScene";
 
@@ -204,7 +205,7 @@ public class CharacterManager : MonoBehaviour
         if (cchit.transform.tag.Equals("GiftBox"))
         {
             Debug.Log("On Controller Collider Hit[<color=blue>" + cchit.transform.name + "</color>] Tag [<color=yellow>" + cchit.transform.tag + "</color>]");
-            cmLogic.EvnetTrans = cchit.transform.GetComponent<WorldInteraction>();
+            cmLogic.EventScripts = cchit.transform.GetComponent<WorldInteraction>();
             cmLogic.EventState = 1;
             cmLogic.RayCastEventLogic();
         }

@@ -13,6 +13,7 @@ public class WorldInteraction : MonoBehaviour
     public Vector3 PlayerPos;
     public Vector3 PlayerRotation;
 
+    public int UseState = 0;
     public TextMesh NicName;
     private SpriteRenderer EventIcon;
     private Transform Player;
@@ -34,15 +35,24 @@ public class WorldInteraction : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (area > Vector3.Distance(Player.position, transform.position))
+        ObjectOpenCheck();
+    }
+
+    public void ObjectOpenCheck()
+    {
+        if (UseState == 0)
         {
-            if(!EventObj.activeSelf)
-                EventObj.SetActive(true);
+            if (area > Vector3.Distance(Player.position, transform.position))
+            {
+                if (!EventObj.activeSelf)
+                    EventObj.SetActive(true);
+            }
+            else
+                EventObj.SetActive(false);
         }
         else
         {
-            if (EventObj.activeSelf)
-                EventObj.SetActive(false);
+            EventObj.SetActive(false);
         }
     }
 
@@ -73,6 +83,7 @@ public class WorldInteraction : MonoBehaviour
         {
             case InteractionType.OnChair: EventIcon.sprite = Resources.Load<Sprite>("Icon/CHAIR"); break;
             case InteractionType.Meditate: EventIcon.sprite = Resources.Load<Sprite>("Icon/DESK"); break;
+            case InteractionType.Pickup: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
             case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
         }
 

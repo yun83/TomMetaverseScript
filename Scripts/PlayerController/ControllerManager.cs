@@ -37,9 +37,10 @@ public class ControllerManager : MonoBehaviour
     public bool BoostKey = false;
     public bool JumpKey = false;
 
-    [Header("Player")]
+    [Header("케릭터")]
     public Transform PlayerObject;
     private CharacterController _controller;
+    private CharacterManager _manager;
     [Tooltip("프레임당 점프 높이")]
     public float JumpDis = 0.02f;
     [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
@@ -70,12 +71,16 @@ public class ControllerManager : MonoBehaviour
     private Camera _camera;
     private UiButtonController UIController;
 
-    [Header("Gift Item")]
+    [Header("상호작용")]
     public RandomRespawn RRSpawn;
-    public WorldInteraction EvnetTrans;
+    public WorldInteraction EventScripts;
     public int EventState = 0;
+    /// <summary>
+    /// 손에 아이템을 들었는지 판단
+    /// </summary>
+    private bool HandItem = false;
 
-    [Header("Pet System")]
+    [Header("펫 시스템")]
     public GameObject[] PetObject;
     private GameObject insPetObj;
     private PetMoveController intPetScript;
@@ -100,8 +105,9 @@ public class ControllerManager : MonoBehaviour
         if (PlayerObject == null)
             PlayerObject = GameObject.FindGameObjectWithTag("Player").transform;
 
-        PlayerObject.GetComponent<CharacterManager>().itemEquipment(DataInfo.ins.CharacterMain);
         _controller = PlayerObject.GetComponent<CharacterController>();
+        _manager = PlayerObject.GetComponent<CharacterManager>();
+        _manager.itemEquipment(DataInfo.ins.CharacterMain);
 
         if (cvc == null)
             cvc = GetComponentInChildren<CinemachineVirtualCamera>();
@@ -292,12 +298,13 @@ public class ControllerManager : MonoBehaviour
             //회전
             PlayerObject.eulerAngles = sumAngles;
 
-            if (EvnetTrans != null)
+            if (EventScripts != null)
             {
-                EvnetTrans.EventObj.SetActive(true);
-                if (EvnetTrans.mCollider != null)
+                EventScripts.UseState = 0;
+                //EventScripts.EventObj.SetActive(true);
+                if (EventScripts.mCollider != null)
                 {
-                    EvnetTrans.mCollider.isTrigger = false;
+                    EventScripts.mCollider.isTrigger = false;
                 }
             }
             EventState = 0;
@@ -359,15 +366,15 @@ public class ControllerManager : MonoBehaviour
 
             if (temp != null)
             {
-                if (EvnetTrans != null)
+                if (EventScripts != null)
                 {
-                    EvnetTrans.EventObj.SetActive(true);
-                    if (EvnetTrans.mCollider != null)
+                    //EventScripts.EventObj.SetActive(true);
+                    if (EventScripts.mCollider != null)
                     {
-                        EvnetTrans.mCollider.isTrigger = false;
+                        EventScripts.mCollider.isTrigger = false;
                     }
                 }
-                EvnetTrans = temp;
+                EventScripts = temp;
                 EventState = 1;
             }
             else
@@ -402,12 +409,12 @@ public class ControllerManager : MonoBehaviour
     {
         if (EventState > 0 && EventState < 3)
         {
-            if (EvnetTrans.mCollider != null)
+            if (EventScripts.mCollider != null)
             {
-                EvnetTrans.mCollider.isTrigger = true;
+                EventScripts.mCollider.isTrigger = true;
             }
 
-            switch (EvnetTrans.nowType)
+            switch (EventScripts.nowType)
             {
                 case InteractionType.OutRoom:
                     DataInfo.ins.RoomOutButtonSetting();
@@ -420,32 +427,60 @@ public class ControllerManager : MonoBehaviour
                     {
                         Com.ins.AniSetInt(mAnimator, "Interaction", 1);
                     }
-                    PlayerObject.position = EvnetTrans.PlayerPos;
-                    PlayerObject.eulerAngles = EvnetTrans.PlayerRotation;
+                    PlayerObject.position = EventScripts.PlayerPos;
+                    PlayerObject.eulerAngles = EventScripts.PlayerRotation;
                     break;
                 case InteractionType.Meditate:
                     if (EventState == 1)
                     {
                         Com.ins.AniSetInt(mAnimator, "Interaction", 2);
                     }
-                    PlayerObject.position = EvnetTrans.PlayerPos;
+                    PlayerObject.position = EventScripts.PlayerPos;
                     break;
                 case InteractionType.Gift:
                     if (EventState == 1)
                     {
                         Com.ins.AniSetInt(mAnimator, "Interaction", 3);
-                        RRSpawn.ItemDelet(EvnetTrans);
+                        RRSpawn.ItemDelet(EventScripts);
                         //UIController.OnClick_Roulette();
                     }
-                    PlayerObject.position = EvnetTrans.PlayerPos;
+                    PlayerObject.position = EventScripts.PlayerPos;
+                    break;
+                case InteractionType.Pickup:
+                    if (EventState == 1)
+                    {
+                        StartCoroutine(HandObjectSetting());
+                    }
                     break;
             }
             EventState ++;
-            if (EventState < 3)
+            EventScripts.UseState = 1;
+        }
+    }
+
+    IEnumerator HandObjectSetting()
+    {
+        if (_manager.PickupTrans.childCount > 0)
+        {
+            for(int i = _manager.PickupTrans.childCount - 1; i >= 0; i--)
             {
-                EvnetTrans.EventObj.SetActive(false);
+                Destroy(_manager.PickupTrans.GetChild(i).gameObject);
             }
         }
+        yield return null;
+
+        GameObject HandObject = Instantiate(EventScripts.gameObject);
+        yield return null;
+
+        WorldInteraction temp = HandObject.GetComponent<WorldInteraction>();
+        Destroy(temp.EventObj);
+        Destroy(temp);
+        yield return null;
+
+        HandObject.transform.parent = _manager.PickupTrans;
+        HandObject.transform.localPosition = Vector3.zero;
+
+        HandItem = true;
     }
 
     public void RouletteEndEvent()
@@ -483,7 +518,7 @@ public class ControllerManager : MonoBehaviour
         {
             JumpKey = true;
             mAnimator.SetTrigger("Jump");
-            _verticalVelocity = Mathf.Sqrt(JumpDis * 2f * Gravity);
+            //_verticalVelocity = Mathf.Sqrt(JumpDis * 2f * Gravity);
         }
     }
 

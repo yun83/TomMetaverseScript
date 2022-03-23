@@ -72,14 +72,22 @@ public class DataInfo : Single<DataInfo>
 
     //퀘스트 데이터 로딩
     public List<QuestData> QuestList = new List<QuestData>();
-    List<Dictionary<string, object>> TestData;
+    public List<string> QuestName = new List<string>();
     public QuestData dailyQuest = new QuestData();
 
     private void Awake()
     {
         Application.targetFrameRate = 1000;
 
-        #region Save Loding
+        SaveDataLoding(); 
+        ItemDataLoding();
+        QuestDataLoding();
+
+        Com.ins.BgmSoundPlay(Resources.Load<AudioClip>("BGM/Progress"));
+    }
+
+    private void SaveDataLoding()
+    {
         Debug.Log(" ------------- 세이브 로딩 --------------");
         if (!SaveData.Equals("") && SaveData != null)
         {
@@ -103,9 +111,10 @@ public class DataInfo : Single<DataInfo>
                 BuyItemId.Add(System.Convert.ToInt32(stringList[i]));
             }
         }
-        #endregion
+    }
 
-        #region 아이템 데이터 로딩
+    private void ItemDataLoding()
+    {
 
         List<Dictionary<string, object>> itemCsvDic = CSVReader.Read("Doc/CostumItem");
 
@@ -150,13 +159,18 @@ public class DataInfo : Single<DataInfo>
                     EctItemData.Add(temp);
             }
         }
-        #endregion
+    }
 
-        #region 퀘스트 데이터 로딩
+    private void QuestDataLoding()
+    {
         List<Dictionary<string, object>> QuestData = CSVReader.Read("Doc/QuestData");
-        TestData = CSVReader.Read("Doc/TestData");
+        List<Dictionary<string, object>> TestData = CSVReader.Read("Doc/TestData");
+
+        List<int> dailyCheck = new List<int>();
 
         QuestList.Clear();
+        QuestName.Clear();
+        dailyCheck.Clear();
 
         //중복 퀘스트 방지
         int[] indData = new int[TestData.Count];
@@ -165,8 +179,6 @@ public class DataInfo : Single<DataInfo>
             indData[i] = i;
         }
 
-        List<int> dailyCheck = new List<int>();
-        dailyCheck.Clear();
 
         if (QuestData != null)
         {
@@ -206,9 +218,14 @@ public class DataInfo : Single<DataInfo>
         }
 
         dailyQuest = QuestList[dailyCheck[Random.Range(0, dailyCheck.Count)]];
-        #endregion
 
-        Com.ins.BgmSoundPlay(Resources.Load<AudioClip>("BGM/Progress"));
+
+
+        for (int i = 0; i < TestData.Count; i++)
+        {
+            string temp = System.Convert.ToString(TestData[i]["Description"]);
+            QuestName.Add(temp);
+        }
     }
 
     public info_Costume getItemData(int itemId)

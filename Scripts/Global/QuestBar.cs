@@ -15,6 +15,8 @@ public class QuestBar : MonoBehaviour
     public void ScrollCellIndex(int idx)
     {
         //DataInfo.ins.dailyQuest.QuiteListId
+        int id = DataInfo.ins.dailyQuest.QuiteListId[idx];
+        Title.text = System.Convert.ToString(DataInfo.ins.QuestName[id]);
     }
 
     public void OnClick_Evenet()

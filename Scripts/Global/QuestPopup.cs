@@ -11,7 +11,10 @@ public class QuestPopup : MonoBehaviour
     private void OnEnable()
     {
         Title.text = DataInfo.ins.dailyQuest.nameText;
+
+        StartCoroutine(QuestSetting());
     }
+
     IEnumerator QuestSetting()
     {
         yield return null;
