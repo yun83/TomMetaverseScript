@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
 
-[System.Serializable]
+[Serializable]
 public class Info_Char
 {
     public int Money = 2000;
@@ -60,8 +61,8 @@ public class Info_Char
     }
 }
 
-[System.Serializable]
-public class info_Costume
+[Serializable]
+public class CoustumItemCsv
 {
     public int ItemID = 0;
 
@@ -119,7 +120,7 @@ public class info_Costume
     public int inGameUse = 0;
 }
 
-[System.Serializable] 
+[Serializable] 
 public class OptionData
 {
     public bool EffectSound = true;
@@ -127,9 +128,16 @@ public class OptionData
     public bool NicNameOpen = true;
 }
 
+[Serializable]
+public class ButtonClass
+{
+    public string text;
+    public delegate void ClickEvent();
+    public ClickEvent addEvent;
+}
 
-[System.Serializable] 
-public class QuestData
+[Serializable] 
+public class QuestCsv
 {
     /// <summary>
     /// 퀘스트 아이디
@@ -165,4 +173,12 @@ public class QuestData
     /// 종류에 따른 진행 사항
     /// </summary>
     public List<int> QuiteListState = new List<int>();
+}
+
+[Serializable]
+public class QuestDataCsv{
+    public int ID = -1;
+    public string Name = "";
+    public string Description = "";
+    public int State = 0;
 }

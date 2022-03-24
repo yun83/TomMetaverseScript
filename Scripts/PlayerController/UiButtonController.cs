@@ -31,7 +31,7 @@ public class UiButtonController : MonoBehaviour
 
     private int UiPopupState = 0;
 
-    public List<info_Costume> GestureItem = new List<info_Costume>();
+    public List<CoustumItemCsv> GestureItem = new List<CoustumItemCsv>();
 
     void Awake()
     {
@@ -233,7 +233,7 @@ public class UiButtonController : MonoBehaviour
         for (int i = 0; i < DataInfo.ins.EctItemData.Count; i++)
         {
             if (DataInfo.ins.EctItemData[i].State == 1) {
-                info_Costume temp = DataInfo.ins.EctItemData[i];
+                CoustumItemCsv temp = DataInfo.ins.EctItemData[i];
                 DataInfo.ins.CostumeScrollList.Add(temp);
             }
         }

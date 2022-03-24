@@ -144,7 +144,7 @@ public class ShopPopup : MonoBehaviour
 
     void AddBuyCostumes(int itemId)
     {
-        info_Costume temp = new info_Costume();
+        CoustumItemCsv temp = new CoustumItemCsv();
         temp = DataInfo.ins.getItemData(itemId);
         if (temp != null)
         {
@@ -496,7 +496,7 @@ public class ShopPopup : MonoBehaviour
                 continue;
 
             //DataInfo.ins.BuyItemSaveList 의 아이템을 구매 한다
-            info_Costume itemTrunk = DataInfo.ins.BuyItemSaveList[i];
+            CoustumItemCsv itemTrunk = DataInfo.ins.BuyItemSaveList[i];
 
             DataInfo.ins.BuyItemId.Add(System.Convert.ToInt32(itemTrunk.ItemID));
 

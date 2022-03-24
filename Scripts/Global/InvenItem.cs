@@ -7,7 +7,7 @@ public class InvenItem : MonoBehaviour
 {
     int mIndex = -1;
     public Text ItemText;
-    public info_Costume NowItem = new info_Costume();
+    public CoustumItemCsv NowItem = new CoustumItemCsv();
     Image mImage;
     Button NowButton;
 

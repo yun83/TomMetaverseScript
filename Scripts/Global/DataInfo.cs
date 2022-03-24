@@ -58,22 +58,29 @@ public class DataInfo : Single<DataInfo>
     public List<ButtonClass> OutRoomButton = new List<ButtonClass>();
 
     //아이템 리스트의 데이터 로딩
-    public List<info_Costume>[] CoustumList = new List<info_Costume>[6];
-    public List<info_Costume> EctItemData = new List<info_Costume>();
+    public List<CoustumItemCsv>[] CoustumList = new List<CoustumItemCsv>[6];
+    public List<CoustumItemCsv> EctItemData = new List<CoustumItemCsv>();
 
     //스크롤에 등록될 아이템 리스트 정리
-    public List<info_Costume> CostumeScrollList = new List<info_Costume>();
+    public List<CoustumItemCsv> CostumeScrollList = new List<CoustumItemCsv>();
 
     public List<int> BuyItemId = new List<int>(); //구매한 아이템 ID
 
     //삽에서 구입할 아이템 리스트 작성
-    public List<info_Costume> BuyItemSaveList = new List<info_Costume>();
+    public List<CoustumItemCsv> BuyItemSaveList = new List<CoustumItemCsv>();
     public bool TotlaMoneySumCheck = false;
 
     //퀘스트 데이터 로딩
-    public List<QuestData> QuestList = new List<QuestData>();
-    public List<string> QuestName = new List<string>();
-    public QuestData dailyQuest = new QuestData();
+    public List<QuestCsv> QuestList = new List<QuestCsv>();
+    public QuestCsv dailyQuest = new QuestCsv();
+
+    [Header("퀘스트 시스템")]
+    public List<QuestDataCsv> QuestData = new List<QuestDataCsv>();
+    /// <summary>
+    /// 현재 진행중이 퀘스트 아이디
+    /// 0 마이룸, 1 월드맵, 2 의자, 3 선물, 4 펫, 5 제스쳐,
+    /// </summary>
+    public int Now_QID = -1;
 
     private void Awake()
     {
@@ -121,7 +128,7 @@ public class DataInfo : Single<DataInfo>
         //현재 아이템 타입이 6가지
         for (int i = 0; i < CoustumList.Length; i++)
         {
-            CoustumList[i] = new List<info_Costume>();
+            CoustumList[i] = new List<CoustumItemCsv>();
             CoustumList[i].Clear();
         }
         EctItemData.Clear();
@@ -131,7 +138,7 @@ public class DataInfo : Single<DataInfo>
             for (var i = 0; i < itemCsvDic.Count; i++)
             {
                 //print("ItemID " + data[i]["ItemID"] + " " + "Type " + data[i]["Type"] + " " + "State " + data[i]["State"] + " " + "Name " + data[i]["Name"] + " " +  "resourcesPath " + data[i]["resourcesPath"] );
-                info_Costume temp = new info_Costume();
+                CoustumItemCsv temp = new CoustumItemCsv();
 
                 temp.ItemID = System.Convert.ToInt32(itemCsvDic[i]["ItemID"]);
                 temp.Type = System.Convert.ToInt32(itemCsvDic[i]["Type"]);
@@ -163,32 +170,32 @@ public class DataInfo : Single<DataInfo>
 
     private void QuestDataLoding()
     {
-        List<Dictionary<string, object>> QuestData = CSVReader.Read("Doc/QuestData");
-        List<Dictionary<string, object>> TestData = CSVReader.Read("Doc/TestData");
+        List<Dictionary<string, object>> QuestGet = CSVReader.Read("Doc/Quest");
+        List<Dictionary<string, object>> QuestDataGet = CSVReader.Read("Doc/QuestData");
 
         List<int> dailyCheck = new List<int>();
 
         QuestList.Clear();
-        QuestName.Clear();
         dailyCheck.Clear();
+        QuestData.Clear();
 
         //중복 퀘스트 방지
-        int[] indData = new int[TestData.Count];
+        int[] indData = new int[QuestDataGet.Count];
         for (int i = 0; i < indData.Length; i++)
         {
             indData[i] = i;
         }
 
 
-        if (QuestData != null)
+        if (QuestGet != null)
         {
-            for (int i = 0; i < QuestData.Count; i++)
+            for (int i = 0; i < QuestGet.Count; i++)
             {
-                QuestData temp = new QuestData();
-                temp.ID = System.Convert.ToInt32(QuestData[i]["ID"]); ;
-                temp.QuestID = System.Convert.ToInt32(QuestData[i]["QuestID"]);
-                temp.State = System.Convert.ToInt32(QuestData[i]["State"]);
-                temp.NameID = System.Convert.ToInt32(QuestData[i]["Name"]);
+                QuestCsv temp = new QuestCsv();
+                temp.ID = System.Convert.ToInt32(QuestGet[i]["ID"]); ;
+                temp.QuestID = System.Convert.ToInt32(QuestGet[i]["QuestID"]);
+                temp.State = System.Convert.ToInt32(QuestGet[i]["State"]);
+                temp.NameID = System.Convert.ToInt32(QuestGet[i]["Name"]);
 
                 switch (temp.NameID)
                 {
@@ -198,9 +205,9 @@ public class DataInfo : Single<DataInfo>
                         break;
                 }
 
-                temp.GoldReward = System.Convert.ToInt32(QuestData[i]["GoldReward"]);
+                temp.GoldReward = System.Convert.ToInt32(QuestGet[i]["GoldReward"]);
 
-                temp.Description = System.Convert.ToString(QuestData[i]["Description"]);
+                temp.Description = System.Convert.ToString(QuestGet[i]["Description"]);
 
                 temp.QuiteListId.Clear();
                 temp.QuiteListState.Clear();
@@ -217,18 +224,25 @@ public class DataInfo : Single<DataInfo>
             }
         }
 
-        dailyQuest = QuestList[dailyCheck[Random.Range(0, dailyCheck.Count)]];
-
-
-
-        for (int i = 0; i < TestData.Count; i++)
+        if (QuestDataGet.Count > 0)
         {
-            string temp = System.Convert.ToString(TestData[i]["Description"]);
-            QuestName.Add(temp);
+            for (int i = 0; i < QuestDataGet.Count; i++)
+            {
+                QuestDataCsv temp = new QuestDataCsv();
+
+                temp.ID = System.Convert.ToInt32(QuestDataGet[i]["ID"]); ;
+                temp.Name = System.Convert.ToString(QuestDataGet[i]["Name"]);
+                temp.Description = System.Convert.ToString(QuestDataGet[i]["Description"]);
+                temp.State = 0;
+
+                QuestData.Add(temp);
+            }
         }
+
+        dailyQuest = QuestList[dailyCheck[Random.Range(0, dailyCheck.Count)]];
     }
 
-    public info_Costume getItemData(int itemId)
+    public CoustumItemCsv getItemData(int itemId)
     {
         for (int i = 0; i < CoustumList.Length; i++)
         {

@@ -140,6 +140,7 @@ public class ControllerManager : MonoBehaviour
         MoveUpdate();
         GroundedCheck();
         RayCastEventLogic();
+        QuestCheckFunction();
     }
 
     private void FixedUpdate()
@@ -361,7 +362,7 @@ public class ControllerManager : MonoBehaviour
             }
             catch (System.Exception e)
             {
-                //Debug.Log(e.ToString());
+                Debug.LogWarning(e.ToString());
             }
 
             if (temp != null)
@@ -389,12 +390,24 @@ public class ControllerManager : MonoBehaviour
                     {
                         case "PI_0":
                             intPetScript.OnClick_Evnet_0();
+                            if (DataInfo.ins.Now_QID == 4)
+                            {
+                                DataInfo.ins.QuestData[4].State = 1;
+                            }
                             break;
                         case "PI_1":
                             intPetScript.OnClick_Evnet_1();
+                            if (DataInfo.ins.Now_QID == 4)
+                            {
+                                DataInfo.ins.QuestData[4].State = 1;
+                            }
                             break;
                         case "PI_2":
                             intPetScript.OnClick_Evnet_2();
+                            if (DataInfo.ins.Now_QID == 4)
+                            {
+                                DataInfo.ins.QuestData[4].State = 1;
+                            }
                             break;
                     }
                 }
@@ -426,6 +439,11 @@ public class ControllerManager : MonoBehaviour
                     if (EventState == 1)
                     {
                         Com.ins.AniSetInt(mAnimator, "Interaction", 1);
+
+                        if (DataInfo.ins.Now_QID == 2)
+                        {
+                            DataInfo.ins.QuestData[2].State = 1;
+                        }
                     }
                     PlayerObject.position = EventScripts.PlayerPos;
                     PlayerObject.eulerAngles = EventScripts.PlayerRotation;
@@ -443,6 +461,10 @@ public class ControllerManager : MonoBehaviour
                         Com.ins.AniSetInt(mAnimator, "Interaction", 3);
                         RRSpawn.ItemDelet(EventScripts);
                         //UIController.OnClick_Roulette();
+                        if (DataInfo.ins.Now_QID == 3)
+                        {
+                            DataInfo.ins.QuestData[3].State = 1;
+                        }
                     }
                     PlayerObject.position = EventScripts.PlayerPos;
                     break;
@@ -453,7 +475,7 @@ public class ControllerManager : MonoBehaviour
                     }
                     break;
             }
-            EventState ++;
+            EventState++;
             EventScripts.UseState = 1;
         }
     }
@@ -462,7 +484,7 @@ public class ControllerManager : MonoBehaviour
     {
         if (_manager.PickupTrans.childCount > 0)
         {
-            for(int i = _manager.PickupTrans.childCount - 1; i >= 0; i--)
+            for (int i = _manager.PickupTrans.childCount - 1; i >= 0; i--)
             {
                 Destroy(_manager.PickupTrans.GetChild(i).gameObject);
             }
@@ -556,6 +578,7 @@ public class ControllerManager : MonoBehaviour
             }
         }
     }
+
     private void OnDrawGizmosSelected()
     {
         Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
@@ -566,5 +589,38 @@ public class ControllerManager : MonoBehaviour
 
         // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
         Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
+    }
+
+    void QuestCheckFunction()
+    {
+        //퀘스트 관련 정리
+        //public string[] QuestName = {
+        //    "마이룸에 돌아가세요",
+        //    "월드맵으로 나가세요",
+        //    "의자에 앉았다 일어나세요",
+        //    "선물상자를 획득하세요",
+        //    "펫과 교감 하세요",
+        //};
+
+        //순차적으로 완료 시켜야 한다
+        int QSize = DataInfo.ins.dailyQuest.QuiteListState.Count;
+
+        DataInfo.ins.Now_QID = -1;
+        for (int i = 0; i < QSize; i++)
+        {
+            if (DataInfo.ins.dailyQuest.QuiteListState[i] == 0)
+            {
+                DataInfo.ins.Now_QID = DataInfo.ins.dailyQuest.QuiteListId[i];
+                break;
+            }
+        }
+
+        for (int i = 0; i < QSize; i++)
+        {
+            int idx = DataInfo.ins.dailyQuest.QuiteListId[i];
+            DataInfo.ins.dailyQuest.QuiteListState[i] = DataInfo.ins.QuestData[idx].State;
+
+            Debug.Log(idx + " : 퀘스트 결과 : " + DataInfo.ins.dailyQuest.QuiteListState[i]);
+        }
     }
 }

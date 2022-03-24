@@ -86,7 +86,7 @@ public class CharacterManager : MonoBehaviour
     public void itemEquipment(Info_Char _Data)
     {
         bool SetItemCheck = true;
-        info_Costume temp = null;
+        CoustumItemCsv temp = null;
         string DebugMsg = "item Equipment Check";
 
         _Data.printData();

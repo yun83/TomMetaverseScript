@@ -14,13 +14,22 @@ public class OutRoomPopup : MonoBehaviour
 
     public void InitOutRoomPopup(List<ButtonClass> array)
     {
+        StartCoroutine(ButtonSetting(array));
+    }
+
+    IEnumerator ButtonSetting(List<ButtonClass> array)
+    {
         for (int i = bList.Count - 1; i >= 0; i--)
         {
             Destroy(bList[i]);
         }
 
+        yield return null;
+
         bList.Clear();
         Sample.SetActive(true);
+
+        yield return null;
 
         for (int i = 0; i < array.Count; i++)
         {
@@ -33,20 +42,21 @@ public class OutRoomPopup : MonoBehaviour
             _button.onClick.RemoveAllListeners();
             _button.onClick.AddListener(() => {
                 array[idx].addEvent();
-                });
+            });
 
             _text.text = array[idx].text;
 
             temp.transform.parent = Panel;
+            temp.transform.localScale = Vector3.one;
+
             bList.Add(temp);
         }
+
+        yield return null;
+
         Sample.SetActive(false);
     }
-}
-public class ButtonClass
-{
-    public string text;
-    public delegate void ClickEvent();
-    public ClickEvent addEvent;
+
+
 }
 

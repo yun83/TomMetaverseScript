@@ -9,7 +9,7 @@ public class GestureButtonItem : MonoBehaviour
     Button NowButton;
     Text getText;
 
-    info_Costume ItemInfo;
+    CoustumItemCsv ItemInfo;
     public void ScrollCellIndex(int idx)
     {
         ButtonId = idx;
@@ -29,5 +29,9 @@ public class GestureButtonItem : MonoBehaviour
     {
         //Debug.Log(" ButtonClickEvnet " + ButtonId);
         DataInfo.ins.MyPlayerAnimator.SetInteger("Emotion", ItemInfo.Path);
+        if (DataInfo.ins.Now_QID == 5)
+        {
+            DataInfo.ins.QuestData[5].State = 1;
+        }
     }
 }

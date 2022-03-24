@@ -7,7 +7,7 @@ public class ShopItem : MonoBehaviour
 {
     int mIndex = -1;
     public Text ItemText;
-    public info_Costume NowItem = new info_Costume();
+    public CoustumItemCsv NowItem = new CoustumItemCsv();
     Image mImage;
     Button NowButton;
 
@@ -80,7 +80,7 @@ public class ShopItem : MonoBehaviour
 
                     if (!itemUse)
                     {//저장 되어 있지 않으면 저장
-                        info_Costume temp = NowItem;
+                        CoustumItemCsv temp = NowItem;
                         temp.inGameUse = 1;
                         DataInfo.ins.BuyItemSaveList.Add(NowItem);
                     }
