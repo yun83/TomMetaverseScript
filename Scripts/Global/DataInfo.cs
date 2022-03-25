@@ -81,10 +81,12 @@ public class DataInfo : Single<DataInfo>
     /// 0 마이룸, 1 월드맵, 2 의자, 3 선물, 4 펫, 5 제스쳐,
     /// </summary>
     public int Now_QID = -1;
+    public int Quest_WinState = 0;
 
     private void Awake()
     {
         Application.targetFrameRate = 1000;
+        Quest_WinState = 0;
 
         SaveDataLoding(); 
         ItemDataLoding();
@@ -261,6 +263,46 @@ public class DataInfo : Single<DataInfo>
         return null;
     }
 
+    // Update is called once per frame
+    void LateUpdate()
+    {
+        QuestCheckFunction();
+    }
+
+    void QuestCheckFunction()
+    {
+        //퀘스트 완료에 대한 판단
+        if (Quest_WinState <= 0)
+        {
+            //순차적으로 완료 시켜야 한다
+            int QSize = dailyQuest.QuiteListState.Count;
+            int WinCheckCount = 0;
+
+            Now_QID = -1;
+            for (int i = 0; i < QSize; i++)
+            {
+                if (dailyQuest.QuiteListState[i] == 0)
+                {
+                    Now_QID = dailyQuest.QuiteListId[i];
+                    break;
+                }
+            }
+
+            for (int i = 0; i < QSize; i++)
+            {
+                int idx = dailyQuest.QuiteListId[i];
+                dailyQuest.QuiteListState[i] = QuestData[idx].State;
+                if(dailyQuest.QuiteListState[i] > 0)
+                    WinCheckCount++;
+                //Debug.Log(idx + " : 퀘스트 결과 : " + DataInfo.ins.dailyQuest.QuiteListState[i]);
+            }
+
+            if (WinCheckCount >= QSize)
+            {
+                Quest_WinState = 1;
+            }
+        }
+    }
     public void RoomOutButtonSetting()
     {
         UiButtonController ubc = GameObject.FindObjectOfType<UiButtonController>();

@@ -13,6 +13,8 @@ public class UiButtonController : MonoBehaviour
 
     [Header("버튼 설정")]
     public Button[] UiButton;
+    public GameObject QuestSuccess;
+    private bool SuccesssOn = true;
 
     [Header("게임Ui")]
     public Text MoneyText;
@@ -74,7 +76,6 @@ public class UiButtonController : MonoBehaviour
                     break;
             }
         });
-
         //all popup clase    
         OnClick_CloseAllPopup();
     }
@@ -104,6 +105,22 @@ public class UiButtonController : MonoBehaviour
             OnClick_CloseAllPopup();
         }
 
+        if (DataInfo.ins.Quest_WinState == 1)
+        {
+            if (!SuccesssOn)
+            {
+                SuccesssOn = true;
+                QuestSuccess.SetActive(true);
+            }
+        }
+        else
+        {
+            if (SuccesssOn)
+            {
+                SuccesssOn = false;
+                QuestSuccess.SetActive(false);
+            }
+        }
         MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
     }
 

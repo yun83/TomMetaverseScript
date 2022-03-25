@@ -140,7 +140,6 @@ public class ControllerManager : MonoBehaviour
         MoveUpdate();
         GroundedCheck();
         RayCastEventLogic();
-        QuestCheckFunction();
     }
 
     private void FixedUpdate()
@@ -218,9 +217,12 @@ public class ControllerManager : MonoBehaviour
                     switch (tempTouch.phase)
                     {
                         case TouchPhase.Began:
-                            if (RayCastEvent(tempTouch.position))
+                            if (!EventSystem.current.IsPointerOverGameObject(tempTouch.fingerId))
                             {
-                                return;
+                                if (RayCastEvent(tempTouch.position))
+                                {
+                                    return;
+                                }
                             }
                             if (DataInfo.ins.RightTId == -1)
                             {
@@ -591,36 +593,4 @@ public class ControllerManager : MonoBehaviour
         Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
     }
 
-    void QuestCheckFunction()
-    {
-        //퀘스트 관련 정리
-        //public string[] QuestName = {
-        //    "마이룸에 돌아가세요",
-        //    "월드맵으로 나가세요",
-        //    "의자에 앉았다 일어나세요",
-        //    "선물상자를 획득하세요",
-        //    "펫과 교감 하세요",
-        //};
-
-        //순차적으로 완료 시켜야 한다
-        int QSize = DataInfo.ins.dailyQuest.QuiteListState.Count;
-
-        DataInfo.ins.Now_QID = -1;
-        for (int i = 0; i < QSize; i++)
-        {
-            if (DataInfo.ins.dailyQuest.QuiteListState[i] == 0)
-            {
-                DataInfo.ins.Now_QID = DataInfo.ins.dailyQuest.QuiteListId[i];
-                break;
-            }
-        }
-
-        for (int i = 0; i < QSize; i++)
-        {
-            int idx = DataInfo.ins.dailyQuest.QuiteListId[i];
-            DataInfo.ins.dailyQuest.QuiteListState[i] = DataInfo.ins.QuestData[idx].State;
-
-            Debug.Log(idx + " : 퀘스트 결과 : " + DataInfo.ins.dailyQuest.QuiteListState[i]);
-        }
-    }
 }
