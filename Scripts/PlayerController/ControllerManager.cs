@@ -79,11 +79,18 @@ public class ControllerManager : MonoBehaviour
     /// 손에 아이템을 들었는지 판단
     /// </summary>
     private bool HandItem = false;
+    public GameObject HandRelease;
 
     [Header("펫 시스템")]
     public GameObject[] PetObject;
     private GameObject insPetObj;
     private PetMoveController intPetScript;
+
+    [Header("PageLoding")]
+    public GameObject PageLodingPopup;
+    public Image progressBar = null;
+    public Text ToolTipText;
+    public string nextScene = "";
 
     private void Awake()
     {
@@ -102,6 +109,7 @@ public class ControllerManager : MonoBehaviour
 
     void initController()
     {
+        DataInfo.ins.infoController = this;
         if (PlayerObject == null)
             PlayerObject = GameObject.FindGameObjectWithTag("Player").transform;
 
@@ -132,6 +140,11 @@ public class ControllerManager : MonoBehaviour
         intPetScript.myPlayerTrans = transform;
         intPetScript.PlayerMoveSpeed = moveSpeed;
         insPetObj.name = "펫";
+
+
+        HandRelease.SetActive(false);
+        PageLodingPopup.SetActive(false);
+        progressBar.fillAmount = 0;
     }
 
     // Update is called once per frame
@@ -432,15 +445,24 @@ public class ControllerManager : MonoBehaviour
             switch (EventScripts.nowType)
             {
                 case InteractionType.OutRoom:
-                    DataInfo.ins.RoomOutButtonSetting();
+                    if (EventState == 1)
+                    {
+                        DataInfo.ins.RoomOutButtonSetting();
+                    }
                     break;
                 case InteractionType.WorldMapOut:
-                    DataInfo.ins.WorldMapOutButtonSetting();
+                    if (EventState == 1)
+                    {
+                        DataInfo.ins.WorldMapOutButtonSetting();
+                    }
                     break;
                 case InteractionType.OnChair:
                     if (EventState == 1)
                     {
-                        Com.ins.AniSetInt(mAnimator, "Interaction", 1);
+                        if(DataInfo.ins.CharacterMain.Sex == 1)
+                            Com.ins.AniSetInt(mAnimator, "Interaction", 101);
+                        else
+                            Com.ins.AniSetInt(mAnimator, "Interaction", 1);
 
                         if (DataInfo.ins.Now_QID == 2)
                         {
@@ -453,14 +475,20 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.Meditate:
                     if (EventState == 1)
                     {
-                        Com.ins.AniSetInt(mAnimator, "Interaction", 2);
+                        if (DataInfo.ins.CharacterMain.Sex == 1)
+                            Com.ins.AniSetInt(mAnimator, "Interaction", 102);
+                        else
+                            Com.ins.AniSetInt(mAnimator, "Interaction", 2);
                     }
                     PlayerObject.position = EventScripts.PlayerPos;
                     break;
                 case InteractionType.Gift:
                     if (EventState == 1)
                     {
-                        Com.ins.AniSetInt(mAnimator, "Interaction", 3);
+                        if (DataInfo.ins.CharacterMain.Sex == 1)
+                            Com.ins.AniSetInt(mAnimator, "Interaction", 103);
+                        else
+                            Com.ins.AniSetInt(mAnimator, "Interaction", 3);
                         RRSpawn.ItemDelet(EventScripts);
                         //UIController.OnClick_Roulette();
                         if (DataInfo.ins.Now_QID == 3)
@@ -504,6 +532,7 @@ public class ControllerManager : MonoBehaviour
         HandObject.transform.parent = _manager.PickupTrans;
         HandObject.transform.localPosition = Vector3.zero;
 
+        HandRelease.SetActive(true);
         HandItem = true;
     }
 
@@ -541,9 +570,30 @@ public class ControllerManager : MonoBehaviour
         if (!JumpKey)
         {
             JumpKey = true;
-            mAnimator.SetTrigger("Jump");
+            if (DataInfo.ins.CharacterMain.Sex == 1)
+                mAnimator.SetTrigger("ManJump");
+            else
+                mAnimator.SetTrigger("Jump");
             //_verticalVelocity = Mathf.Sqrt(JumpDis * 2f * Gravity);
         }
+    }
+
+    public void OnClick_HandRelease()
+    {
+        //Hand Item Release
+        if (HandItem)
+        {
+            if (_manager.PickupTrans.childCount > 0)
+            {
+                for (int i = _manager.PickupTrans.childCount - 1; i >= 0; i--)
+                {
+                    Destroy(_manager.PickupTrans.GetChild(i).gameObject);
+                }
+            }
+        }
+
+        HandItem = false;
+        HandRelease.SetActive(false);
     }
 
 
@@ -563,19 +613,31 @@ public class ControllerManager : MonoBehaviour
             {
                 case 0:
                     moveSpeedSum = 0;
-                    Com.ins.AniSetInt(mAnimator, "MoveState", 0);
+                    if (DataInfo.ins.CharacterMain.Sex == 1)
+                        Com.ins.AniSetInt(mAnimator, "MoveState", 100);
+                    else
+                        Com.ins.AniSetInt(mAnimator, "MoveState", 0);
                     break;
                 case 1:
                     moveSpeedSum = moveSpeed;
-                    Com.ins.AniSetInt(mAnimator, "MoveState", 1);
+                    if (DataInfo.ins.CharacterMain.Sex == 1)
+                        Com.ins.AniSetInt(mAnimator, "MoveState", 101);
+                    else
+                        Com.ins.AniSetInt(mAnimator, "MoveState", 1);
                     break;
                 case 2:
                     moveSpeedSum = moveSpeed + moveSpeed;
-                    Com.ins.AniSetInt(mAnimator, "MoveState", 2);
+                    if (DataInfo.ins.CharacterMain.Sex == 1)
+                        Com.ins.AniSetInt(mAnimator, "MoveState", 102);
+                    else
+                        Com.ins.AniSetInt(mAnimator, "MoveState", 2);
                     break;
                 case 3:
                     moveSpeedSum = moveSpeed + moveSpeed * moveSpeed;
-                    Com.ins.AniSetInt(mAnimator, "MoveState", 3);
+                    if (DataInfo.ins.CharacterMain.Sex == 1)
+                        Com.ins.AniSetInt(mAnimator, "MoveState", 103);
+                    else
+                        Com.ins.AniSetInt(mAnimator, "MoveState", 3);
                     break;
             }
         }
@@ -593,4 +655,56 @@ public class ControllerManager : MonoBehaviour
         Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
     }
 
+    public void LoadScene(string sceneName)
+    {
+        progressBar.fillAmount = 0;
+        PageLodingPopup.SetActive(true);
+        nextScene = sceneName;
+
+        StartCoroutine(coroutineSceneLoding());
+
+        if (DataInfo.ins.Now_QID == 0 && sceneName.Equals("Room_A"))
+        {
+            DataInfo.ins.QuestData[0].State = 1;
+        }
+        if (DataInfo.ins.Now_QID == 1 && sceneName.Equals("World_A"))
+        {
+            DataInfo.ins.QuestData[1].State = 1;
+        }
+    }
+
+    IEnumerator coroutineSceneLoding()
+    {
+        yield return null;
+
+        AsyncOperation op;
+        op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(nextScene);
+        op.allowSceneActivation = false;
+
+        float timer = 0.0f;
+
+        while (!op.isDone)
+        {
+            yield return null;
+            timer += Time.deltaTime;
+            if (op.progress < 0.9f)
+            {
+                progressBar.fillAmount = Mathf.Lerp(progressBar.fillAmount, op.progress, timer);
+                if (progressBar.fillAmount >= op.progress)
+                {
+                    timer = 0f;
+                }
+            }
+            else
+            {
+                progressBar.fillAmount = Mathf.Lerp(progressBar.fillAmount, 1f, timer);
+
+                if (progressBar.fillAmount >= 0.99f)
+                {
+                    op.allowSceneActivation = true;
+                    yield break;
+                }
+            }
+        }
+    }
 }

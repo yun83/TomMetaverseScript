@@ -28,7 +28,11 @@ public class GestureButtonItem : MonoBehaviour
     public void OnClick_Evenet()
     {
         //Debug.Log(" ButtonClickEvnet " + ButtonId);
-        DataInfo.ins.MyPlayerAnimator.SetInteger("Emotion", ItemInfo.Path);
+        //DataInfo.ins.MyPlayerAnimator.SetInteger("Emotion", ItemInfo.Path);
+        if(DataInfo.ins.CharacterMain.Sex == 1)
+            Com.ins.AniSetInt(DataInfo.ins.MyPlayerAnimator, "Emotion", ItemInfo.Path + 100);
+        else
+            Com.ins.AniSetInt(DataInfo.ins.MyPlayerAnimator, "Emotion", ItemInfo.Path);
         if (DataInfo.ins.Now_QID == 5)
         {
             DataInfo.ins.QuestData[5].State = 1;

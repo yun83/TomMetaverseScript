@@ -95,7 +95,7 @@ public class PetMoveController : MonoBehaviour
 
         if (aniMoveState != 0 && PlayerDis < 2f)
         {
-            PetAni.SetInteger("Move", 0);
+            Com.ins.AniSetInt(PetAni, "Move", 0);
             aniMoveState = 0;
         }
 

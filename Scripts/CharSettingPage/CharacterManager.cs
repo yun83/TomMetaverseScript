@@ -79,7 +79,7 @@ public class CharacterManager : MonoBehaviour
 
     public void OnClick_SceneChanger()
     {
-        LoadingPage.LoadScene(NectSceneName);
+        cmLogic.LoadScene(NectSceneName);
     }
 
 

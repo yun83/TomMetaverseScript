@@ -18,12 +18,12 @@ public class LoadingPage : MonoBehaviour
         StartCoroutine(LoadScene());
     }
 
-    public static void LoadScene(string sceneName) {
+    public static void LoadScene(string sceneName) 
+    {
         nextScene = sceneName;
-        SceneManager.LoadScene("99_LoadingScene");
-        //SceneManager.LoadScene(sceneName);
+        SceneManager.LoadScene(sceneName);
 
-        if(DataInfo.ins.Now_QID == 0 && sceneName.Equals("Room_A"))
+        if (DataInfo.ins.Now_QID == 0 && sceneName.Equals("Room_A"))
         {
             DataInfo.ins.QuestData[0].State = 1;
         }

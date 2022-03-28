@@ -503,22 +503,22 @@ public class ShopPopup : MonoBehaviour
             //구매된 아이템 체크
             if (itemTrunk.Type < 6)
             {
-                for (int j = 0; j < DataInfo.ins.CoustumList[itemTrunk.Type].Count; j++)
+                for (int cnt = 0; cnt < DataInfo.ins.CoustumList[itemTrunk.Type].Count; cnt++)
                 {
-                    if (DataInfo.ins.CoustumList[itemTrunk.Type][i].ItemID == itemTrunk.ItemID)
+                    if (DataInfo.ins.CoustumList[itemTrunk.Type][cnt].ItemID == itemTrunk.ItemID)
                     {
-                        DataInfo.ins.CoustumList[itemTrunk.Type][i].State = 1;
+                        DataInfo.ins.CoustumList[itemTrunk.Type][cnt].State = 1;
                         continue;
                     }
                 }
             }
             else
             {
-                for (int j = 0; j < DataInfo.ins.EctItemData.Count; j++)
+                for (int cnt = 0; cnt < DataInfo.ins.EctItemData.Count; cnt++)
                 {
-                    if (DataInfo.ins.EctItemData[i].ItemID == itemTrunk.ItemID)
+                    if (DataInfo.ins.EctItemData[cnt].ItemID == itemTrunk.ItemID)
                     {
-                        DataInfo.ins.EctItemData[i].State = 1;
+                        DataInfo.ins.EctItemData[cnt].State = 1;
                         continue;
                     }
                 }

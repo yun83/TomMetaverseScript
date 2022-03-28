@@ -42,6 +42,12 @@ public class CharacterWindow : MonoBehaviour
     private int CheckInvenNumber = -1;
     private int CheckInvenIndex = -1;
 
+    [Header("PageLoding")]
+    public GameObject PageLodingPopup;
+    public Image progressBar = null;
+    public Text ToolTipText;
+    public string nextScene = "";
+
     void Start()
     {
         playerManger = mPlayer.GetComponent<CharacterManager>();
@@ -64,7 +70,7 @@ public class CharacterWindow : MonoBehaviour
 
         if (!DataInfo.ins.SaveData.Equals("") && DataInfo.ins.SaveData != null)
         {
-            Debug.Log(" ------------- CharacterWindow 로딩 ------------- ");
+            //Debug.Log(" ------------- CharacterWindow 로딩 ------------- ");
             DataInfo.ins.CharacterSub = JsonUtility.FromJson<Info_Char>(DataInfo.ins.SaveData);
         }
 
@@ -443,7 +449,60 @@ public class CharacterWindow : MonoBehaviour
         Debug.Log(DataInfo.ins.SaveData);
         DataInfo.ins.CharacterMain = DataInfo.ins.CharacterSub;
 
-        //UnityEngine.SceneManagement.SceneManager.LoadScene(NectSceneName);
-        LoadingPage.LoadScene(NectSceneName);
+        LoadScene(NectSceneName);
+    }
+
+
+    public void LoadScene(string sceneName)
+    {
+        progressBar.fillAmount = 0;
+        PageLodingPopup.SetActive(true);
+        nextScene = sceneName;
+
+        StartCoroutine(coroutineLoadScene());
+
+        if (DataInfo.ins.Now_QID == 0 && sceneName.Equals("Room_A"))
+        {
+            DataInfo.ins.QuestData[0].State = 1;
+        }
+        if (DataInfo.ins.Now_QID == 1 && sceneName.Equals("World_A"))
+        {
+            DataInfo.ins.QuestData[1].State = 1;
+        }
+    }
+
+    IEnumerator coroutineLoadScene()
+    {
+        yield return null;
+
+        AsyncOperation op;
+        op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(nextScene);
+        op.allowSceneActivation = false;
+
+        float timer = 0.0f;
+
+        while (!op.isDone)
+        {
+            yield return null;
+            timer += Time.deltaTime;
+            if (op.progress < 0.9f)
+            {
+                progressBar.fillAmount = Mathf.Lerp(progressBar.fillAmount, op.progress, timer);
+                if (progressBar.fillAmount >= op.progress)
+                {
+                    timer = 0f;
+                }
+            }
+            else
+            {
+                progressBar.fillAmount = Mathf.Lerp(progressBar.fillAmount, 1f, timer);
+
+                if (progressBar.fillAmount >= 0.99f)
+                {
+                    op.allowSceneActivation = true;
+                    yield break;
+                }
+            }
+        }
     }
 }

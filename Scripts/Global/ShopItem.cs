@@ -64,7 +64,13 @@ public class ShopItem : MonoBehaviour
                 break;
             case 100:
                 {
-                    DataInfo.ins.SubCharAnimator.SetInteger("Emotion", NowItem.Path);
+                    //DataInfo.ins.SubCharAnimator.SetInteger("Emotion", NowItem.Path);
+
+                    if(DataInfo.ins.CharacterSub.Sex == 1)
+                        Com.ins.AniSetInt(DataInfo.ins.SubCharAnimator, "Emotion", NowItem.Path + 100);
+                    else
+                        Com.ins.AniSetInt(DataInfo.ins.SubCharAnimator, "Emotion", NowItem.Path);
+
                     itemUse = false;
 
                     for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)

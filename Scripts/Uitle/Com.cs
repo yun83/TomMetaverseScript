@@ -183,9 +183,10 @@ public class Com : Single<Com>
     public void AniSetInt(Animator ani, string IntName, int value)
     {
         if (ani.GetInteger(IntName) != value)
+        {
+            //Debug.Log(IntName + " [" + value + "]");
             ani.SetInteger(IntName, value);
-        //else
-        //    Debug.Log("----- Repeatedly calling the playing state ----- " + ani.name + " ------ "+ IntName);
+        }
     }
 
     public void BgmSoundPlay(AudioClip SoundSrc, bool Loop = true)

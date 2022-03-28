@@ -14,7 +14,7 @@ public class SceneChange : MonoBehaviour
         temp.onClick.RemoveAllListeners();
         temp.onClick.AddListener(() =>
         {
-            LoadingPage.LoadScene(SceneName);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(SceneName);
         });
     }
 }

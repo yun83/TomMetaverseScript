@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DataInfo : Single<DataInfo>
 {
+    public ControllerManager infoController;
     public bool LoginCheck = false;
     public bool LodingCheck = false;
 
@@ -311,14 +312,14 @@ public class DataInfo : Single<DataInfo>
         ButtonClass item1 = new ButtonClass();
         item1.text = "World Map";
         item1.addEvent = (() => {
-            LoadingPage.LoadScene("World_A");
+            infoController.LoadScene("World_A");
         });
 
-        ButtonClass item2 = new ButtonClass();
-        item2.text = "Char Setting Page";
-        item2.addEvent = (() => {
-            LoadingPage.LoadScene("01_CharacterWindow");
-        });
+        //ButtonClass item2 = new ButtonClass();
+        //item2.text = "Char Setting Page";
+        //item2.addEvent = (() => {
+        //    LoadingPage.LoadScene("01_CharacterWindow");
+        //});
 
         ButtonClass item3 = new ButtonClass();
         item3.text = "Quit Game";
@@ -327,7 +328,7 @@ public class DataInfo : Single<DataInfo>
         });
 
         OutRoomButton.Add(item1);
-        OutRoomButton.Add(item2);
+        //OutRoomButton.Add(item2);
         OutRoomButton.Add(item3);
         ubc.OnClick_OutRoomPopup(OutRoomButton);
 
@@ -342,7 +343,7 @@ public class DataInfo : Single<DataInfo>
         ButtonClass item1 = new ButtonClass();
         item1.text = "My Room";
         item1.addEvent = (() => {
-            LoadingPage.LoadScene("Room_A");
+            infoController.LoadScene("Room_A");
         });
 
         ButtonClass item2 = new ButtonClass();
