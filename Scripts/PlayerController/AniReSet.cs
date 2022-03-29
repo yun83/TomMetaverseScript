@@ -11,10 +11,7 @@ public class AniReSet : StateMachineBehaviour
         //Debug.Log("에니메이션 시작시");
 
         //트리거 형태처럼 만들어 주기 위해서 스테이터스 초기화
-        if(DataInfo.ins.CharacterMain.Sex != 1)
-            animator.SetInteger(IntegerName, 0);
-        else
-            animator.SetInteger(IntegerName, 100);
+        animator.SetInteger(IntegerName, 0);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

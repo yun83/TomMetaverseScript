@@ -32,6 +32,7 @@ public class ShopPopup : MonoBehaviour
     int sumMoney = 0;
 
     private bool PurchaseUse = false;
+    private RectTransform scrollRect;
 
     // Start is called before the first frame update
     void Start()
@@ -39,12 +40,14 @@ public class ShopPopup : MonoBehaviour
         PurchaseUse = false;
         SubButton.SetActive(false);
 
-        ShopButton[0].onClick.RemoveAllListeners();
+        for(int i = 0; i < ShopButton.Length; i++)
+        {
+            ShopButton[i].onClick.RemoveAllListeners();
+        }
         ShopButton[0].onClick.AddListener(OnClick_Suggestion);
-        ShopButton[1].onClick.RemoveAllListeners();
         ShopButton[1].onClick.AddListener(OnClick_Item);
-        ShopButton[2].onClick.RemoveAllListeners();
         ShopButton[2].onClick.AddListener(OnClick_Gesture);
+        ShopButton[3].onClick.AddListener(OnClick_MyRoom);
 
         Purchase.onClick.RemoveAllListeners();
         Purchase.onClick.AddListener(OnClick_Purchase);
@@ -60,6 +63,8 @@ public class ShopPopup : MonoBehaviour
             if(!PurchaseUse)
                 StartCoroutine(OnClick_purchaseBuy()); 
         });
+
+        scrollRect = setScroll.GetComponent<RectTransform>();
 
         State = 0;
         SuggestonSetting();
@@ -238,6 +243,7 @@ public class ShopPopup : MonoBehaviour
             }
         }
         SubButton.SetActive(false);
+        scrollRect.offsetMax = (new Vector2(0, -90));
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -268,6 +274,7 @@ public class ShopPopup : MonoBehaviour
             }
 
             SubButton.SetActive(true);
+            scrollRect.offsetMax = (new Vector2(0, -150));
             ClickCheckClose(0);
 
             StartCoroutine(ScrollViewSetting());
@@ -424,6 +431,7 @@ public class ShopPopup : MonoBehaviour
             //아이템 리스트 셋팅
             DataInfo.ins.CostumeScrollList.Clear();
             SubButton.SetActive(false);
+            scrollRect.offsetMax = (new Vector2(0, -90));
 
             for (int i = 0; i < DataInfo.ins.EctItemData.Count; i++)
             {
@@ -541,12 +549,15 @@ public class ShopPopup : MonoBehaviour
         yield return null;
 
         if (DataInfo.ins.CharacterMain.Money >= sumMoney)
-            DataInfo.ins.CharacterMain.Money -= sumMoney;
+        {
+            DataInfo.ins.AddMoney(-sumMoney);
+        }
 
 
         yield return null;
 
         DataInfo.ins.BuyItemSaveList.Clear();
+
         switch (State)
         {
             case 1:
@@ -568,6 +579,27 @@ public class ShopPopup : MonoBehaviour
         yield return null;
 
         PurchaseUse = false;
+    }
+
+    public void OnClick_MyRoom()
+    {
+        if (State != 3)
+        {
+            State = 3;
+            //이전에 클릭된 버튼이 존재한다
+            if (subState >= 0)
+                ShopButton[subState].GetComponent<Image>().color = Color.white;
+            ShopButton[State].GetComponent<Image>().color = Color.yellow;
+            subState = State;
+
+            setScroll.totalCount = 0;
+            //아이템 리스트 셋팅
+            DataInfo.ins.CostumeScrollList.Clear();
+            SubButton.SetActive(false);
+            scrollRect.offsetMax = (new Vector2(0, -90));
+
+            StartCoroutine(ScrollViewSetting());
+        }
     }
 
     public void OnClick_Exit()

@@ -485,16 +485,7 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.Gift:
                     if (EventState == 1)
                     {
-                        if (DataInfo.ins.CharacterMain.Sex == 1)
-                            Com.ins.AniSetInt(mAnimator, "Interaction", 103);
-                        else
-                            Com.ins.AniSetInt(mAnimator, "Interaction", 3);
-                        RRSpawn.ItemDelet(EventScripts);
-                        //UIController.OnClick_Roulette();
-                        if (DataInfo.ins.Now_QID == 3)
-                        {
-                            DataInfo.ins.QuestData[3].State = 1;
-                        }
+                        GiftGet();
                     }
                     PlayerObject.position = EventScripts.PlayerPos;
                     break;
@@ -534,6 +525,30 @@ public class ControllerManager : MonoBehaviour
 
         HandRelease.SetActive(true);
         HandItem = true;
+    }
+
+    void GiftGet()
+    {
+        int[] getMoney = { 100, 150, 200, 250, 300 };
+        Com.ins.ShuffleArray(getMoney);
+
+        if (DataInfo.ins.CharacterMain.Sex == 1)
+            Com.ins.AniSetInt(mAnimator, "Interaction", 103);
+        else
+            Com.ins.AniSetInt(mAnimator, "Interaction", 3);
+
+        RRSpawn.ItemDelet(EventScripts);
+
+        if (DataInfo.ins.Now_QID == 3)
+        {
+            DataInfo.ins.QuestData[3].State = 1;
+        }
+
+        DataInfo.ins.AddMoney(getMoney[0]);
+
+        DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterMain);
+        //æ∆¿Ã≈€ »πµÊ
+        UIController.CallToastMassage("º±π∞ »πµÊ «œø¥Ω¿¥œ¥Ÿ. [" + getMoney[0] + "] Gold", 0.8f);
     }
 
     public void RouletteEndEvent()

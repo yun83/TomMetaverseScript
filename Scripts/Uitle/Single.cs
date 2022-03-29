@@ -25,9 +25,7 @@ public class Single<T> : MonoBehaviour where T : MonoBehaviour
         {
             if (applicationIsQuitting)
             {
-                Debug.LogWarning("<color=blue>[Singleton]</color> Instance '" + typeof(T) +
-                    "' already destroyed on application quit." +
-                    " Won't create again - returning null.");
+                Debug.LogWarning("<color=blue>[Singleton]</color> Instance '" + typeof(T) + "' already destroyed on application quit. Won't create again - returning null.");
                 return null;
             }
 
@@ -39,9 +37,7 @@ public class Single<T> : MonoBehaviour where T : MonoBehaviour
 
                     if (FindObjectsOfType(typeof(T)).Length > 1)
                     {
-                        Debug.LogError("<color=blue>[Singleton]</color> Something went really wrong " +
-                            " - there should never be more than 1 singleton!" +
-                            " Reopenning the scene might fix it.");
+                        Debug.LogError("<color=blue>[Singleton]</color> Something went really wrong  - there should never be more than 1 singleton! Reopenning the scene might fix it.");
                         return _instance;
                     }
 
@@ -63,14 +59,11 @@ public class Single<T> : MonoBehaviour where T : MonoBehaviour
 
                         singleton.transform.parent = singletonParnet.transform;
 
-                        Debug.Log("<color=blue>[Singleton]</color> An instance of " + typeof(T) +
-                            " is needed in the scene, so '" + singleton +
-                            "' was created with DontDestroyOnLoad.");
+                        //Debug.Log("<color=blue>[Singleton]</color> An instance of " + typeof(T) + " is needed in the scene, so '" + singleton + "' was created with DontDestroyOnLoad.");
                     }
                     else
                     {
-                        Debug.Log("<color=blue>[Singleton]</color> Using instance already created: " +
-                            _instance.gameObject.name);
+                        //Debug.Log("<color=blue>[Singleton]</color> Using instance already created: " + _instance.gameObject.name);
                     }
                 }
 

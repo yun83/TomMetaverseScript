@@ -47,10 +47,8 @@ public class QuestPopup : MonoBehaviour
     {
         if(DataInfo.ins.Quest_WinState == 1)
         {
-            DataInfo.ins.CharacterMain.Money += DataInfo.ins.dailyQuest.GoldReward;
             DataInfo.ins.Quest_WinState = 2;
-
-            DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterMain);
+            DataInfo.ins.AddMoney(DataInfo.ins.dailyQuest.GoldReward);
             SuccesButton.interactable = false;
         }
     }

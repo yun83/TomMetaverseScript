@@ -121,9 +121,13 @@ public class UiButtonController : MonoBehaviour
                 QuestSuccess.SetActive(false);
             }
         }
-        MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
     }
 
+
+    public void CallToastMassage(string mas, float ft = 0.1f)
+    {
+        ToastMes.OnMessage(mas, ft);
+    }
     public void OnClick_CloseAllPopup()
     {
         switch (UiPopupState)

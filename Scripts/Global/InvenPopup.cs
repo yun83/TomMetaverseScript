@@ -12,6 +12,7 @@ public class InvenPopup : MonoBehaviour
     public Button[] InvenButton;
     public GameObject SubButton;
     public GameObject[] SelectDetailedMenu;
+    private RectTransform scrollRect;
 
     void Start()
     {
@@ -22,6 +23,7 @@ public class InvenPopup : MonoBehaviour
     }
     private void OnEnable()
     {
+        scrollRect = ScrollView.GetComponent<RectTransform>();
         scrollViewSetting();
         CharacterSetting();
     }
@@ -42,10 +44,8 @@ public class InvenPopup : MonoBehaviour
             DataInfo.ins.CharacterSub = JsonUtility.FromJson<Info_Char>(DataInfo.ins.SaveData);
         }
 
-        //NicName.text = DataInfo.ins.CharacterSub.NicName;
         InvenChar.itemEquipment(DataInfo.ins.CharacterSub);
         DataInfo.ins.SubCharAnimator = InvenChar.GetComponentInChildren<Animator>();
-        //MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
     }
 
     void scrollViewSetting()
@@ -70,8 +70,8 @@ public class InvenPopup : MonoBehaviour
 
         SubButton.SetActive(true);
         ClickCheckClose(0);
-
         StartCoroutine(ScrollViewSetting());
+        scrollRect.offsetMax = (new Vector2(0, -150));
     }
 
     void OnClick_Item() {
@@ -90,8 +90,8 @@ public class InvenPopup : MonoBehaviour
             }
         }
         SubButton.SetActive(false);
-
         StartCoroutine(ScrollViewSetting());
+        scrollRect.offsetMax = (new Vector2(0, -90));
     }
 
     #region detailed Menu Button Setting

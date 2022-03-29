@@ -18,6 +18,7 @@ public class DataInfo : Single<DataInfo>
     /// 2:월드맵
     /// </summary>
     public int State = 0;
+    public bool MoneyChange = false;
 
     //세이브 파일
     public string SaveData
@@ -304,6 +305,13 @@ public class DataInfo : Single<DataInfo>
             }
         }
     }
+    public void AddMoney(int value)
+    {
+        CharacterMain.Money += value;
+        SaveData = JsonUtility.ToJson(CharacterMain);
+        MoneyChange = true;
+    }
+
     public void RoomOutButtonSetting()
     {
         UiButtonController ubc = GameObject.FindObjectOfType<UiButtonController>();
