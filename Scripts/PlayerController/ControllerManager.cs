@@ -99,6 +99,9 @@ public class ControllerManager : MonoBehaviour
         DataInfo.ins.RightTId = -1;
 
         _camera = Camera.main;
+
+        //√ﬂ»ƒ NPC ¥Î»≠∏¶ ≈Î«ÿº≠ »πµÊ
+        CreatePetObject();
     }
 
     // Start is called before the first frame update
@@ -135,13 +138,6 @@ public class ControllerManager : MonoBehaviour
         RRSpawn = GameObject.FindObjectOfType<RandomRespawn>();
         UIController = GetComponentInChildren<UiButtonController>();
 
-        insPetObj = Instantiate(PetObject[0]);
-        intPetScript = insPetObj.AddComponent<PetMoveController>();
-        intPetScript.myPlayerTrans = transform;
-        intPetScript.PlayerMoveSpeed = moveSpeed;
-        insPetObj.name = "∆Í";
-
-
         HandRelease.SetActive(false);
         PageLodingPopup.SetActive(false);
         progressBar.fillAmount = 0;
@@ -157,6 +153,33 @@ public class ControllerManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
+        Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
+
+        if (Grounded) Gizmos.color = transparentGreen;
+        else Gizmos.color = transparentRed;
+
+        // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
+        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
+    }
+
+    void CreatePetObject()
+    {
+        if (insPetObj != null)
+        {
+            Destroy(insPetObj);
+            insPetObj = null;
+        }
+
+        insPetObj = Instantiate(PetObject[0]);
+        intPetScript = insPetObj.AddComponent<PetMoveController>();
+        intPetScript.myPlayerTrans = transform;
+        intPetScript.PlayerMoveSpeed = moveSpeed;
+        insPetObj.name = "∆Í";
     }
 
     void MoveUpdate()
@@ -373,7 +396,11 @@ public class ControllerManager : MonoBehaviour
 
             try
             {
-                temp = Truk.parent.GetComponent<WorldInteraction>();
+                if(Truk.parent != null)
+                    temp = Truk.parent.GetComponent<WorldInteraction>();
+                else
+                    temp = Truk.GetComponent<WorldInteraction>();
+
             }
             catch (System.Exception e)
             {
@@ -493,6 +520,11 @@ public class ControllerManager : MonoBehaviour
                     if (EventState == 1)
                     {
                         StartCoroutine(HandObjectSetting());
+                    }
+                    break;
+                case InteractionType.NPC_PetMaster:
+                    if (EventState == 1)
+                    {
                     }
                     break;
             }
@@ -658,17 +690,6 @@ public class ControllerManager : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
-        Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
-
-        if (Grounded) Gizmos.color = transparentGreen;
-        else Gizmos.color = transparentRed;
-
-        // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
-        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
-    }
 
     public void LoadScene(string sceneName)
     {

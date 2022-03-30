@@ -14,7 +14,7 @@ public class TransparencyCapture : MonoBehaviour
 
     public int AllItemSize = 0;
 
-    public List<Transform> itemTrans = new List<Transform>();
+    List<Transform> itemTrans = new List<Transform>();
 
     void Awake()
     {

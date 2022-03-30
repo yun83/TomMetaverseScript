@@ -6,13 +6,15 @@ using UnityEngine.UI;
 public class WorldInteraction : MonoBehaviour
 {
     public InteractionType nowType = InteractionType.OutRoom;
-    public GameObject EventObj;
+    [Header("배치관련")]
     public Vector3 IconPos;
 
     [Tooltip("명확한 좌표 설정을 위해서 따로 명시해준다")]
     public Vector3 PlayerPos;
     public Vector3 PlayerRotation;
 
+    [Header("Type Ect")]
+    public GameObject EventObj;
     public int UseState = 0;
     public TextMesh NicName;
     private SpriteRenderer EventIcon;
@@ -40,6 +42,9 @@ public class WorldInteraction : MonoBehaviour
 
     public void ObjectOpenCheck()
     {
+        if (EventObj == null)
+            return;
+
         if (UseState == 0)
         {
             if (area > Vector3.Distance(Player.position, transform.position))
@@ -65,7 +70,7 @@ public class WorldInteraction : MonoBehaviour
             EventObj = null;
         }
 
-        if(nowType == InteractionType.NicName)
+        if(nowType == InteractionType.NicName || nowType == InteractionType.NPC_PetMaster )
         {
             EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/NicName3DText"));
             NicName = EventObj.GetComponentInChildren<TextMesh>();
@@ -85,6 +90,9 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.Meditate: EventIcon.sprite = Resources.Load<Sprite>("Icon/DESK"); break;
             case InteractionType.Pickup: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
             case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
+            case InteractionType.NPC_PetMaster:
+                NicName.text = "Pet Master";
+                break;
         }
 
         EventObj.transform.parent = transform;
@@ -105,4 +113,5 @@ public enum InteractionType
     Pet_Idx0,
     Pet_Idx1,
     Pet_Idx2,
+    NPC_PetMaster,
 }

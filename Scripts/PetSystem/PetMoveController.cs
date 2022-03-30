@@ -13,10 +13,13 @@ public class PetMoveController : MonoBehaviour
     public float PlayerDis;
     public float PlayerMoveSpeed = 2;
     private float SumSpeed = 0;
+    public int AniSetIntIndx = 0;
     private GameObject InteractionObj = null;
     Vector3 movePos;
 
     public bool ShowObject  = false;
+    float NonAniTime = 0;
+    int NonMoveAniState = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +50,8 @@ public class PetMoveController : MonoBehaviour
         PlayerDis = Vector3.Distance(transform.position, myPlayerTrans.position);
 
         PetMove();
+        //NonAniTime //움직임 없는 시간 판단후 에니메이션
+        PetNonMoveAni();
     }
 
     private void PetMove()
@@ -71,31 +76,48 @@ public class PetMoveController : MonoBehaviour
                 break;
             case 1:
                 InteractionObj.SetActive(false);
-                Com.ins.AniSetInt(PetAni, "Move", 1);
+                if (AniSetIntIndx != 1)
+                {
+                    AniSetIntIndx = 1;
+                    Com.ins.AniSetInt(PetAni, "Move", AniSetIntIndx);
+                }
 
                 SumSpeed = PlayerMoveSpeed;
                 if (PlayerDis > 5)
                     aniMoveState = 2;
                 break;
             case 2:
-                Com.ins.AniSetInt(PetAni, "Move", 2);
+                if (AniSetIntIndx != 2)
+                {
+                    AniSetIntIndx = 2;
+                    Com.ins.AniSetInt(PetAni, "Move", AniSetIntIndx);
+                }
 
                 SumSpeed = PlayerMoveSpeed + PlayerMoveSpeed;
                 if (PlayerDis > 7)
                     aniMoveState = 3;
                 break;
             case 3:
-                Com.ins.AniSetInt(PetAni, "Move", 2);
+                if (AniSetIntIndx != 2)
+                {
+                    AniSetIntIndx = 2;
+                    Com.ins.AniSetInt(PetAni, "Move", AniSetIntIndx);
+                }
 
                 SumSpeed = PlayerMoveSpeed + PlayerMoveSpeed + PlayerMoveSpeed + 1f;
-                if (PlayerDis < 5)
-                    aniMoveState = 2;
+                //if (PlayerDis < 5)
+                //    aniMoveState = 2;
                 break;
         }
 
         if (aniMoveState != 0 && PlayerDis < 2f)
         {
-            Com.ins.AniSetInt(PetAni, "Move", 0);
+            if (AniSetIntIndx != 0)
+            {
+                AniSetIntIndx = 0;
+                NonAniTime = Time.time;
+                Com.ins.AniSetInt(PetAni, "Move", AniSetIntIndx);
+            }
             aniMoveState = 0;
         }
 
@@ -105,6 +127,20 @@ public class PetMoveController : MonoBehaviour
             movePos += transform.forward * offset;
             movePos.y = 0.05f;
             transform.position = movePos;
+        }
+    }
+
+    void PetNonMoveAni()
+    {
+        //NonMoveAniState
+        //NonAniTime
+
+        if(NonMoveAniState == 0)
+        {
+            if(NonAniTime > Time.time + 5)
+            {
+
+            }
         }
     }
 

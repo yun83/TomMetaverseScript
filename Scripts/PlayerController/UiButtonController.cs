@@ -128,6 +128,7 @@ public class UiButtonController : MonoBehaviour
     {
         ToastMes.OnMessage(mas, ft);
     }
+
     public void OnClick_CloseAllPopup()
     {
         switch (UiPopupState)

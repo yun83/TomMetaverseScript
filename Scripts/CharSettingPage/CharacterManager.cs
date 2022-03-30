@@ -28,6 +28,7 @@ public class CharacterManager : MonoBehaviour
             if (WoIn == null)
             {
                 WoIn = gameObject.AddComponent<WorldInteraction>();
+                WoIn.transform.SetParent(gameObject.transform);
                 WoIn.nowType = InteractionType.NicName;
                 WoIn.IconPos = new Vector3(0, 1.5f, 0);
                 WoIn.InitWorldInteraction();
@@ -35,6 +36,7 @@ public class CharacterManager : MonoBehaviour
         }
 
         cmLogic = FindObjectOfType<ControllerManager>();
+        nicCheck = !DataInfo.ins.OptionInfo.NicNameOpen;
     }
 
     private void LateUpdate()
