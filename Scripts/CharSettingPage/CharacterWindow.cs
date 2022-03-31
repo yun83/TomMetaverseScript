@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,7 +35,9 @@ public class CharacterWindow : MonoBehaviour
     /// 0 - 팝업 없음
     /// 1 - 저장 및 나가기 팝업
     /// 2 - 닉네임 잘못 됨을 알리는 팝업
-    /// </summary>
+    /// 3 - 게임 종료 팝업
+    /// 4 - 아이템 구매 팝업
+     /// </summary>
     private int PopupOpenCheck = 0;
 
     private CharacterManager playerManger = new CharacterManager();
@@ -42,11 +45,20 @@ public class CharacterWindow : MonoBehaviour
     private int CheckInvenNumber = -1;
     private int CheckInvenIndex = -1;
 
-    [Header("PageLoding")]
+    [Header("로딩화면")]
     public GameObject PageLodingPopup;
     public Image progressBar = null;
     public Text ToolTipText;
     public string nextScene = "";
+
+    [Header("구매기능")]
+    public GameObject Purchase;
+    public Text PurchaseCountText;
+    public InitScroll PurchaseScroll;
+    public Text TotalBuyGold;
+    public Button ItemBuy;
+    private int sumMoney = 0;
+    private bool PurchaseUse = false;
 
     void Start()
     {
@@ -97,6 +109,13 @@ public class CharacterWindow : MonoBehaviour
         //CloseButton.onClick.AddListener(OpenQuitPopupObj);
         CloseButton.onClick.AddListener(OpenPopup);
 
+        ItemBuy.onClick.RemoveAllListeners();
+        ItemBuy.onClick.AddListener(() => {
+            if (!PurchaseUse)
+                StartCoroutine(OnClick_purchaseBuy());
+        });
+
+        Purchase.SetActive(false);
         ExitPopupObj.SetActive(false);
         QuitPopupObj.SetActive(false);
 
@@ -132,9 +151,32 @@ public class CharacterWindow : MonoBehaviour
                 case 3:
                     OnClick_ClseQuitPopupObj();
                     break;
+                case 4:
+                    OnClick_BuyPopupClose();
+                    break;
             }
         }
         ChangeCostumeCheck();
+        if (DataInfo.ins.BuyItemSaveList.Count > 0) {
+            PurchaseCountText.text = DataInfo.ins.BuyItemSaveList.Count.ToString();
+        }
+        else
+            PurchaseCountText.text = "0";
+
+        if (DataInfo.ins.TotlaMoneySumCheck)
+        {
+            sumMoney = 0;
+            for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
+            {
+                if (DataInfo.ins.BuyItemSaveList[i].inGameUse != 0)
+                {
+                    sumMoney += DataInfo.ins.BuyItemSaveList[i].price;
+                }
+            }
+            DataInfo.ins.TotlaMoneySumCheck = false;
+            TotalBuyGold.text = "Total " + sumMoney + "Gold";
+        }
+
     }
 
     void ChangeCostumeCheck()
@@ -504,5 +546,121 @@ public class CharacterWindow : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void OnClick_BuyButton()
+    {
+        if(DataInfo.ins.BuyItemSaveList.Count <= 0)
+        {
+            return;
+        }
+        PopupOpenCheck = 4;
+        Purchase.SetActive(true);
+        DataInfo.ins.TotlaMoneySumCheck = false;
+
+        //PurchaseScroll
+        int sumMoney = 0;
+        for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
+        {
+            if (DataInfo.ins.BuyItemSaveList[i].inGameUse != 0)
+            {
+                sumMoney += DataInfo.ins.BuyItemSaveList[i].price;
+            }
+        }
+
+        TotalBuyGold.text = "Total " + sumMoney + "Gold";
+
+        StartCoroutine(PurchaseSetting());
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
+    }
+
+    public void OnClick_BuyPopupClose()
+    {
+        PopupOpenCheck = 0;
+        Purchase.SetActive(false);
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
+    }
+
+    IEnumerator PurchaseSetting()
+    {
+        //ReSetScrollView();
+
+        yield return null;
+
+        PurchaseScroll.totalCount = DataInfo.ins.BuyItemSaveList.Count;
+        PurchaseScroll.InitScrollCall();
+    }
+    IEnumerator OnClick_purchaseBuy()
+    {
+        //연속 클릭 방지
+        PurchaseUse = true;
+        //구매처리
+        string savetrunk = "";
+
+        sumMoney = 0;
+        for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
+        {
+            if (DataInfo.ins.BuyItemSaveList[i].inGameUse == 0)
+                continue;
+
+            //DataInfo.ins.BuyItemSaveList 의 아이템을 구매 한다
+            CoustumItemCsv itemTrunk = DataInfo.ins.BuyItemSaveList[i];
+
+            DataInfo.ins.BuyItemId.Add(System.Convert.ToInt32(itemTrunk.ItemID));
+            sumMoney += itemTrunk.price;
+
+            //구매된 아이템 체크
+            if (itemTrunk.Type < 6)
+            {
+                for (int cnt = 0; cnt < DataInfo.ins.CoustumList[itemTrunk.Type].Count; cnt++)
+                {
+                    if (DataInfo.ins.CoustumList[itemTrunk.Type][cnt].ItemID == itemTrunk.ItemID)
+                    {
+                        DataInfo.ins.CoustumList[itemTrunk.Type][cnt].State = 1;
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                for (int cnt = 0; cnt < DataInfo.ins.EctItemData.Count; cnt++)
+                {
+                    if (DataInfo.ins.EctItemData[cnt].ItemID == itemTrunk.ItemID)
+                    {
+                        DataInfo.ins.EctItemData[cnt].State = 1;
+                        continue;
+                    }
+                }
+            }
+        }
+
+        yield return null;
+
+        DataInfo.ins.BuyItemId = DataInfo.ins.BuyItemId.Distinct().ToList();
+
+        for (int i = 0; i < DataInfo.ins.BuyItemId.Count; i++)
+        {
+            savetrunk += DataInfo.ins.BuyItemId[i] + ",";
+        }
+        DataInfo.ins.saveBuyItem = savetrunk;
+
+        PopupOpenCheck = 0;
+        Purchase.SetActive(false);
+
+        yield return null;
+
+        if (DataInfo.ins.CharacterMain.Money >= sumMoney)
+        {
+            DataInfo.ins.AddMoney(-sumMoney);
+        }
+
+        yield return null;
+
+        DataInfo.ins.BuyItemSaveList.Clear();
+        StartCoroutine(ClickEvnetCall(DataInfo.ins.InvenNumber));
+
+        yield return null;
+
+        PurchaseUse = false;
     }
 }

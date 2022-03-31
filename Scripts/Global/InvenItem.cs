@@ -7,24 +7,37 @@ public class InvenItem : MonoBehaviour
 {
     int mIndex = -1;
     public Text ItemText;
+    public Image ItemIcon;
     public CoustumItemCsv NowItem = new CoustumItemCsv();
     Image mImage;
     Button NowButton;
 
     public void ScrollCellIndex(int idx)
     {
+        string iconName = "CharCut/";
         mIndex = idx;
         mImage = GetComponent<Image>();
         NowButton = GetComponent<Button>();
 
-        //if (idx >= DataInfo.ins.TempItem.Length)
-        //    return;
+        NowItem = DataInfo.ins.CostumeScrollList[idx];
 
-        //mImage.color = DataInfo.ins.TempItem[idx];
-        NowItem = //DataInfo.ins.CoustumList[DataInfo.ins.InvenNumber][idx];
-            DataInfo.ins.CostumeScrollList[idx];
+        switch (NowItem.Type)
+        {
+            case 0: iconName += "Hair_"; break;
+            case 1: iconName += "Shirt_"; break;
+            case 2: iconName += "Pants_"; break;
+            case 3: iconName += "Shoes_"; break;
+            case 4: iconName += "Set_"; break;
+            case 5: iconName += "Accessory_"; break;
+        }
+        iconName += (NowItem.Sex + "_" + NowItem.Path);
 
-        ItemText.text = idx + NowItem.Description;
+        ItemIcon.sprite = Resources.Load<Sprite>(iconName);
+
+        if (NowItem.State == 0)
+            ItemText.text = NowItem.price.ToString() + "Gold";
+        else
+            ItemText.text = "";
 
         NowButton.onClick.RemoveAllListeners();
         NowButton.onClick.AddListener(OnClick_Evenet);
@@ -34,8 +47,6 @@ public class InvenItem : MonoBehaviour
     {
         if (mIndex >= 0)
         {
-            //Debug.Log("<color=cyan> 인벤 Click Evnet </color> Inven Type [ " + DataInfo.ins.InvenNumber + " ] :: ItemSelectIndex [ " + DataInfo.ins.ItemSelectIndex + " ]");
-
             if (mIndex != DataInfo.ins.ItemSelectIndex)
             {
                 DataInfo.ins.ItemSelectIndex = mIndex;
@@ -58,6 +69,8 @@ public class InvenItem : MonoBehaviour
                         DataInfo.ins.CharacterSub.Accessory = NowItem.ItemID;
                         break;
                 }
+                AddBuyCostumes(NowItem.ItemID);
+
             }
             else
             {
@@ -124,6 +137,58 @@ public class InvenItem : MonoBehaviour
                             DataInfo.ins.CharacterSub.Accessory = -1;
                         }
                         break;
+                }
+                RemoveBuycostumes(NowItem.ItemID);
+            }
+        }
+    }
+    void AddBuyCostumes(int itemId)
+    {
+        CoustumItemCsv temp = new CoustumItemCsv();
+        temp = DataInfo.ins.getItemData(itemId);
+        if (temp != null)
+        {
+            //아이템의 아이디가 검색 되면 해당 아이템이 구매 가능한 아이템인지 확인
+            if (temp.State == 0)
+            {
+                //Costumes.Add(temp);
+                //저장된 구매 가능 코스튬이 있을 경우
+                if (DataInfo.ins.BuyItemSaveList.Count > 0)
+                {
+                    for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
+                    {
+                        //한번에 구매 가능한 타입을 1개로 제한 상의는 변경된 상의 한가지 형태로
+                        if (temp.Type == DataInfo.ins.BuyItemSaveList[i].Type)
+                        {
+                            //저장 되었던 코스튬의 데이터 제거
+                            DataInfo.ins.BuyItemSaveList.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+
+                temp.inGameUse = 1;
+                //구매 하려는 아이템에 저장
+                DataInfo.ins.BuyItemSaveList.Add(temp);
+            }
+        }
+        //Debug.Log("Buy Item List Size " + DataInfo.ins.BuyItemSaveList.Count);
+    }
+
+    void RemoveBuycostumes(int itemId)
+    {
+        CoustumItemCsv temp = new CoustumItemCsv();
+        temp = DataInfo.ins.getItemData(itemId);
+
+        if (DataInfo.ins.BuyItemSaveList.Count > 0)
+        {
+            for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
+            {
+                //저장 되었던 코스튬의 데이터 제거
+                if(DataInfo.ins.BuyItemSaveList[i].ItemID == itemId)
+                {
+                    DataInfo.ins.BuyItemSaveList.RemoveAt(i);
+                    break;
                 }
             }
         }

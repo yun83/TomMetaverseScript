@@ -16,19 +16,37 @@ public class ShopBuyItem : MonoBehaviour
 
     int Index = -1;
     public string nowID;
+    public CoustumItemCsv NowItem = new CoustumItemCsv();
 
     void Awake()
     {
         button = GetComponent<Button>();
+        CheckBox.SetActive(true);
     }
 
     public void ScrollCellIndex(int idx)
     {
+        string iconName = "CharCut/";
         Index = idx;
 
-        Title.text = DataInfo.ins.BuyItemSaveList[idx].Name;
-        Description.text = DataInfo.ins.BuyItemSaveList[idx].Description;
-        Price.text = DataInfo.ins.BuyItemSaveList[idx].price.ToString();
+        NowItem = DataInfo.ins.BuyItemSaveList[idx];
+
+        Title.text = NowItem.Name;
+        Description.text = NowItem.Description;
+        Price.text = NowItem.price.ToString();
+
+        switch (NowItem.Type)
+        {
+            case 0: iconName += "Hair_"; break;
+            case 1: iconName += "Shirt_"; break;
+            case 2: iconName += "Pants_"; break;
+            case 3: iconName += "Shoes_"; break;
+            case 4: iconName += "Set_"; break;
+            case 5: iconName += "Accessory_"; break;
+        }
+        iconName += (NowItem.Sex + "_" + NowItem.Path);
+
+        IconImage.sprite = Resources.Load<Sprite>(iconName);
 
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(OnClick_Evenet);

@@ -224,7 +224,6 @@ public class ShopPopup : MonoBehaviour
         ShopButton[State].GetComponent<Image>().color = Color.yellow;
         subState = State;
 
-        setScroll.totalCount = 0;
         //아이템 리스트 셋팅
         DataInfo.ins.CostumeScrollList.Clear();
         for (int i = 0; i < DataInfo.ins.CoustumList.Length; i++)
@@ -232,7 +231,7 @@ public class ShopPopup : MonoBehaviour
             for (int k = 0; k < DataInfo.ins.CoustumList[i].Count; k++)
             {
                 //아이템 데이터에 추천 항목 축가 하여 추천 검사
-                if (DataInfo.ins.CoustumList[i][k].Suggestion == 1)
+                if (DataInfo.ins.CoustumList[i][k].State == 1)
                 {
                     if (DataInfo.ins.CoustumList[i][k].Sex == DataInfo.ins.CharacterSub.Sex
                         || DataInfo.ins.CoustumList[i][k].Sex == 2)
@@ -242,8 +241,10 @@ public class ShopPopup : MonoBehaviour
                 }
             }
         }
-        SubButton.SetActive(false);
-        scrollRect.offsetMax = (new Vector2(0, -90));
+
+        SubButton.SetActive(true);
+        scrollRect.offsetMax = (new Vector2(0, -150));
+        ClickCheckClose(0);
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -295,19 +296,7 @@ public class ShopPopup : MonoBehaviour
     {
         ClickCheckClose(0);
         //아이템 리스트 셋팅
-        DataInfo.ins.CostumeScrollList.Clear();
-        for (int i = 0; i < DataInfo.ins.CoustumList.Length; i++)
-        {
-            for (int k = 0; k < DataInfo.ins.CoustumList[i].Count; k++)
-            {
-                //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
-                if (DataInfo.ins.CoustumList[i][k].Sex == DataInfo.ins.CharacterSub.Sex
-                    || DataInfo.ins.CoustumList[i][k].Sex == 2)
-                {
-                    DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[i][k]);
-                }
-            }
-        }
+        ItemListReSet(-1);
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -315,16 +304,7 @@ public class ShopPopup : MonoBehaviour
     {
         ClickCheckClose(1);
         //아이템 리스트 셋팅
-        DataInfo.ins.CostumeScrollList.Clear();
-        for (int k = 0; k < DataInfo.ins.CoustumList[0].Count; k++)
-        {
-            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
-            if (DataInfo.ins.CoustumList[0][k].Sex == DataInfo.ins.CharacterSub.Sex
-                || DataInfo.ins.CoustumList[0][k].Sex == 2)
-            {
-                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[0][k]);
-            }
-        }
+        ItemListReSet(0);
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -332,16 +312,7 @@ public class ShopPopup : MonoBehaviour
     {
         ClickCheckClose(2);
         //아이템 리스트 셋팅
-        DataInfo.ins.CostumeScrollList.Clear();
-        for (int k = 0; k < DataInfo.ins.CoustumList[1].Count; k++)
-        {
-            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
-            if (DataInfo.ins.CoustumList[1][k].Sex == DataInfo.ins.CharacterSub.Sex
-                || DataInfo.ins.CoustumList[1][k].Sex == 2)
-            {
-                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[1][k]);
-            }
-        }
+        ItemListReSet(1);
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -349,16 +320,7 @@ public class ShopPopup : MonoBehaviour
     {
         ClickCheckClose(3);
         //아이템 리스트 셋팅
-        DataInfo.ins.CostumeScrollList.Clear();
-        for (int k = 0; k < DataInfo.ins.CoustumList[2].Count; k++)
-        {
-            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
-            if (DataInfo.ins.CoustumList[2][k].Sex == DataInfo.ins.CharacterSub.Sex
-                || DataInfo.ins.CoustumList[2][k].Sex == 2)
-            {
-                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[2][k]);
-            }
-        }
+        ItemListReSet(2);
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -366,16 +328,7 @@ public class ShopPopup : MonoBehaviour
     {
         ClickCheckClose(4);
         //아이템 리스트 셋팅
-        DataInfo.ins.CostumeScrollList.Clear();
-        for (int k = 0; k < DataInfo.ins.CoustumList[3].Count; k++)
-        {
-            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
-            if (DataInfo.ins.CoustumList[3][k].Sex == DataInfo.ins.CharacterSub.Sex
-                || DataInfo.ins.CoustumList[3][k].Sex == 2)
-            {
-                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[3][k]);
-            }
-        }
+        ItemListReSet(3);
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -383,33 +336,15 @@ public class ShopPopup : MonoBehaviour
     {
         ClickCheckClose(5);
         //아이템 리스트 셋팅
-        DataInfo.ins.CostumeScrollList.Clear();
-        for (int k = 0; k < DataInfo.ins.CoustumList[4].Count; k++)
-        {
-            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
-            if (DataInfo.ins.CoustumList[4][k].Sex == DataInfo.ins.CharacterSub.Sex
-                || DataInfo.ins.CoustumList[4][k].Sex == 2)
-            {
-                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[4][k]);
-            }
-        }
+        ItemListReSet(4);
 
         StartCoroutine(ScrollViewSetting());
     }
     public void OnClick_detailedMenu_Accessory()
     {
         ClickCheckClose(6);
-        //아이템 리스트 셋팅
-        DataInfo.ins.CostumeScrollList.Clear();
-        for (int k = 0; k < DataInfo.ins.CoustumList[5].Count; k++)
-        {
-            //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
-            if (DataInfo.ins.CoustumList[5][k].Sex == DataInfo.ins.CharacterSub.Sex
-                || DataInfo.ins.CoustumList[5][k].Sex == 2)
-            {
-                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[5][k]);
-            }
-        }
+
+        ItemListReSet(5);
 
         StartCoroutine(ScrollViewSetting());
     }
@@ -498,6 +433,7 @@ public class ShopPopup : MonoBehaviour
         //구매처리
         string savetrunk = "";
 
+        sumMoney = 0;
         for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
         {
             if (DataInfo.ins.BuyItemSaveList[i].inGameUse == 0)
@@ -507,6 +443,7 @@ public class ShopPopup : MonoBehaviour
             CoustumItemCsv itemTrunk = DataInfo.ins.BuyItemSaveList[i];
 
             DataInfo.ins.BuyItemId.Add(System.Convert.ToInt32(itemTrunk.ItemID));
+            sumMoney += itemTrunk.price;
 
             //구매된 아이템 체크
             if (itemTrunk.Type < 6)
@@ -599,6 +536,72 @@ public class ShopPopup : MonoBehaviour
             scrollRect.offsetMax = (new Vector2(0, -90));
 
             StartCoroutine(ScrollViewSetting());
+        }
+    }
+
+    void ItemListReSet(int mType)
+    {
+        DataInfo.ins.CostumeScrollList.Clear();
+        if (State == 0)
+        { //내 아이템
+            //아이템 리스트 셋팅
+            for (int i = 0; i < DataInfo.ins.CoustumList.Length; i++)
+            {
+                for (int k = 0; k < DataInfo.ins.CoustumList[i].Count; k++)
+                {
+                    //아이템 데이터에 추천 항목 축가 하여 추천 검사
+                    if (DataInfo.ins.CoustumList[i][k].State == 1)
+                    {
+                        if (DataInfo.ins.CoustumList[i][k].Sex == DataInfo.ins.CharacterSub.Sex
+                            || DataInfo.ins.CoustumList[i][k].Sex == 2)
+                        {
+                            DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[i][k]);
+                        }
+                    }
+                }
+            }
+        }
+        if (State == 1)
+        {//의상구매
+            for (int i = 0; i < DataInfo.ins.CoustumList.Length; i++)
+            {
+                for (int k = 0; k < DataInfo.ins.CoustumList[i].Count; k++)
+                {
+                    //성별 검사 하여 현재 나에게 맞는 성멸의 아이템만 출력
+                    if (DataInfo.ins.CoustumList[i][k].Sex == DataInfo.ins.CharacterSub.Sex
+                        || DataInfo.ins.CoustumList[i][k].Sex == 2)
+                    {
+                        DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[i][k]);
+                    }
+                }
+            }
+        }
+        
+        //아이템 리스트 셋팅
+        List<CoustumItemCsv> tempList = new List<CoustumItemCsv>();
+        tempList.Clear();
+        for (int idx = 0; idx < DataInfo.ins.CostumeScrollList.Count; idx++)
+        {
+            tempList.Add(DataInfo.ins.CostumeScrollList[idx]);
+        }
+
+        DataInfo.ins.CostumeScrollList.Clear();
+        if (mType < 0)
+        {
+            for (int k = 0; k < tempList.Count; k++)
+            {
+                DataInfo.ins.CostumeScrollList.Add(tempList[k]);
+            }
+        }
+        else
+        {
+            for (int k = 0; k < tempList.Count; k++)
+            {
+                if (tempList[k].Type == mType)
+                {
+                    DataInfo.ins.CostumeScrollList.Add(tempList[k]);
+                }
+            }
         }
     }
 
