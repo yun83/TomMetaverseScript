@@ -37,10 +37,114 @@ public class InvenItem : MonoBehaviour
         if (NowItem.State == 0)
             ItemText.text = NowItem.price.ToString() + "Gold";
         else
-            ItemText.text = "";
+            ItemText.text = NowItem.Name;
 
         NowButton.onClick.RemoveAllListeners();
-        NowButton.onClick.AddListener(OnClick_Evenet);
+        NowButton.onClick.AddListener(OnClick_EvnetVer2);
+    }
+
+    public void OnClick_EvnetVer2()
+    {
+        //Debug.Log("Now Click Index [" + mIndex +
+        //"] info Save Index [" + DataInfo.ins.ItemSelectIndex +
+        //"] Item Id [" + NowItem.ItemID +
+        //"] Buy Check [" + NowItem.State +
+        //"] PopupOpen Check [" + DataInfo.ins.cWin_OpenBuyPopup +
+        //"]");
+
+        if (mIndex >= 0)
+        {
+            if (mIndex != DataInfo.ins.ItemSelectIndex)
+            {
+                DataInfo.ins.ItemSelectIndex = mIndex;
+                switch (DataInfo.ins.InvenNumber)
+                {
+                    case 0: //머리
+                        DataInfo.ins.CharacterSub.Hair = NowItem.ItemID;
+                        break;
+                    case 1: //셔츠
+                    case 4: //세트
+                        DataInfo.ins.CharacterSub.Shirt = NowItem.ItemID;
+                        break;
+                    case 2: //바지
+                        DataInfo.ins.CharacterSub.Pants = NowItem.ItemID;
+                        break;
+                    case 3: //신발
+                        DataInfo.ins.CharacterSub.Shoes = NowItem.ItemID;
+                        break;
+                    case 5: // 악세사리
+                        DataInfo.ins.CharacterSub.Accessory = NowItem.ItemID;
+                        break;
+                    case 6: //My Item
+                        switch (NowItem.Type)
+                        {
+                            case 0: //머리
+                                DataInfo.ins.CharacterSub.Hair = NowItem.ItemID;
+                                break;
+                            case 1: //셔츠
+                            case 4: //세트
+                                DataInfo.ins.CharacterSub.Shirt = NowItem.ItemID;
+                                break;
+                            case 2: //바지
+                                DataInfo.ins.CharacterSub.Pants = NowItem.ItemID;
+                                break;
+                            case 3: //신발
+                                DataInfo.ins.CharacterSub.Shoes = NowItem.ItemID;
+                                break;
+                            case 5: // 악세사리
+                                DataInfo.ins.CharacterSub.Accessory = NowItem.ItemID;
+                                break;
+                        }
+                        break;
+                }
+                AddBuyCostumes(NowItem.ItemID);
+            }
+            else
+            {
+                //같은 번호 클릭시에 구매 팝업
+                if (NowItem.State == 0)
+                {
+                    if (DataInfo.ins.cWin_OpenBuyPopup == 0)
+                    {
+                        DataInfo.ins.cWin_OpenBuyPopup = 1;
+                        DataInfo.ins.BuyItemSelect = NowItem;
+                    }
+                }
+                else if (NowItem.State == 1)
+                {
+                    DataInfo.ins.ItemSelectIndex = -1;
+                    //같은 번호 클릭시에 아이템 해제
+                    switch (NowItem.Type)
+                    {
+                        case 0://머리
+                            if (DataInfo.ins.CharacterSub.Sex == 1)
+                            {//기본 남녀의 헤어가 다르기 때문에 분기
+                                DataInfo.ins.CharacterSub.Hair = 5;
+                            }
+                            else
+                            {
+                                DataInfo.ins.CharacterSub.Hair = 0;
+                            }
+                            break;
+                        case 1: //셔츠
+                        case 4: //세트
+                            if (NowItem.Type == 4)
+                                DataInfo.ins.CharacterSub.Pants = 15;
+                            DataInfo.ins.CharacterSub.Shirt = 10;
+                            break;
+                        case 2: //바지
+                            DataInfo.ins.CharacterSub.Pants = 15;
+                            break;
+                        case 3: //신발
+                            DataInfo.ins.CharacterSub.Shoes = 19;
+                            break;
+                        case 5: // 악세사리
+                            DataInfo.ins.CharacterSub.Accessory = -1;
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     public void OnClick_Evenet()

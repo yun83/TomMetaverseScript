@@ -70,6 +70,7 @@ public class DataInfo : Single<DataInfo>
 
     //삽에서 구입할 아이템 리스트 작성
     public List<CoustumItemCsv> BuyItemSaveList = new List<CoustumItemCsv>();
+    public CoustumItemCsv BuyItemSelect = new CoustumItemCsv();
     public bool TotlaMoneySumCheck = false;
 
     //퀘스트 데이터 로딩
@@ -85,6 +86,7 @@ public class DataInfo : Single<DataInfo>
     public int Now_QID = -1;
     public int Quest_WinState = 0;
 
+    public int cWin_OpenBuyPopup = 0;
     private void Awake()
     {
         Application.targetFrameRate = 1000;

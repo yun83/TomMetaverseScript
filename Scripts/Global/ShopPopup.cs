@@ -85,7 +85,7 @@ public class ShopPopup : MonoBehaviour
         DataInfo.ins.BuyItemSaveList.Clear();
         PurchaseText = Purchase.GetComponentInChildren<Text>();
         Purchase.enabled = false;
-        PurchaseText.text = "Purchase";
+        PurchaseText.text = "0";
 
         BuyPopup.SetActive(false);
         
@@ -143,7 +143,7 @@ public class ShopPopup : MonoBehaviour
         if (DataInfo.ins.BuyItemSaveList.Count > 0)
         {
             Purchase.enabled = true;
-            PurchaseText.text = "Purcharse [" + DataInfo.ins.BuyItemSaveList.Count + "]";
+            PurchaseText.text = DataInfo.ins.BuyItemSaveList.Count.ToString();
         }
     }
 
@@ -297,40 +297,30 @@ public class ShopPopup : MonoBehaviour
         ClickCheckClose(0);
         //아이템 리스트 셋팅
         ItemListReSet(-1);
-
-        StartCoroutine(ScrollViewSetting());
     }
     public void OnClick_detailedMenu_Hair()
     {
         ClickCheckClose(1);
         //아이템 리스트 셋팅
         ItemListReSet(0);
-
-        StartCoroutine(ScrollViewSetting());
     }
     public void OnClick_detailedMenu_Shirt()
     {
         ClickCheckClose(2);
         //아이템 리스트 셋팅
         ItemListReSet(1);
-
-        StartCoroutine(ScrollViewSetting());
     }
     public void OnClick_detailedMenu_Pants()
     {
         ClickCheckClose(3);
         //아이템 리스트 셋팅
         ItemListReSet(2);
-
-        StartCoroutine(ScrollViewSetting());
     }
     public void OnClick_detailedMenu_Shoes()
     {
         ClickCheckClose(4);
         //아이템 리스트 셋팅
         ItemListReSet(3);
-
-        StartCoroutine(ScrollViewSetting());
     }
     public void OnClick_detailedMenu_Set()
     {
@@ -511,7 +501,7 @@ public class ShopPopup : MonoBehaviour
                 break;
         }
 
-        PurchaseText.text = "Purcharse";
+        PurchaseText.text = "0";
 
         yield return null;
 
@@ -603,6 +593,8 @@ public class ShopPopup : MonoBehaviour
                 }
             }
         }
+
+        StartCoroutine(ScrollViewSetting());
     }
 
     public void OnClick_Exit()

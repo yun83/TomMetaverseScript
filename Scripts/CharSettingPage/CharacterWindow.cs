@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CharacterWindow : MonoBehaviour
 {
@@ -21,14 +22,16 @@ public class CharacterWindow : MonoBehaviour
     public Text NicNameObj;
     public GameObject SetterEndObj;
     private Button SetterEndButton;
-    public Button CloseButton;
 
     private Vector2 nowPos, prePos;
     private Vector2 movePosDiff;
 
     public NicNamePopup NicPopup;
+    [Header("설정완료")]
     public GameObject ExitPopupObj;
-    public GameObject QuitPopupObj;
+    public Text ExitPopupText;
+    public Button ExitPopupYes;
+    public Button ExitPopupNo;
 
     public string NectSceneName = "97_moveScene";
     /// <summary>
@@ -51,14 +54,8 @@ public class CharacterWindow : MonoBehaviour
     public Text ToolTipText;
     public string nextScene = "";
 
-    [Header("구매기능")]
-    public GameObject Purchase;
-    public Text PurchaseCountText;
-    public InitScroll PurchaseScroll;
-    public Text TotalBuyGold;
-    public Button ItemBuy;
-    private int sumMoney = 0;
-    private bool PurchaseUse = false;
+    [Header("아이템 구매")]
+    public ItemBuyPopup BuyPopup;
 
     void Start()
     {
@@ -69,6 +66,7 @@ public class CharacterWindow : MonoBehaviour
             int tempIdx = i;
             ItemIconButton[i].onClick.RemoveAllListeners();
             ItemIconButton[tempIdx].onClick.AddListener(()=> {
+                Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
                 OnClick_IndexButton(tempIdx);
             });
         }
@@ -89,14 +87,10 @@ public class CharacterWindow : MonoBehaviour
         if (DataInfo.ins.CharacterSub.NicName == null || DataInfo.ins.CharacterSub.NicName == "")
         {
             NicNameObj.text = "닉네임을 설정하세요";
-            NicNameSetter.SetActive(true);
-            SetterEndObj.SetActive(false);
         }
         else
         {
             NicNameObj.text = DataInfo.ins.CharacterSub.NicName;
-            NicNameSetter.SetActive(false);
-            SetterEndObj.SetActive(true);
         }
 
         ChangedNicName = NicNameSetter.GetComponentInChildren<InputField>();
@@ -105,19 +99,8 @@ public class CharacterWindow : MonoBehaviour
         SetterEndButton.onClick.RemoveAllListeners();
         SetterEndButton.onClick.AddListener(OpenPopup);
 
-        CloseButton.onClick.RemoveAllListeners();
-        //CloseButton.onClick.AddListener(OpenQuitPopupObj);
-        CloseButton.onClick.AddListener(OpenPopup);
-
-        ItemBuy.onClick.RemoveAllListeners();
-        ItemBuy.onClick.AddListener(() => {
-            if (!PurchaseUse)
-                StartCoroutine(OnClick_purchaseBuy());
-        });
-
-        Purchase.SetActive(false);
         ExitPopupObj.SetActive(false);
-        QuitPopupObj.SetActive(false);
+        BuyPopup.gameObject.SetActive(false);
 
         playerManger.itemEquipment(DataInfo.ins.CharacterSub);
 
@@ -128,7 +111,7 @@ public class CharacterWindow : MonoBehaviour
         else
             OnClick_SexFemale();
 
-        OnClick_IndexButton(1);
+        OnClick_IndexButton(6);
     }
 
     void FixedUpdate()
@@ -148,35 +131,17 @@ public class CharacterWindow : MonoBehaviour
                 case 2:
                     closeCharPopup();
                     break;
-                case 3:
-                    OnClick_ClseQuitPopupObj();
-                    break;
                 case 4:
                     OnClick_BuyPopupClose();
                     break;
             }
         }
-        ChangeCostumeCheck();
-        if (DataInfo.ins.BuyItemSaveList.Count > 0) {
-            PurchaseCountText.text = DataInfo.ins.BuyItemSaveList.Count.ToString();
-        }
-        else
-            PurchaseCountText.text = "0";
 
-        if (DataInfo.ins.TotlaMoneySumCheck)
+        if (DataInfo.ins.cWin_OpenBuyPopup == 1)
         {
-            sumMoney = 0;
-            for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
-            {
-                if (DataInfo.ins.BuyItemSaveList[i].inGameUse != 0)
-                {
-                    sumMoney += DataInfo.ins.BuyItemSaveList[i].price;
-                }
-            }
-            DataInfo.ins.TotlaMoneySumCheck = false;
-            TotalBuyGold.text = "Total " + sumMoney + "Gold";
+            OnClick_BuyPopupOpen();
         }
-
+        ChangeCostumeCheck();
     }
 
     void ChangeCostumeCheck()
@@ -265,6 +230,7 @@ public class CharacterWindow : MonoBehaviour
             case 3: PrintStr += "신발 인벤"; break;
             case 4: PrintStr += "세트 인벤"; break;
             case 5: PrintStr += "악세서리 인벤"; break;
+            case 6: PrintStr += "구매한 아이템"; break;
         }
 
         if( DataInfo.ins.InvenNumber >= 0)
@@ -279,8 +245,6 @@ public class CharacterWindow : MonoBehaviour
         tempImage.color = Color.blue;
 
         DataInfo.ins.ItemSelectIndex = -1;
-
-        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
 
         //Debug.Log(PrintStr);
     }
@@ -298,11 +262,29 @@ public class CharacterWindow : MonoBehaviour
 
         DataInfo.ins.CostumeScrollList.Clear();
 
-        for (int i = 0; i < DataInfo.ins.CoustumList[idx].Count; i++) {
-            //성별이 공통이거나 같을때에 리스트에 추가
-            if (DataInfo.ins.CoustumList[idx][i].Sex == DataInfo.ins.CharacterSub.Sex || DataInfo.ins.CoustumList[idx][i].Sex == 2)
+        if (idx == 6) {
+            //구매한 아이템버튼 추가
+            for(int parts = 0; parts < DataInfo.ins.CoustumList.Length; parts++)
             {
-                DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[idx][i]);
+                for(int cnt = 0; cnt < DataInfo.ins.CoustumList[parts].Count; cnt++)
+                {
+                    if (DataInfo.ins.CoustumList[parts][cnt].State == 1)
+                    {
+                        if (DataInfo.ins.CoustumList[parts][cnt].Sex == DataInfo.ins.CharacterSub.Sex || DataInfo.ins.CoustumList[parts][cnt].Sex == 2)
+                            DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[parts][cnt]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < DataInfo.ins.CoustumList[idx].Count; i++)
+            {
+                //성별이 공통이거나 같을때에 리스트에 추가
+                if (DataInfo.ins.CoustumList[idx][i].Sex == DataInfo.ins.CharacterSub.Sex || DataInfo.ins.CoustumList[idx][i].Sex == 2)
+                {
+                    DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[idx][i]);
+                }
             }
         }
 
@@ -342,8 +324,8 @@ public class CharacterWindow : MonoBehaviour
     public void OnClick_NicNameSet()
     {
         //Debug.Log("닉네임 변경");
-        NicNameSetter.SetActive(true);
-        SetterEndObj.SetActive(false);
+        //NicNameSetter.SetActive(true);
+        //SetterEndObj.SetActive(false);
     }
 
     public void OnClick_SaveButton()
@@ -361,8 +343,8 @@ public class CharacterWindow : MonoBehaviour
         DataInfo.ins.CharacterSub.NicName = tempName;
         NicNameObj.text = DataInfo.ins.CharacterSub.NicName;
 
-        NicNameSetter.SetActive(false);
-        SetterEndObj.SetActive(true);
+        //NicNameSetter.SetActive(false);
+        //SetterEndObj.SetActive(true);
 
         //info 동기화
         //DataInfo.ins.CharacterMain.NicName = DataInfo.ins.CharacterSub.NicName;
@@ -396,6 +378,7 @@ public class CharacterWindow : MonoBehaviour
 
         if (DataInfo.ins.CharacterSub.Sex == 0)
         {
+            Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
             DataInfo.ins.CharacterSub.Sex = 1;
             DataInfo.ins.CharacterSub.Hair = 5;
 
@@ -415,6 +398,7 @@ public class CharacterWindow : MonoBehaviour
 
         if (DataInfo.ins.CharacterSub.Sex == 1)
         {
+            Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
             DataInfo.ins.CharacterSub.Sex = 0;
             DataInfo.ins.CharacterSub.Hair = 0;
 
@@ -425,9 +409,31 @@ public class CharacterWindow : MonoBehaviour
 
     void OpenPopup()
     {
+        if (DataInfo.ins.CharacterSub.NicName == null || DataInfo.ins.CharacterSub.NicName == "")
+        {
+            ClosePopup();
+            OpenCharPopupData("알림", "케릭명을 설정해 주세요");
+            return;
+        }
+
         PopupOpenCheck = 1;
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
         ExitPopupObj.SetActive(true);
+
+        ExitPopupYes.onClick.RemoveAllListeners();
+        ExitPopupNo.onClick.RemoveAllListeners();
+        if (DataInfo.ins.BuyItemSaveList.Count <= 0)
+        {
+            ExitPopupText.text = "현재의 상태를\n저장 하고 나가 시겠습니까?";
+            ExitPopupNo.onClick.AddListener(ClosePopup);
+            ExitPopupYes.onClick.AddListener(SaveExitCharSettingPage);
+        }
+        else
+        {
+            ExitPopupText.text = "구매 되지 않은 아이템은 착용 해제 됩니다.\n게임화면으로 나가 시겠습니까?";
+            ExitPopupNo.onClick.AddListener(ClosePopup);
+            ExitPopupYes.onClick.AddListener(CharCostumSettingOut);
+        }
     }
 
     public void ClosePopup()
@@ -456,33 +462,12 @@ public class CharacterWindow : MonoBehaviour
         NicPopup.gameObject.SetActive(false);
     }
 
-    void OpenQuitPopupObj()
-    {
-        QuitPopupObj.SetActive(true);
-        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
-        PopupOpenCheck = 3;
-    }
-
-    public void OnClick_ClseQuitPopupObj()
-    {
-        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
-        PopupOpenCheck = 0;
-        QuitPopupObj.SetActive(false);
-    }
-
     public void OnClick_QuitPopupOk()
     {
         Application.Quit();
     }
 
     public void SaveExitCharSettingPage() {
-        if(DataInfo.ins.CharacterSub.NicName == null || DataInfo.ins.CharacterSub.NicName == "")
-        {
-            Debug.Log("케릭명 설정이 안되었음을 알리는 팝업");
-            NicPopup.gameObject.SetActive(false);
-            OpenCharPopupData("알림", "케릭명을 설정해 주세요");
-            return;
-        }
         
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Select"));
 
@@ -494,14 +479,56 @@ public class CharacterWindow : MonoBehaviour
         LoadScene(NectSceneName);
     }
 
+    void CharCostumSettingOut()
+    {
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Select"));
+
+        for(int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
+        {
+            switch (DataInfo.ins.BuyItemSaveList[i].Type)
+            {
+                case 0: //머리
+                        //기본 남녀의 헤어가 다르기 때문에 분기   
+                    if (DataInfo.ins.CharacterSub.Sex == 1)
+                    {
+                        DataInfo.ins.CharacterSub.Hair = 5;
+                    }
+                    else
+                    {
+                        DataInfo.ins.CharacterSub.Hair = 0;
+                    }
+                    break;
+                case 1: //셔츠
+                case 4: //세트
+                    if(DataInfo.ins.BuyItemSaveList[i].Type == 4)
+                    {//바지 자동 기본 설정
+                        DataInfo.ins.CharacterSub.Pants = 15;
+                    }
+                    DataInfo.ins.CharacterSub.Shirt = 10;
+                    break;
+                case 2: //바지
+                    DataInfo.ins.CharacterSub.Pants = 15;
+                    break;
+                case 3: //신발
+                    DataInfo.ins.CharacterSub.Shoes = 19;
+                    break;
+                case 5: // 악세사리
+                    DataInfo.ins.CharacterSub.Accessory = -1;
+                    break;
+            }
+        }
+
+        Debug.Log(DataInfo.ins.SaveData);
+        DataInfo.ins.CharacterMain = DataInfo.ins.CharacterSub;
+
+        LoadScene(NectSceneName);
+    }
 
     public void LoadScene(string sceneName)
     {
         progressBar.fillAmount = 0;
         PageLodingPopup.SetActive(true);
         nextScene = sceneName;
-
-        StartCoroutine(coroutineLoadScene());
 
         if (DataInfo.ins.Now_QID == 0 && sceneName.Equals("Room_A"))
         {
@@ -511,6 +538,7 @@ public class CharacterWindow : MonoBehaviour
         {
             DataInfo.ins.QuestData[1].State = 1;
         }
+        StartCoroutine(coroutineLoadScene());
     }
 
     IEnumerator coroutineLoadScene()
@@ -518,7 +546,7 @@ public class CharacterWindow : MonoBehaviour
         yield return null;
 
         AsyncOperation op;
-        op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(nextScene);
+        op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
 
         float timer = 0.0f;
@@ -548,119 +576,30 @@ public class CharacterWindow : MonoBehaviour
         }
     }
 
-    public void OnClick_BuyButton()
+    public void OnClick_BuyPopupOpen()
     {
-        if(DataInfo.ins.BuyItemSaveList.Count <= 0)
-        {
-            return;
-        }
-        PopupOpenCheck = 4;
-        Purchase.SetActive(true);
-        DataInfo.ins.TotlaMoneySumCheck = false;
-
-        //PurchaseScroll
-        int sumMoney = 0;
-        for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
-        {
-            if (DataInfo.ins.BuyItemSaveList[i].inGameUse != 0)
-            {
-                sumMoney += DataInfo.ins.BuyItemSaveList[i].price;
-            }
-        }
-
-        TotalBuyGold.text = "Total " + sumMoney + "Gold";
-
-        StartCoroutine(PurchaseSetting());
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
+        PopupOpenCheck = 4;
+        DataInfo.ins.cWin_OpenBuyPopup = 2;
+        BuyPopup.gameObject.SetActive(true);
+        BuyPopup.ButtonSetting(ReflashScroll, OnClick_BuyPopupClose, NoMoneyPopupCall);
     }
 
     public void OnClick_BuyPopupClose()
     {
-        PopupOpenCheck = 0;
-        Purchase.SetActive(false);
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
-    }
-
-    IEnumerator PurchaseSetting()
-    {
-        //ReSetScrollView();
-
-        yield return null;
-
-        PurchaseScroll.totalCount = DataInfo.ins.BuyItemSaveList.Count;
-        PurchaseScroll.InitScrollCall();
-    }
-    IEnumerator OnClick_purchaseBuy()
-    {
-        //연속 클릭 방지
-        PurchaseUse = true;
-        //구매처리
-        string savetrunk = "";
-
-        sumMoney = 0;
-        for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
-        {
-            if (DataInfo.ins.BuyItemSaveList[i].inGameUse == 0)
-                continue;
-
-            //DataInfo.ins.BuyItemSaveList 의 아이템을 구매 한다
-            CoustumItemCsv itemTrunk = DataInfo.ins.BuyItemSaveList[i];
-
-            DataInfo.ins.BuyItemId.Add(System.Convert.ToInt32(itemTrunk.ItemID));
-            sumMoney += itemTrunk.price;
-
-            //구매된 아이템 체크
-            if (itemTrunk.Type < 6)
-            {
-                for (int cnt = 0; cnt < DataInfo.ins.CoustumList[itemTrunk.Type].Count; cnt++)
-                {
-                    if (DataInfo.ins.CoustumList[itemTrunk.Type][cnt].ItemID == itemTrunk.ItemID)
-                    {
-                        DataInfo.ins.CoustumList[itemTrunk.Type][cnt].State = 1;
-                        continue;
-                    }
-                }
-            }
-            else
-            {
-                for (int cnt = 0; cnt < DataInfo.ins.EctItemData.Count; cnt++)
-                {
-                    if (DataInfo.ins.EctItemData[cnt].ItemID == itemTrunk.ItemID)
-                    {
-                        DataInfo.ins.EctItemData[cnt].State = 1;
-                        continue;
-                    }
-                }
-            }
-        }
-
-        yield return null;
-
-        DataInfo.ins.BuyItemId = DataInfo.ins.BuyItemId.Distinct().ToList();
-
-        for (int i = 0; i < DataInfo.ins.BuyItemId.Count; i++)
-        {
-            savetrunk += DataInfo.ins.BuyItemId[i] + ",";
-        }
-        DataInfo.ins.saveBuyItem = savetrunk;
-
         PopupOpenCheck = 0;
-        Purchase.SetActive(false);
+        DataInfo.ins.cWin_OpenBuyPopup = 0;
+        BuyPopup.gameObject.SetActive(false);
+    }
 
-        yield return null;
-
-        if (DataInfo.ins.CharacterMain.Money >= sumMoney)
-        {
-            DataInfo.ins.AddMoney(-sumMoney);
-        }
-
-        yield return null;
-
-        DataInfo.ins.BuyItemSaveList.Clear();
+    void ReflashScroll()
+    {
         StartCoroutine(ClickEvnetCall(DataInfo.ins.InvenNumber));
+    }
 
-        yield return null;
-
-        PurchaseUse = false;
+    void NoMoneyPopupCall()
+    {
+        OpenCharPopupData("알림", "보유금액이 부족합니다.");
     }
 }
