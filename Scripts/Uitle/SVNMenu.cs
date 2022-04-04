@@ -42,10 +42,15 @@ public class SVNMenu
 	}
 
 
-	[MenuItem("adtnMenu/Save/Delete Save File", false, 11)]
+	[MenuItem("adtnMenu/Save/Delete All Save File", false, 11)]
 	static void RemoveSaveFile()
     {
 		PlayerPrefs.DeleteAll();
-    }
+	}
+	[MenuItem("adtnMenu/Save/Delete Event Day File", false, 12)]
+	static void RemoveDayFile()
+	{
+		PlayerPrefs.DeleteKey("DayEvent");
+	}
 #endif
 }

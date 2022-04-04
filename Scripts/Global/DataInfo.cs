@@ -36,6 +36,11 @@ public class DataInfo : Single<DataInfo>
         get { return PlayerPrefs.GetString("saveBuyItem", ""); }
         set { PlayerPrefs.SetString("saveBuyItem", value); }
     }
+    public string DayEvent
+    {
+        get { return PlayerPrefs.GetString("DayEvent", ""); }
+        set { PlayerPrefs.SetString("DayEvent", value); }
+    }
 
     public OptionData OptionInfo = new OptionData();
 
@@ -87,6 +92,10 @@ public class DataInfo : Single<DataInfo>
     public int Quest_WinState = 0;
 
     public int cWin_OpenBuyPopup = 0;
+
+    [Header("시간형 이벤트")]
+    public DayEventData deData = new DayEventData();
+
     private void Awake()
     {
         Application.targetFrameRate = 1000;
@@ -95,23 +104,22 @@ public class DataInfo : Single<DataInfo>
         SaveDataLoding(); 
         ItemDataLoding();
         QuestDataLoding();
+        TimeEventLoding();
 
         Com.ins.BgmSoundPlay(Resources.Load<AudioClip>("BGM/Progress"));
     }
 
     private void SaveDataLoding()
     {
-        Debug.Log(" ------------- 세이브 로딩 --------------");
+        //Debug.Log(" ------------- 세이브 로딩 --------------");
         if (!SaveData.Equals("") && SaveData != null)
         {
-            Debug.Log("<color=yellow> Use Character Main Save Data </color>");
             CharacterMain = JsonUtility.FromJson<Info_Char>(SaveData);
         }
         Debug.Log("<color=yellow>Print Character Data</color>" + CharacterMain.printData());
 
         if (!saveOption.Equals("") && saveOption != null)
         {
-            Debug.Log("<color=yellow> Use Option Save Data </color>");
             OptionInfo = JsonUtility.FromJson<OptionData>(saveOption);
         }
 
@@ -267,6 +275,17 @@ public class DataInfo : Single<DataInfo>
         return null;
     }
 
+    void TimeEventLoding()
+    {
+        //Debug.Log(" ------------- 세이브 로딩 --------------");
+        if (!DayEvent.Equals("") && DayEvent != null)
+        {
+            deData = JsonUtility.FromJson<DayEventData>(DayEvent);
+            //DateTime a = System.DateTime.ParseExact(deData.RouletteDay, "yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+        }
+        Debug.Log("<color=yellow>Time Event Print</color>" + deData.printData());
+    }
+
     // Update is called once per frame
     void LateUpdate()
     {
@@ -317,7 +336,6 @@ public class DataInfo : Single<DataInfo>
     public void RoomOutButtonSetting()
     {
         UiButtonController ubc = GameObject.FindObjectOfType<UiButtonController>();
-        OutRoomButton.Clear();
 
         ButtonClass item1 = new ButtonClass();
         item1.text = "World Map";
@@ -336,6 +354,8 @@ public class DataInfo : Single<DataInfo>
         item3.addEvent = (() => {
             ubc.OnClick_Exit();
         });
+
+        OutRoomButton.Clear();
 
         OutRoomButton.Add(item1);
         //OutRoomButton.Add(item2);

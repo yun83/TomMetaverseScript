@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class ControllerManager : MonoBehaviour
 {
@@ -85,12 +86,19 @@ public class ControllerManager : MonoBehaviour
     public GameObject[] PetObject;
     private GameObject insPetObj;
     private PetMoveController intPetScript;
+    [Tooltip("∆Í¿Ã æ…æ∆ ¿÷¥¬ ∞¯∞£")]
+    public Transform PetInTrans;
 
     [Header("PageLoding")]
     public GameObject PageLodingPopup;
     public Image progressBar = null;
     public Text ToolTipText;
     public string nextScene = "";
+    /// <summary>
+    /// 0 - Ect,
+    /// 1 - MyRoom,
+    /// </summary>
+    public int RoomCheck = 0;
 
     private void Awake()
     {
@@ -100,8 +108,6 @@ public class ControllerManager : MonoBehaviour
 
         _camera = Camera.main;
 
-        //√ﬂ»ƒ NPC ¥Î»≠∏¶ ≈Î«ÿº≠ »πµÊ
-        CreatePetObject();
     }
 
     // Start is called before the first frame update
@@ -112,6 +118,7 @@ public class ControllerManager : MonoBehaviour
 
     void initController()
     {
+        string SceneName = SceneManager.GetActiveScene().name;
         DataInfo.ins.infoController = this;
         if (PlayerObject == null)
             PlayerObject = GameObject.FindGameObjectWithTag("Player").transform;
@@ -138,9 +145,18 @@ public class ControllerManager : MonoBehaviour
         RRSpawn = GameObject.FindObjectOfType<RandomRespawn>();
         UIController = GetComponentInChildren<UiButtonController>();
 
+
         HandRelease.SetActive(false);
         PageLodingPopup.SetActive(false);
         progressBar.fillAmount = 0;
+
+        //√ﬂ»ƒ NPC ¥Î»≠∏¶ ≈Î«ÿº≠ »πµÊ
+        CreatePetObject();
+
+        if (SceneName.Equals("Room_A") || SceneName.Equals("Room_B"))
+        {
+            RoomCheck = 1;
+        }
     }
 
     // Update is called once per frame
@@ -339,12 +355,7 @@ public class ControllerManager : MonoBehaviour
 
             if (EventScripts != null)
             {
-                EventScripts.UseState = 0;
-                //EventScripts.EventObj.SetActive(true);
-                if (EventScripts.mCollider != null)
-                {
-                    EventScripts.mCollider.isTrigger = false;
-                }
+                EventScripts.OutInteraction();
             }
             EventState = 0;
         }
@@ -411,11 +422,7 @@ public class ControllerManager : MonoBehaviour
             {
                 if (EventScripts != null)
                 {
-                    //EventScripts.EventObj.SetActive(true);
-                    if (EventScripts.mCollider != null)
-                    {
-                        EventScripts.mCollider.isTrigger = false;
-                    }
+                    EventScripts.OutInteraction();
                 }
                 EventScripts = temp;
                 EventState = 1;
@@ -466,7 +473,7 @@ public class ControllerManager : MonoBehaviour
         {
             if (EventScripts.mCollider != null)
             {
-                EventScripts.mCollider.isTrigger = true;
+                EventScripts.OnInteraction();
             }
 
             switch (EventScripts.nowType)
@@ -714,7 +721,7 @@ public class ControllerManager : MonoBehaviour
         yield return null;
 
         AsyncOperation op;
-        op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(nextScene);
+        op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
 
         float timer = 0.0f;

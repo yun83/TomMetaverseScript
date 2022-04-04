@@ -21,7 +21,7 @@ public class OutRoomPopup : MonoBehaviour
     {
         for (int i = bList.Count - 1; i >= 0; i--)
         {
-            Destroy(bList[i]);
+            Destroy(bList[i].gameObject);
         }
 
         yield return null;

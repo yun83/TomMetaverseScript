@@ -33,6 +33,10 @@ public class Info_Char
     /// ¾Ç¼¼»ç¸®
     /// </summary>
     public int Accessory = -1;
+    /// <summary>
+    /// Æê Á¾·ù
+    /// </summary>
+    public int PetID = -1;
 
     public void iniEqtData(string mNic = "")
     {
@@ -47,7 +51,7 @@ public class Info_Char
 
     public string printData()
     {
-        string ret = 
+        string ret =
             "\n NicName [" + NicName + "] " +
             "\n Sex [" + Sex + "] " +
             "\n Hair [" + Hair + "] " +
@@ -181,4 +185,20 @@ public class QuestDataCsv{
     public string Name = "";
     public string Description = "";
     public int State = 0;
+}
+
+[Serializable] 
+public class DayEventData{
+    public int RouletteState;
+    public string RouletteDay;
+
+    public string printData()
+    {
+        string ret =
+            "\n Roulette "+
+            "\n State [" + RouletteState + "] " +
+            "\n Day [" + RouletteDay + "] "
+            ;
+        return ret;
+    }
 }

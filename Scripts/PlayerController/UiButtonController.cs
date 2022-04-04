@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,10 @@ public class UiButtonController : MonoBehaviour
     public GameObject QuestSuccess;
     private bool SuccesssOn = true;
 
+    [Header("·ê·¿")]
+    public GameObject RoulettePopup;
+    DateTime SpinTime;
+
     [Header("°ÔÀÓUi")]
     public Text MoneyText;
     public GameObject CharObj;
@@ -26,7 +31,6 @@ public class UiButtonController : MonoBehaviour
     public GameObject ShopPopup;
     public GameObject InvenPopup;
     public GameObject QuestPopup;
-    public GameObject RoulettePopup;
     public OutRoomPopup OR_Popup;
     public PopupController popupController;
     public UiMessage ToastMes;
@@ -76,8 +80,11 @@ public class UiButtonController : MonoBehaviour
                     break;
             }
         });
+        UiButton[6].onClick.AddListener(OnClick_Roulette);
+
         //all popup clase    
         OnClick_CloseAllPopup();
+        RoulettButtonSetting();
     }
 
     void OnEnable()
@@ -105,22 +112,8 @@ public class UiButtonController : MonoBehaviour
             OnClick_CloseAllPopup();
         }
 
-        if (DataInfo.ins.Quest_WinState == 1)
-        {
-            if (!SuccesssOn)
-            {
-                SuccesssOn = true;
-                QuestSuccess.SetActive(true);
-            }
-        }
-        else
-        {
-            if (SuccesssOn)
-            {
-                SuccesssOn = false;
-                QuestSuccess.SetActive(false);
-            }
-        }
+        RouletteTimeLogin();
+
     }
 
 
@@ -370,4 +363,68 @@ public class UiButtonController : MonoBehaviour
         myPlayer.itemEquipment(DataInfo.ins.CharacterMain);
 
     }
+
+    void RouletteTimeLogin()
+    {
+        //Äù½ºÆ® Ã¼Å©
+        if (DataInfo.ins.Quest_WinState == 1)
+        {
+            if (!SuccesssOn)
+            {
+                SuccesssOn = true;
+                QuestSuccess.SetActive(true);
+            }
+        }
+        else
+        {
+            if (SuccesssOn)
+            {
+                SuccesssOn = false;
+                QuestSuccess.SetActive(false);
+            }
+        }
+
+        if (DataInfo.ins.deData.RouletteState == 2)
+        {
+            TimeSpan RouletteSumTime = SpinTime - DateTime.Now;
+
+            if (RouletteSumTime.Seconds <= 0)
+            {
+                UiButton[6].interactable = true;
+                DataInfo.ins.deData.RouletteState = 0;
+            }
+            //else
+            //    Debug.Log(RouletteSumTime.Hours + "½Ã" + RouletteSumTime.Minutes + "ºÐ" + RouletteSumTime.Seconds + "ÃÊ");
+        }
+    }
+
+    void RoulettButtonSetting()
+    {
+        UiButton[6].interactable = true;
+        if (DataInfo.ins.deData.RouletteState == 1)
+        {
+            SpinTime = DateTime.ParseExact(DataInfo.ins.deData.RouletteDay, "yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+            DataInfo.ins.deData.RouletteState = 2;
+
+            UiButton[6].interactable = false;
+        }
+    }
+
+    public void OnClick_RoletteSpin()
+    {
+        UiButton[6].interactable = false;
+        //·ê·¿ µ¹¸° ½Ã°£ ÀúÀå
+        DataInfo.ins.deData.RouletteState = 1;
+
+        DateTime temp = DateTime.Now.AddDays(1);
+
+        DataInfo.ins.deData.RouletteDay = //DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");
+                                         new System.DateTime(temp.Year, temp.Month, temp.Day, 0, 0, 0).ToString("yyyyMMddHHmmss");
+        Debug.Log("·ê·¿ µ¹¸° ½Ã°£ ÀúÀå : " + DataInfo.ins.deData.printData());
+
+        DataInfo.ins.DayEvent = JsonUtility.ToJson(DataInfo.ins.deData);
+
+        Invoke("RoulettButtonSetting", 0.1f);
+    }
+
 }

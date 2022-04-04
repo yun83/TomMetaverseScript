@@ -242,7 +242,7 @@ public class CharacterWindow : MonoBehaviour
         StartCoroutine(ClickEvnetCall(idx));
 
         Image tempImage = ItemIconButton[idx].GetComponent<Image>();
-        tempImage.color = Color.blue;
+        tempImage.color = Color.yellow;
 
         DataInfo.ins.ItemSelectIndex = -1;
 

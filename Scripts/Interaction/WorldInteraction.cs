@@ -61,6 +61,33 @@ public class WorldInteraction : MonoBehaviour
         }
     }
 
+    public void OnInteraction()
+    {
+        mCollider.isTrigger = true;
+    }
+
+    public void OutInteraction()
+    {
+
+        UseState = 0;
+
+        switch (nowType)
+        {
+            default:
+                if (mCollider != null)
+                {
+                    mCollider.isTrigger = false;
+                }
+                break;
+            case InteractionType.NicName:
+            case InteractionType.NPC_PetMaster:
+                break;
+            case InteractionType.OutRoom:
+            case InteractionType.WorldMapOut:
+                break;
+        }
+    }
+
     public void InitWorldInteraction()
     {
         if (EventObj != null)
@@ -70,18 +97,29 @@ public class WorldInteraction : MonoBehaviour
             EventObj = null;
         }
 
-        if(nowType == InteractionType.NicName || nowType == InteractionType.NPC_PetMaster )
+        switch (nowType)
         {
-            EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/NicName3DText"));
-            NicName = EventObj.GetComponentInChildren<TextMesh>();
-            NicName.text = DataInfo.ins.CharacterMain.NicName;
-            EventObj.name = "닉네임";
+            default:
+                EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
+                EventIcon = EventObj.GetComponentInChildren<SpriteRenderer>();
+                EventObj.name = "상호작용";
+                break;
+            case InteractionType.NicName:
+            case InteractionType.NPC_PetMaster:
+                EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/NicName3DText"));
+                NicName = EventObj.GetComponentInChildren<TextMesh>();
+                NicName.text = DataInfo.ins.CharacterMain.NicName;
+                EventObj.name = "닉네임";
+                break;
+            case InteractionType.OutRoom:
+            case InteractionType.WorldMapOut:
+                break;
         }
-        else
+
+        if (EventObj != null)
         {
-            EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
-            EventIcon = EventObj.GetComponentInChildren<SpriteRenderer>();
-            EventObj.name = "상호작용";
+            EventObj.transform.parent = transform;
+            EventObj.transform.localPosition = IconPos;
         }
 
         switch (nowType)
@@ -90,13 +128,25 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.Meditate: EventIcon.sprite = Resources.Load<Sprite>("Icon/DESK"); break;
             case InteractionType.Pickup: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
             case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
-            case InteractionType.NPC_PetMaster:
-                NicName.text = "Pet Master";
+            case InteractionType.NPC_PetMaster: NicName.text = "Pet Master"; break;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //Debug.Log("World Interaction On Trigger Enter[<color=blue>" + other.name + "</color>] Tag [<color=yellow>" + other.tag + "</color>]");
+        switch (nowType)
+        {
+            case InteractionType.OutRoom:
+            case InteractionType.WorldMapOut:
+                if(other.tag == "Player")
+                {
+                    DataInfo.ins.infoController.EventScripts = this;
+                    DataInfo.ins.infoController.EventState = 1;
+                    DataInfo.ins.infoController.RayCastEventLogic();
+                }
                 break;
         }
-
-        EventObj.transform.parent = transform;
-        EventObj.transform.localPosition = IconPos;
     }
 }
 
