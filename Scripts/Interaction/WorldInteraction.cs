@@ -19,20 +19,27 @@ public class WorldInteraction : MonoBehaviour
     public TextMesh NicName;
     private SpriteRenderer EventIcon;
     private Transform Player;
-    public Collider mCollider;
+    public Collider[] mColliders;
+    public bool ColliderCheck = false;
+    Collider EventCollider = null;
     private float area = 10;
-
+    public float PlayerDis = 0;
     public int ItemId = -1;
+
+    [Header("NPC ÀÏ°æ¿ì")]
+    public GameObject UiCameraObj;
 
     void Awake()
     {
         InitWorldInteraction();
         Player = GameObject.FindGameObjectWithTag("Player").transform;
 
-        if(gameObject.TryGetComponent<Collider>(out var Col))
-        {
-            mCollider = Col;
-        }
+        ColliderCheck = false;
+        
+        mColliders = GetComponentsInChildren<Collider>();
+
+        if (mColliders.Length > 0)
+            ColliderCheck = true;
     }
 
     private void FixedUpdate()
@@ -47,7 +54,9 @@ public class WorldInteraction : MonoBehaviour
 
         if (UseState == 0)
         {
-            if (area > Vector3.Distance(Player.position, transform.position))
+            PlayerDis = Vector3.Distance(Player.position, transform.position);
+
+            if (area > PlayerDis)
             {
                 if (!EventObj.activeSelf)
                     EventObj.SetActive(true);
@@ -63,21 +72,22 @@ public class WorldInteraction : MonoBehaviour
 
     public void OnInteraction()
     {
-        mCollider.isTrigger = true;
+        for(int i=0;i< mColliders.Length; i ++)
+            mColliders[i].isTrigger = true;
     }
 
     public void OutInteraction()
     {
-
         UseState = 0;
 
         switch (nowType)
         {
             default:
-                if (mCollider != null)
-                {
-                    mCollider.isTrigger = false;
-                }
+                for (int i = 0; i < mColliders.Length; i++)
+                    mColliders[i].isTrigger = false;
+
+                if (EventCollider != null)
+                    EventCollider.isTrigger = true;
                 break;
             case InteractionType.NicName:
             case InteractionType.NPC_PetMaster:
@@ -120,6 +130,7 @@ public class WorldInteraction : MonoBehaviour
         {
             EventObj.transform.parent = transform;
             EventObj.transform.localPosition = IconPos;
+            EventCollider = EventObj.GetComponent<Collider>();
         }
 
         switch (nowType)
@@ -147,6 +158,11 @@ public class WorldInteraction : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawSphere(transform.position, 0.05f);
     }
 }
 

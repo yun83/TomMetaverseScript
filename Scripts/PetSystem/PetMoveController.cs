@@ -20,6 +20,8 @@ public class PetMoveController : MonoBehaviour
     public bool ShowObject  = false;
     float NonAniTime = 0;
     int NonMoveAniState = 0;
+
+    public bool MoveStop = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,9 +49,12 @@ public class PetMoveController : MonoBehaviour
         {
             return;
         }
-        PlayerDis = Vector3.Distance(transform.position, myPlayerTrans.position);
 
-        PetMove();
+        if (!MoveStop)
+        {
+            PlayerDis = Vector3.Distance(transform.position, myPlayerTrans.position);
+            PetMove();
+        }
         //NonAniTime //움직임 없는 시간 판단후 에니메이션
         PetNonMoveAni();
     }

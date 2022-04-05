@@ -26,6 +26,8 @@ public class ShopPopup : MonoBehaviour
     public Text TotlaPrice;
     public Button PurchaseClose;
     public Button PurchaseBuy;
+    public Button AllSelect;
+    public Button AllDelete;
 
     int State = -1;
     int subState = -1;
@@ -40,29 +42,36 @@ public class ShopPopup : MonoBehaviour
         PurchaseUse = false;
         SubButton.SetActive(false);
 
-        for(int i = 0; i < ShopButton.Length; i++)
+        Purchase.onClick.RemoveAllListeners();
+        PurchaseClose.onClick.RemoveAllListeners();
+        PurchaseBuy.onClick.RemoveAllListeners();
+        AllSelect.onClick.RemoveAllListeners();
+        AllDelete.onClick.RemoveAllListeners();
+
+        for (int i = 0; i < ShopButton.Length; i++)
         {
             ShopButton[i].onClick.RemoveAllListeners();
         }
+
         ShopButton[0].onClick.AddListener(OnClick_Suggestion);
         ShopButton[1].onClick.AddListener(OnClick_Item);
         ShopButton[2].onClick.AddListener(OnClick_Gesture);
         ShopButton[3].onClick.AddListener(OnClick_MyRoom);
 
-        Purchase.onClick.RemoveAllListeners();
         Purchase.onClick.AddListener(OnClick_Purchase);
 
-        PurchaseClose.onClick.RemoveAllListeners();
         PurchaseClose.onClick.AddListener(() =>
         {
             BuyPopup.SetActive(false);
         });
 
-        PurchaseBuy.onClick.RemoveAllListeners();
         PurchaseBuy.onClick.AddListener(() => { 
             if(!PurchaseUse)
                 StartCoroutine(OnClick_purchaseBuy()); 
         });
+
+        AllSelect.onClick.AddListener(() => { });
+        AllDelete.onClick.AddListener(() => { });
 
         scrollRect = setScroll.GetComponent<RectTransform>();
 
@@ -104,6 +113,7 @@ public class ShopPopup : MonoBehaviour
 
         if (DataInfo.ins.TotlaMoneySumCheck)
         {
+            int getSize = DataInfo.ins.BuyItemSaveList.Count;
             sumMoney = 0;
             for(int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
             {
@@ -114,6 +124,11 @@ public class ShopPopup : MonoBehaviour
             }
             TotlaPrice.text = "Total " + sumMoney + " Gold";
             DataInfo.ins.TotlaMoneySumCheck = false;
+            PurchaseText.text = getSize.ToString();
+            if (getSize > 0)
+                Purchase.interactable = true;
+            else
+                Purchase.interactable = false;
         }
     }
 
@@ -598,6 +613,16 @@ public class ShopPopup : MonoBehaviour
     }
 
     public void OnClick_Exit()
+    {
+
+    }
+
+    void OnClick_AllSelectButton()
+    {
+
+    }
+
+    void OnClick_AllDeletButton()
     {
 
     }

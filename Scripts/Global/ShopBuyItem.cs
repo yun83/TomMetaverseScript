@@ -13,6 +13,7 @@ public class ShopBuyItem : MonoBehaviour
 
     public GameObject CheckBox;
     public Button button;
+    public Button DeletButton;
 
     int Index = -1;
     public string nowID;
@@ -50,6 +51,9 @@ public class ShopBuyItem : MonoBehaviour
 
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(OnClick_Evenet);
+
+        DeletButton.onClick.RemoveAllListeners();
+        DeletButton.onClick.AddListener(OnClick_DeletButton);
     }
 
     void OnClick_Evenet()
@@ -64,6 +68,18 @@ public class ShopBuyItem : MonoBehaviour
             DataInfo.ins.BuyItemSaveList[Index].inGameUse = 1;
             CheckBox.SetActive(true);
         }
+        DataInfo.ins.TotlaMoneySumCheck = true;
+    }
+
+    void OnClick_DeletButton()
+    {
+        Destroy(gameObject);
+
+        if (DataInfo.ins.BuyItemSaveList.Count <= 1)
+            DataInfo.ins.BuyItemSaveList.Clear();
+        else
+            DataInfo.ins.BuyItemSaveList.RemoveAt(Index);
+
         DataInfo.ins.TotlaMoneySumCheck = true;
     }
 }

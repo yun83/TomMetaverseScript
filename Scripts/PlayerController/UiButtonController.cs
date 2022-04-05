@@ -34,6 +34,7 @@ public class UiButtonController : MonoBehaviour
     public OutRoomPopup OR_Popup;
     public PopupController popupController;
     public UiMessage ToastMes;
+    public NpcPopup NpcPopupScript;
 
     private int UiPopupState = 0;
 
@@ -143,6 +144,7 @@ public class UiButtonController : MonoBehaviour
         }
 
         UiPopupState = 0;
+
         //all popup clase
         GestureScroll.SetActive(false);
         OptionPopup.SetActive(false);
@@ -153,6 +155,7 @@ public class UiButtonController : MonoBehaviour
         CharObj.SetActive(false);
         RoulettePopup.SetActive(false);
         OR_Popup.gameObject.SetActive(false);
+        NpcPopupScript.gameObject.SetActive(false);
     }
 
     #region UI Button Click Setting
@@ -427,4 +430,8 @@ public class UiButtonController : MonoBehaviour
         Invoke("RoulettButtonSetting", 0.1f);
     }
 
+    public void OnClick_Npc()
+    {
+        NpcPopupScript.gameObject.SetActive(true);
+    }
 }

@@ -397,17 +397,14 @@ public class ControllerManager : MonoBehaviour
         int layerMask = 1 << LayerMask.NameToLayer("TouchLayer");  // FindObject 레이어만 충돌 체크함
         Ray ray = _camera.ScreenPointToRay(inPos);
 
-
         if (Physics.Raycast(ray, out rayHit, distance, layerMask))
         {
             WorldInteraction temp = null;
             Transform Truk = rayHit.transform;
-
-            Debug.Log("Ray Cast Event Trigger [<color=blue> Name : " + Truk.name + "</color> ] [<color=yellow> Tag : " + Truk.tag + "</color> ]");
-
+            //Debug.Log("Ray Cast Event Trigger [<color=blue> Name : " + Truk.name + "</color> ] [<color=yellow> Tag : " + Truk.tag + "</color> ]");
             try
             {
-                if(Truk.parent != null)
+                if (Truk.parent != null)
                     temp = Truk.parent.GetComponent<WorldInteraction>();
                 else
                     temp = Truk.GetComponent<WorldInteraction>();
@@ -461,7 +458,6 @@ public class ControllerManager : MonoBehaviour
                     }
                 }
             }
-
             ret = true;
         }
         return ret;
@@ -471,11 +467,6 @@ public class ControllerManager : MonoBehaviour
     {
         if (EventState > 0 && EventState < 3)
         {
-            if (EventScripts.mCollider != null)
-            {
-                EventScripts.OnInteraction();
-            }
-
             switch (EventScripts.nowType)
             {
                 case InteractionType.OutRoom:
@@ -493,7 +484,11 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.OnChair:
                     if (EventState == 1)
                     {
-                        if(DataInfo.ins.CharacterMain.Sex == 1)
+                        if (EventScripts.ColliderCheck)
+                        {
+                            EventScripts.OnInteraction();
+                        }
+                        if (DataInfo.ins.CharacterMain.Sex == 1)
                             Com.ins.AniSetInt(mAnimator, "Interaction", 101);
                         else
                             Com.ins.AniSetInt(mAnimator, "Interaction", 1);
@@ -509,6 +504,10 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.Meditate:
                     if (EventState == 1)
                     {
+                        if (EventScripts.ColliderCheck)
+                        {
+                            EventScripts.OnInteraction();
+                        }
                         if (DataInfo.ins.CharacterMain.Sex == 1)
                             Com.ins.AniSetInt(mAnimator, "Interaction", 102);
                         else
@@ -532,6 +531,9 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.NPC_PetMaster:
                     if (EventState == 1)
                     {
+                        Debug.Log("Npc 터치 거리 : " + EventScripts.PlayerDis);
+                        if (EventScripts.PlayerDis < 5)
+                            UIController.OnClick_Npc();
                     }
                     break;
             }

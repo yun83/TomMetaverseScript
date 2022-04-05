@@ -203,7 +203,7 @@ public class CharacterManager : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit cchit)
     {
-        //Debug.Log("On Controller Collider Hit[<color=blue>" + cchit.transform.name + "</color>] Tag [<color=yellow>" + cchit.transform.tag + "</color>]");
+        //Debug.Log("000 On Controller Collider Hit[<color=blue>" + cchit.transform.name + "</color>] Tag [<color=yellow>" + cchit.transform.tag + "</color>]");
         if (cchit.transform.tag.Equals("GiftBox"))
         {
             cmLogic.EventScripts = cchit.transform.GetComponent<WorldInteraction>();
