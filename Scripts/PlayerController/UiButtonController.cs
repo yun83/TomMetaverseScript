@@ -430,8 +430,13 @@ public class UiButtonController : MonoBehaviour
         Invoke("RoulettButtonSetting", 0.1f);
     }
 
-    public void OnClick_Npc()
+    public void OnClick_Npc(WorldInteraction wi)
     {
-        NpcPopupScript.gameObject.SetActive(true);
+        if (!DataInfo.ins.CallNpc)
+        {
+
+            NpcPopupScript.gameObject.SetActive(true);
+            NpcPopupScript.InitNpc(wi);
+        }
     }
 }

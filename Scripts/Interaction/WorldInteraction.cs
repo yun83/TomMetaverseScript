@@ -91,6 +91,7 @@ public class WorldInteraction : MonoBehaviour
                 break;
             case InteractionType.NicName:
             case InteractionType.NPC_PetMaster:
+            case InteractionType.NPC_Cafe_0:
                 break;
             case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
@@ -116,6 +117,7 @@ public class WorldInteraction : MonoBehaviour
                 break;
             case InteractionType.NicName:
             case InteractionType.NPC_PetMaster:
+            case InteractionType.NPC_Cafe_0:
                 EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/NicName3DText"));
                 NicName = EventObj.GetComponentInChildren<TextMesh>();
                 NicName.text = DataInfo.ins.CharacterMain.NicName;
@@ -140,6 +142,7 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.Pickup: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
             case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
             case InteractionType.NPC_PetMaster: NicName.text = "Pet Master"; break;
+            case InteractionType.NPC_Cafe_0: NicName.text = "Cafe Master"; break;
         }
     }
 
@@ -180,4 +183,5 @@ public enum InteractionType
     Pet_Idx1,
     Pet_Idx2,
     NPC_PetMaster,
+    NPC_Cafe_0,
 }

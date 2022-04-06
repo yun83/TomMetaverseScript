@@ -93,6 +93,8 @@ public class DataInfo : Single<DataInfo>
 
     public int cWin_OpenBuyPopup = 0;
 
+    public bool CallNpc = false;
+
     [Header("시간형 이벤트")]
     public DayEventData deData = new DayEventData();
 

@@ -183,19 +183,28 @@ public class ControllerManager : MonoBehaviour
         Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
     }
 
-    void CreatePetObject()
+    public void CreatePetObject()
     {
+        int petID = DataInfo.ins.CharacterMain.PetID;
+        if (petID < 0)
+        {
+            return;
+        }
+
         if (insPetObj != null)
         {
             Destroy(insPetObj);
             insPetObj = null;
         }
 
-        insPetObj = Instantiate(PetObject[0]);
-        intPetScript = insPetObj.AddComponent<PetMoveController>();
-        intPetScript.myPlayerTrans = transform;
-        intPetScript.PlayerMoveSpeed = moveSpeed;
-        insPetObj.name = "Æê";
+        if (petID < PetObject.Length)
+        {
+            insPetObj = Instantiate(PetObject[petID]);
+            intPetScript = insPetObj.AddComponent<PetMoveController>();
+            intPetScript.myPlayerTrans = transform;
+            intPetScript.PlayerMoveSpeed = moveSpeed;
+            insPetObj.name = "Æê";
+        }
     }
 
     void MoveUpdate()
@@ -529,11 +538,14 @@ public class ControllerManager : MonoBehaviour
                     }
                     break;
                 case InteractionType.NPC_PetMaster:
+                case InteractionType.NPC_Cafe_0:
                     if (EventState == 1)
                     {
                         Debug.Log("Npc ÅÍÄ¡ °Å¸® : " + EventScripts.PlayerDis);
                         if (EventScripts.PlayerDis < 5)
-                            UIController.OnClick_Npc();
+                        {
+                            UIController.OnClick_Npc(EventScripts);
+                        }
                     }
                     break;
             }
