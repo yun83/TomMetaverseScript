@@ -24,10 +24,14 @@ public class WorldInteraction : MonoBehaviour
     Collider EventCollider = null;
     private float area = 10;
     public float PlayerDis = 0;
+
+    [Header("픽업 아이템")]
+    public GameObject TempObj;
+    [Tooltip("보조용 PickUp 일경우 아이템 ID")]
     public int ItemId = -1;
 
-    [Header("NPC 일경우")]
-    public GameObject UiCameraObj;
+    [Header("NPC 일경우 OnOff")]
+    public GameObject OnOffObject;
 
     void Awake()
     {
@@ -40,6 +44,9 @@ public class WorldInteraction : MonoBehaviour
 
         if (mColliders.Length > 0)
             ColliderCheck = true;
+
+        if (OnOffObject != null)
+            OnOffObject.SetActive(false);
     }
 
     private void FixedUpdate()
@@ -92,9 +99,11 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.NicName:
             case InteractionType.NPC_PetMaster:
             case InteractionType.NPC_Cafe_0:
+            case InteractionType.NPC_Cafe_1:
                 break;
             case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
+            case InteractionType.Cafe_In:
                 break;
         }
     }
@@ -115,9 +124,25 @@ public class WorldInteraction : MonoBehaviour
                 EventIcon = EventObj.GetComponentInChildren<SpriteRenderer>();
                 EventObj.name = "상호작용";
                 break;
+            case InteractionType.Pickup:
+                EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
+                EventIcon = EventObj.GetComponentInChildren<SpriteRenderer>();
+                EventObj.name = "상호작용";
+
+                switch (ItemId)
+                {
+                    case 0:
+                        TempObj = Instantiate(Resources.Load<GameObject>("Prefabs/PickUpItem/CoffeeCup_A"));
+                        TempObj.transform.SetParent(transform);
+                        TempObj.transform.localPosition = new Vector3(0, 0.3f, 0);
+                        TempObj.transform.localScale = new Vector3(10, 10, 10);
+                        break;
+                }
+                break;
             case InteractionType.NicName:
             case InteractionType.NPC_PetMaster:
             case InteractionType.NPC_Cafe_0:
+            case InteractionType.NPC_Cafe_1:
                 EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/NicName3DText"));
                 NicName = EventObj.GetComponentInChildren<TextMesh>();
                 NicName.text = DataInfo.ins.CharacterMain.NicName;
@@ -125,6 +150,7 @@ public class WorldInteraction : MonoBehaviour
                 break;
             case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
+            case InteractionType.Cafe_In:
                 break;
         }
 
@@ -143,6 +169,7 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
             case InteractionType.NPC_PetMaster: NicName.text = "Pet Master"; break;
             case InteractionType.NPC_Cafe_0: NicName.text = "Cafe Master"; break;
+            case InteractionType.NPC_Cafe_1: NicName.text = "Cafe Manager"; break;
         }
     }
 
@@ -153,7 +180,8 @@ public class WorldInteraction : MonoBehaviour
         {
             case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
-                if(other.tag == "Player")
+            case InteractionType.Cafe_In:
+                if (other.tag == "Player")
                 {
                     DataInfo.ins.infoController.EventScripts = this;
                     DataInfo.ins.infoController.EventState = 1;
@@ -184,4 +212,6 @@ public enum InteractionType
     Pet_Idx2,
     NPC_PetMaster,
     NPC_Cafe_0,
+    NPC_Cafe_1,
+    Cafe_In,
 }

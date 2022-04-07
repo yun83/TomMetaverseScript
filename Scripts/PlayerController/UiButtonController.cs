@@ -97,6 +97,8 @@ public class UiButtonController : MonoBehaviour
                 DataInfo.ins.State = -1;
                 break;
             case "Room_A":
+            case "Room_B":
+            case "CoffeeShop":
                 DataInfo.ins.State = 1;
                 break;
             case "World_A":

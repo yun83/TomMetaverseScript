@@ -410,11 +410,17 @@ public class ControllerManager : MonoBehaviour
         {
             WorldInteraction temp = null;
             Transform Truk = rayHit.transform;
-            //Debug.Log("Ray Cast Event Trigger [<color=blue> Name : " + Truk.name + "</color> ] [<color=yellow> Tag : " + Truk.tag + "</color> ]");
+            Debug.Log("Ray Cast Event Trigger [<color=blue> Name : " + Truk.name + "</color> ] [<color=yellow> Tag : " + Truk.tag + "</color> ]");
             try
             {
                 if (Truk.parent != null)
+                {
                     temp = Truk.parent.GetComponent<WorldInteraction>();
+                    if (Truk.tag == "EctPlayer")
+                    {
+                        temp = Truk.GetComponent<WorldInteraction>();
+                    }
+                }
                 else
                     temp = Truk.GetComponent<WorldInteraction>();
 
@@ -490,6 +496,12 @@ public class ControllerManager : MonoBehaviour
                         DataInfo.ins.WorldMapOutButtonSetting();
                     }
                     break;
+                case InteractionType.Cafe_In:
+                    if (EventState == 1)
+                    {
+                        LoadScene("CoffeeShop");
+                    }
+                    break;
                 case InteractionType.OnChair:
                     if (EventState == 1)
                     {
@@ -539,6 +551,7 @@ public class ControllerManager : MonoBehaviour
                     break;
                 case InteractionType.NPC_PetMaster:
                 case InteractionType.NPC_Cafe_0:
+                case InteractionType.NPC_Cafe_1:
                     if (EventState == 1)
                     {
                         Debug.Log("Npc 터치 거리 : " + EventScripts.PlayerDis);
@@ -578,6 +591,10 @@ public class ControllerManager : MonoBehaviour
 
         HandRelease.SetActive(true);
         HandItem = true;
+
+        yield return null;
+
+        Destroy(EventScripts.gameObject);
     }
 
     void GiftGet()

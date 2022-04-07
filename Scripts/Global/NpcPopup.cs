@@ -7,13 +7,14 @@ public class NpcPopup : MonoBehaviour
 {
     public int State = 0;
     public Transform ParentTrans;
-    public Text NpcMsg;
+    public GameObject NpcButtonObj;
 
     public WorldInteraction EventScripts;
     public GameObject Trunk;
     List<Button> TrunkButtonList = new List<Button>();
 
     int MsgCount = 0;
+    bool EctClickCheck = false;
     /// <summary>
     /// 0-갯풀, 1-카페
     /// </summary>
@@ -31,7 +32,7 @@ public class NpcPopup : MonoBehaviour
 
         if (EventScripts != null)
         {
-            EventScripts.UiCameraObj.SetActive(false);
+            EventScripts.OnOffObject.SetActive(false);
         }
         TrunkButtonList.Clear();
         if (Trunk != null)
@@ -45,7 +46,7 @@ public class NpcPopup : MonoBehaviour
         MsgCount = 0;
         State = 0;
         DataInfo.ins.CallNpc = true;
-        EventScripts.UiCameraObj.SetActive(true);
+        EventScripts.OnOffObject.SetActive(true);
     }
 
     // Update is called once per frame
@@ -62,7 +63,10 @@ public class NpcPopup : MonoBehaviour
                 PetNpcStateLogic();
                 break;
             case InteractionType.NPC_Cafe_0:
-                CafeNpcStateLogic();
+                CafeNpc_0_StateLogic();
+                break;
+            case InteractionType.NPC_Cafe_1:
+                CafeNpc_1_StateLogic();
                 break;
         }
     }
@@ -84,6 +88,15 @@ public class NpcPopup : MonoBehaviour
 
         Button[] temp = rt.GetComponentsInChildren<Button>();
 
+
+        //for (int i = 0; i < BCount; i++)
+        //{
+        //    GameObject tempO = Instantiate(NpcButtonObj);
+        //    tempO.transform.parent = Trunk.transform;
+
+        //    NpcButton tempN = tempO.GetComponent<NpcButton>();
+        //}
+
         TrunkButtonList.Clear();
         for (int i = 0; i < temp.Length; i++)
         {
@@ -96,13 +109,20 @@ public class NpcPopup : MonoBehaviour
         switch (State)
         {
             case 0:
-                CreatePage("Prefabs/PetNpc/Set_0_PetNpc");
+                CreatePage("Prefabs/PetNpc/PetNpc0_0");
+                TrunkButtonList[0].onClick.RemoveAllListeners();
+                TrunkButtonList[0].onClick.AddListener(() =>
+                {
+                    Application.OpenURL("https://tomntoms.notion.site/tomntoms/GETPOOL-7bb3724306a24551aaaf3d26358e6dd0");
+                }
+                );
+                EctClickCheck = false;
                 State = 1;
                 break;
             case 1:
-                if (Input.GetMouseButtonDown(0))
+                if(EctClickCheck)
                 {
-                    CreatePage("Prefabs/PetNpc/Set_2_PetNpc");
+                    CreatePage("Prefabs/PetNpc/PetNpc0_1");
                     for (int i = 0; i < TrunkButtonList.Count; i++)
                     {
                         int idx = i;
@@ -116,25 +136,63 @@ public class NpcPopup : MonoBehaviour
                         }
                         );
                     }
+                    EctClickCheck = false;
                     State = 2;
                 }
                 break;
         }
     }
 
-    void CafeNpcStateLogic()
+    void CafeNpc_0_StateLogic()
     {
         switch (State)
         {
             case 0:
-                CreatePage("Prefabs/PetNpc/Set_0_CafeMaster");
+                CreatePage("Prefabs/PetNpc/CafeNpc0_0");
+                TrunkButtonList[0].onClick.RemoveAllListeners();
+                TrunkButtonList[0].onClick.AddListener(() =>
+                {
+                    Application.OpenURL("https://www.tomntoms.com");
+                }
+                );
+                EctClickCheck = false;
                 State = 1;
                 break;
             case 1:
-                if (Input.GetMouseButtonDown(0))
-                {
-                }
                 break;
         }
+    }
+
+    void CafeNpc_1_StateLogic()
+    {
+        switch (State)
+        {
+            case 0:
+                CreatePage("Prefabs/PetNpc/CafeNpc1_0");
+                for (int i = 0; i < TrunkButtonList.Count; i++)
+                {
+                    int idx = i;
+                    TrunkButtonList[idx].onClick.RemoveAllListeners();
+                }
+                TrunkButtonList[0].onClick.AddListener(() =>
+                {
+                    //손에 들수 있는 커피 오브젝트 생성
+                    gameObject.SetActive(false);
+
+                    GameObject TempObj = Instantiate(Resources.Load<GameObject>("Prefabs/PickUpItem/PickUpHand"));
+                    TempObj.transform.localPosition = new Vector3(3, 0.8f, -1.6f);
+                    TempObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                });
+                EctClickCheck = false;
+                State = 1;
+                break;
+            case 1:
+                break;
+        }
+    }
+
+    public void OnClick_EctClick()
+    {
+        EctClickCheck = true;
     }
 }

@@ -59,7 +59,8 @@ public class Info_Char
             "\n Pants [" + Pants + "] " +
             "\n Shoes [" + Shoes + "] " +
             "\n Accessory [" + Accessory + "] " +
-            "\n Money [" + Money + "] "
+            "\n Money [" + Money + "] " +
+            "\n PetID [" + PetID + "] "
             ;
         return ret;
     }

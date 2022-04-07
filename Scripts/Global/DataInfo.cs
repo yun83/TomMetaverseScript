@@ -41,6 +41,11 @@ public class DataInfo : Single<DataInfo>
         get { return PlayerPrefs.GetString("DayEvent", ""); }
         set { PlayerPrefs.SetString("DayEvent", value); }
     }
+    public string MyRoomName
+    {
+        get { return PlayerPrefs.GetString("MyRoomName", ""); }
+        set { PlayerPrefs.SetString("MyRoomName", value); }
+    }
 
     public OptionData OptionInfo = new OptionData();
 

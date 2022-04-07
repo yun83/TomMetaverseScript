@@ -56,6 +56,7 @@ public class CharacterWindow : MonoBehaviour
 
     [Header("아이템 구매")]
     public ItemBuyPopup BuyPopup;
+    public GameObject MyRoomSelectPopup;
 
     void Start()
     {
@@ -101,6 +102,7 @@ public class CharacterWindow : MonoBehaviour
 
         ExitPopupObj.SetActive(false);
         BuyPopup.gameObject.SetActive(false);
+        MyRoomSelectPopup.SetActive(false);
 
         playerManger.itemEquipment(DataInfo.ins.CharacterSub);
 
@@ -476,7 +478,8 @@ public class CharacterWindow : MonoBehaviour
         Debug.Log(DataInfo.ins.SaveData);
         DataInfo.ins.CharacterMain = DataInfo.ins.CharacterSub;
 
-        LoadScene(NectSceneName);
+        //LoadScene(NectSceneName);
+        MyRoomSelectPopup.SetActive(true);
     }
 
     void CharCostumSettingOut()
@@ -521,7 +524,8 @@ public class CharacterWindow : MonoBehaviour
         Debug.Log(DataInfo.ins.SaveData);
         DataInfo.ins.CharacterMain = DataInfo.ins.CharacterSub;
 
-        LoadScene(NectSceneName);
+        //LoadScene(NectSceneName);
+        MyRoomSelectPopup.SetActive(true);
     }
 
     public void LoadScene(string sceneName)
@@ -601,5 +605,19 @@ public class CharacterWindow : MonoBehaviour
     void NoMoneyPopupCall()
     {
         OpenCharPopupData("알림", "보유금액이 부족합니다.");
+    }
+
+    public void OnClick_RoomSelect(int idx)
+    {
+        switch (idx)
+        {
+            case 0:
+                DataInfo.ins.MyRoomName = "Room_A";
+                break;
+            case 1:
+                DataInfo.ins.MyRoomName = "Room_B";
+                break;
+        }
+        LoadScene(DataInfo.ins.MyRoomName);
     }
 }
