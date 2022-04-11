@@ -27,17 +27,20 @@ public class PetRoomPoint : MonoBehaviour
             Vector3 tempPos = transform.position;
             PetManager = trunk.GetComponent<PetMoveController>();
             PetManager.MoveStop = true;
-            tempPos.y += 0.5f;
+
+            //tempPos.y += 0.5f;
+
             PetManager.transform.position = tempPos;
             PetManager.transform.rotation = transform.rotation;
-            PetManager.gameObject.GetComponent<Collider>().isTrigger = false;
-            PetManager.gameObject.AddComponent<Rigidbody>();
+
+            //PetManager.gameObject.GetComponent<Collider>().isTrigger = false;
+            //PetManager.gameObject.AddComponent<Rigidbody>();
 
             State = 1;
         }
         else
         {
-            Invoke("PetSearch", 0.5f);
+            Invoke("PetSearch", 0.2f);
         }
     }
 

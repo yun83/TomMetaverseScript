@@ -116,29 +116,37 @@ public class NpcPopup : MonoBehaviour
                     Application.OpenURL("https://tomntoms.notion.site/tomntoms/GETPOOL-7bb3724306a24551aaaf3d26358e6dd0");
                 }
                 );
+                TrunkButtonList[1].onClick.RemoveAllListeners();
+                TrunkButtonList[1].onClick.AddListener(() => { 
+                    State = 2;
+                    EctClickCheck = false;
+                });
                 EctClickCheck = false;
                 State = 1;
                 break;
             case 1:
                 if(EctClickCheck)
                 {
-                    CreatePage("Prefabs/PetNpc/PetNpc0_1");
-                    for (int i = 0; i < TrunkButtonList.Count; i++)
-                    {
-                        int idx = i;
-                        TrunkButtonList[idx].onClick.RemoveAllListeners();
-                        TrunkButtonList[idx].onClick.AddListener(() =>
-                        {
-                            DataInfo.ins.CharacterMain.PetID = idx;
-                            DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterMain);
-                            DataInfo.ins.infoController.CreatePetObject();
-                            gameObject.SetActive(false);
-                        }
-                        );
-                    }
                     EctClickCheck = false;
-                    State = 2;
+                    //State = 2;
                 }
+                break;
+            case 2:
+                CreatePage("Prefabs/PetNpc/PetNpc0_1");
+                for (int i = 0; i < TrunkButtonList.Count; i++)
+                {
+                    int idx = i;
+                    TrunkButtonList[idx].onClick.RemoveAllListeners();
+                    TrunkButtonList[idx].onClick.AddListener(() =>
+                    {
+                        DataInfo.ins.CharacterMain.PetID = idx;
+                        DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterMain);
+                        DataInfo.ins.infoController.CreatePetObject();
+                        gameObject.SetActive(false);
+                    }
+                    );
+                }
+                State = 3;
                 break;
         }
     }
@@ -155,6 +163,24 @@ public class NpcPopup : MonoBehaviour
                     Application.OpenURL("https://www.tomntoms.com");
                 }
                 );
+                TrunkButtonList[1].onClick.RemoveAllListeners();
+                TrunkButtonList[1].onClick.AddListener(() => {
+
+                    //DataInfo.ins.OutRoomButton.Clear();
+
+                    //ButtonClass item1 = new ButtonClass();
+                    //item1.text = "CoffeeShop";
+                    //item1.addEvent = (() => {
+                    //    DataInfo.ins.infoController.LoadScene("CoffeeShop");
+                    //});
+                    //DataInfo.ins.OutRoomButton.Add(item1);
+
+                    //DataInfo.ins.GameUI.OR_Popup.Title.text = "카페 들어가기";
+                    //DataInfo.ins.GameUI.OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
+
+                    DataInfo.ins.infoController.LoadScene("CoffeeShop");
+
+                });
                 EctClickCheck = false;
                 State = 1;
                 break;
@@ -183,7 +209,6 @@ public class NpcPopup : MonoBehaviour
                     TempObj.transform.localPosition = new Vector3(3, 0.8f, -1.6f);
                     TempObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                 });
-                EctClickCheck = false;
                 State = 1;
                 break;
             case 1:

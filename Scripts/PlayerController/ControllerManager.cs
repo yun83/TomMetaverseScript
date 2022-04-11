@@ -16,7 +16,7 @@ public class ControllerManager : MonoBehaviour
     public Transform Axis;
 
     [Tooltip("카메라 회전 속도")]
-    public float rotateSpeed = 0.65f;
+    public float rotateSpeed = 0.25f;
     [Tooltip("카메라 확대 축소 속도")]
     public float ZoomSpeed = 0.5f;            // 줌 스피드.
     [Tooltip("카메라와의 거리")]
@@ -40,7 +40,7 @@ public class ControllerManager : MonoBehaviour
 
     [Header("케릭터")]
     public Transform PlayerObject;
-    private CharacterController _controller;
+    public CharacterController _controller;
     private CharacterManager _manager;
     [Tooltip("프레임당 점프 높이")]
     public float JumpDis = 0.02f;
@@ -70,7 +70,6 @@ public class ControllerManager : MonoBehaviour
 
     public CinemachineVirtualCamera cvc;
     private Camera _camera;
-    private UiButtonController UIController;
 
     [Header("상호작용")]
     public RandomRespawn RRSpawn;
@@ -81,6 +80,7 @@ public class ControllerManager : MonoBehaviour
     /// </summary>
     private bool HandItem = false;
     public GameObject HandRelease;
+    private bool EventStartCheck = false;
 
     [Header("펫 시스템")]
     public GameObject[] PetObject;
@@ -107,7 +107,6 @@ public class ControllerManager : MonoBehaviour
         DataInfo.ins.RightTId = -1;
 
         _camera = Camera.main;
-
     }
 
     // Start is called before the first frame update
@@ -143,12 +142,11 @@ public class ControllerManager : MonoBehaviour
         //    mAnimator.runtimeAnimatorController = AniType[1];
 
         RRSpawn = GameObject.FindObjectOfType<RandomRespawn>();
-        UIController = GetComponentInChildren<UiButtonController>();
-
 
         HandRelease.SetActive(false);
         PageLodingPopup.SetActive(false);
         progressBar.fillAmount = 0;
+        EventStartCheck = false;
 
         //추후 NPC 대화를 통해서 획득
         CreatePetObject();
@@ -200,10 +198,7 @@ public class ControllerManager : MonoBehaviour
         if (petID < PetObject.Length)
         {
             insPetObj = Instantiate(PetObject[petID]);
-            intPetScript = insPetObj.AddComponent<PetMoveController>();
-            intPetScript.myPlayerTrans = transform;
-            intPetScript.PlayerMoveSpeed = moveSpeed;
-            insPetObj.name = "펫";
+            insPetObj.AddComponent<PetMoveController>();
         }
     }
 
@@ -364,6 +359,7 @@ public class ControllerManager : MonoBehaviour
 
             if (EventScripts != null)
             {
+                _controller.enabled = true;
                 EventScripts.OutInteraction();
             }
             EventState = 0;
@@ -372,6 +368,14 @@ public class ControllerManager : MonoBehaviour
         transform.position = PlayerObject.position;
         if (EventState == 0)
         {
+            if (EventStartCheck)
+            {
+                if(EventScripts != null)
+                {
+                    EventScripts.OutInteraction();
+                }
+                EventStartCheck = false;
+            }
             //이동
             //PlayerObject.position += PlayerObject.forward * offset;
             Vector3 MoveVec3 = PlayerObject.forward * offset;
@@ -416,10 +420,6 @@ public class ControllerManager : MonoBehaviour
                 if (Truk.parent != null)
                 {
                     temp = Truk.parent.GetComponent<WorldInteraction>();
-                    if (Truk.tag == "EctPlayer")
-                    {
-                        temp = Truk.GetComponent<WorldInteraction>();
-                    }
                 }
                 else
                     temp = Truk.GetComponent<WorldInteraction>();
@@ -441,36 +441,49 @@ public class ControllerManager : MonoBehaviour
             }
             else
             {
-                if (Truk.tag == "Pet")
+                switch (Truk.tag)
                 {
-                    intPetScript.PetInteraction();
-                }
-                else
-                {
-                    switch (Truk.name)
-                    {
-                        case "PI_0":
-                            intPetScript.OnClick_Evnet_0();
-                            if (DataInfo.ins.Now_QID == 4)
+                    default:
+                        switch (Truk.name)
+                        {
+                            case "PI_0":
+                                intPetScript.OnClick_Evnet_0();
+                                if (DataInfo.ins.Now_QID == 4)
+                                {
+                                    DataInfo.ins.QuestData[4].State = 1;
+                                }
+                                break;
+                            case "PI_1":
+                                intPetScript.OnClick_Evnet_1();
+                                if (DataInfo.ins.Now_QID == 4)
+                                {
+                                    DataInfo.ins.QuestData[4].State = 1;
+                                }
+                                break;
+                            case "PI_2":
+                                intPetScript.OnClick_Evnet_2();
+                                if (DataInfo.ins.Now_QID == 4)
+                                {
+                                    DataInfo.ins.QuestData[4].State = 1;
+                                }
+                                break;
+                        }
+                        break;
+                    case "Pet":
+                        intPetScript.PetInteraction();
+                        break;
+                    case "EctPlayer":
+                    case "WarpPoint":
+                        {
+                            if (EventScripts != null)
                             {
-                                DataInfo.ins.QuestData[4].State = 1;
+                                EventScripts.OutInteraction();
                             }
-                            break;
-                        case "PI_1":
-                            intPetScript.OnClick_Evnet_1();
-                            if (DataInfo.ins.Now_QID == 4)
-                            {
-                                DataInfo.ins.QuestData[4].State = 1;
-                            }
-                            break;
-                        case "PI_2":
-                            intPetScript.OnClick_Evnet_2();
-                            if (DataInfo.ins.Now_QID == 4)
-                            {
-                                DataInfo.ins.QuestData[4].State = 1;
-                            }
-                            break;
-                    }
+                            temp = Truk.GetComponent<WorldInteraction>();
+                            EventScripts = temp;
+                            EventState = 1;
+                        }
+                        break;
                 }
             }
             ret = true;
@@ -482,24 +495,60 @@ public class ControllerManager : MonoBehaviour
     {
         if (EventState > 0 && EventState < 3)
         {
+            if (!EventStartCheck)
+            {
+                EventStartCheck = true;
+            }
             switch (EventScripts.nowType)
             {
                 case InteractionType.OutRoom:
                     if (EventState == 1)
                     {
-                        DataInfo.ins.RoomOutButtonSetting();
+                        DataInfo.ins.OutRoomButton.Clear();
+
+                        ButtonClass item1 = new ButtonClass();
+                        item1.text = "World Map";
+                        item1.addEvent = (() => {
+                            LoadScene("World_A");
+                        });
+                        DataInfo.ins.OutRoomButton.Add(item1);
+
+                        DataInfo.ins.GameUI.OR_Popup.Title.text = "leave the Room";
+                        DataInfo.ins.GameUI.OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
                     }
                     break;
                 case InteractionType.WorldMapOut:
                     if (EventState == 1)
                     {
-                        DataInfo.ins.WorldMapOutButtonSetting();
+                        DataInfo.ins.OutRoomButton.Clear();
+
+                        ButtonClass item1 = new ButtonClass();
+                        item1.text = "My Room";
+                        item1.addEvent = (() => {
+                            LoadScene(DataInfo.ins.MyRoomName);
+                        });
+                        DataInfo.ins.OutRoomButton.Add(item1);
+
+                        DataInfo.ins.GameUI.OR_Popup.Title.text = "leave the Room";
+                        DataInfo.ins.GameUI.OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
                     }
                     break;
                 case InteractionType.Cafe_In:
                     if (EventState == 1)
                     {
-                        LoadScene("CoffeeShop");
+                        //LoadScene("CoffeeShop");
+                        DataInfo.ins.OutRoomButton.Clear();
+
+                        ButtonClass item1 = new ButtonClass();
+                        item1.text = "CoffeeShop";
+                        item1.addEvent = (() =>
+                        {
+                            LoadScene("CoffeeShop");
+                        });
+                        DataInfo.ins.OutRoomButton.Add(item1);
+
+                        DataInfo.ins.GameUI.OR_Popup.Title.text = "카페 들어가기";
+                        DataInfo.ins.GameUI.OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
                     }
                     break;
                 case InteractionType.OnChair:
@@ -535,6 +584,23 @@ public class ControllerManager : MonoBehaviour
                             Com.ins.AniSetInt(mAnimator, "Interaction", 2);
                     }
                     PlayerObject.position = EventScripts.PlayerPos;
+                    PlayerObject.eulerAngles = EventScripts.PlayerRotation;
+                    break;
+                case InteractionType.Sleep:
+                    if (EventState == 1)
+                    {
+                        if (EventScripts.ColliderCheck)
+                        {
+                            EventScripts.OnInteraction();
+                        }
+                        if (DataInfo.ins.CharacterMain.Sex == 1)
+                            Com.ins.AniSetInt(mAnimator, "Interaction", 104);
+                        else
+                            Com.ins.AniSetInt(mAnimator, "Interaction", 4);
+                    }
+                    _controller.enabled = false;
+                    PlayerObject.position = EventScripts.PlayerPos;
+                    PlayerObject.eulerAngles = EventScripts.PlayerRotation;
                     break;
                 case InteractionType.Gift:
                     if (EventState == 1)
@@ -554,13 +620,16 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.NPC_Cafe_1:
                     if (EventState == 1)
                     {
-                        Debug.Log("Npc 터치 거리 : " + EventScripts.PlayerDis);
+                        //Debug.Log("Npc 터치 거리 : " + EventScripts.PlayerDis);
                         if (EventScripts.PlayerDis < 5)
                         {
-                            UIController.OnClick_Npc(EventScripts);
+                            DataInfo.ins.GameUI.OnClick_Npc(EventScripts);
                         }
                     }
                     break;
+                    //Interaction 4 눕기
+                    //Interaction 5 옆으로 눕기
+                    //Interaction 6 앉아서 다리 흔들기
             }
             EventState++;
             EventScripts.UseState = 1;
@@ -602,10 +671,11 @@ public class ControllerManager : MonoBehaviour
         int[] getMoney = { 100, 150, 200, 250, 300 };
         Com.ins.ShuffleArray(getMoney);
 
-        if (DataInfo.ins.CharacterMain.Sex == 1)
-            Com.ins.AniSetInt(mAnimator, "Interaction", 103);
-        else
-            Com.ins.AniSetInt(mAnimator, "Interaction", 3);
+        //선물 줍는 에니메이션 삭제
+        //if (DataInfo.ins.CharacterMain.Sex == 1)
+        //    Com.ins.AniSetInt(mAnimator, "Interaction", 103);
+        //else
+        //    Com.ins.AniSetInt(mAnimator, "Interaction", 3);
 
         RRSpawn.ItemDelet(EventScripts);
 
@@ -618,12 +688,12 @@ public class ControllerManager : MonoBehaviour
 
         DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterMain);
         //아이템 획득
-        UIController.CallToastMassage("선물 획득 하였습니다. [" + getMoney[0] + "] Gold", 0.8f);
+        DataInfo.ins.GameUI.CallToastMassage("선물 획득 하였습니다. [" + getMoney[0] + "] Gold", 0.8f);
     }
 
     public void RouletteEndEvent()
     {
-        UIController.OnClick_CloseAllPopup();
+        DataInfo.ins.GameUI.OnClick_CloseAllPopup();
     }
 
     private static float ClampAngle(float lfAngle, float lfMin, float lfMax)

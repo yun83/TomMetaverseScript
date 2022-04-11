@@ -5,6 +5,8 @@ using UnityEngine;
 public class DataInfo : Single<DataInfo>
 {
     public ControllerManager infoController;
+    public UiButtonController GameUI;
+
     public bool LoginCheck = false;
     public bool LodingCheck = false;
 
@@ -340,59 +342,4 @@ public class DataInfo : Single<DataInfo>
         MoneyChange = true;
     }
 
-    public void RoomOutButtonSetting()
-    {
-        UiButtonController ubc = GameObject.FindObjectOfType<UiButtonController>();
-
-        ButtonClass item1 = new ButtonClass();
-        item1.text = "World Map";
-        item1.addEvent = (() => {
-            infoController.LoadScene("World_A");
-        });
-
-        //ButtonClass item2 = new ButtonClass();
-        //item2.text = "Char Setting Page";
-        //item2.addEvent = (() => {
-        //    LoadingPage.LoadScene("01_CharacterWindow");
-        //});
-
-        ButtonClass item3 = new ButtonClass();
-        item3.text = "Quit Game";
-        item3.addEvent = (() => {
-            ubc.OnClick_Exit();
-        });
-
-        OutRoomButton.Clear();
-
-        OutRoomButton.Add(item1);
-        //OutRoomButton.Add(item2);
-        OutRoomButton.Add(item3);
-        ubc.OnClick_OutRoomPopup(OutRoomButton);
-
-        ubc.OR_Popup.Title.text = "leave the Room";
-    }
-
-    public void WorldMapOutButtonSetting()
-    {
-        UiButtonController ubc = GameObject.FindObjectOfType<UiButtonController>();
-        OutRoomButton.Clear();
-
-        ButtonClass item1 = new ButtonClass();
-        item1.text = "My Room";
-        item1.addEvent = (() => {
-            infoController.LoadScene("Room_A");
-        });
-
-        ButtonClass item2 = new ButtonClass();
-        item2.text = "Quit Game";
-        item2.addEvent = (() => {
-            ubc.OnClick_Exit();
-        });
-
-        OutRoomButton.Add(item1);
-        OutRoomButton.Add(item2);
-        ubc.OnClick_OutRoomPopup(OutRoomButton);
-
-        ubc.OR_Popup.Title.text = "leave the Room";
-    }
 }

@@ -33,6 +33,9 @@ public class WorldInteraction : MonoBehaviour
     [Header("NPC 일경우 OnOff")]
     public GameObject OnOffObject;
 
+    string SceneName;
+    int RoomState = 0;
+
     void Awake()
     {
         InitWorldInteraction();
@@ -47,6 +50,22 @@ public class WorldInteraction : MonoBehaviour
 
         if (OnOffObject != null)
             OnOffObject.SetActive(false);
+
+        SceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+        switch (SceneName)
+        {
+            default:
+                area = 10;
+                RoomState = 0;
+                break;
+            case "Room_A":
+            case "Room_B":
+            case "CoffeeShop":
+                area = 2;
+                RoomState = 1;
+                break;
+        }
     }
 
     private void FixedUpdate()
@@ -81,6 +100,7 @@ public class WorldInteraction : MonoBehaviour
     {
         for(int i=0;i< mColliders.Length; i ++)
             mColliders[i].isTrigger = true;
+
     }
 
     public void OutInteraction()
@@ -148,7 +168,7 @@ public class WorldInteraction : MonoBehaviour
                 NicName.text = DataInfo.ins.CharacterMain.NicName;
                 EventObj.name = "닉네임";
                 break;
-            case InteractionType.OutRoom:
+            //case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
             case InteractionType.Cafe_In:
                 break;
@@ -178,7 +198,7 @@ public class WorldInteraction : MonoBehaviour
         //Debug.Log("World Interaction On Trigger Enter[<color=blue>" + other.name + "</color>] Tag [<color=yellow>" + other.tag + "</color>]");
         switch (nowType)
         {
-            case InteractionType.OutRoom:
+            //case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
             case InteractionType.Cafe_In:
                 if (other.tag == "Player")
@@ -214,4 +234,5 @@ public enum InteractionType
     NPC_Cafe_0,
     NPC_Cafe_1,
     Cafe_In,
+    Sleep,
 }

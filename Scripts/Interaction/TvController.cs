@@ -14,10 +14,13 @@ public class TvController : MonoBehaviour
     public GameObject IconButton;
     public GameObject RemoteController;
 
-    private bool PlayVideoInit = false;
+    private bool PlayVideo = false;
+    private bool PlayVideoIconShow = false;
     private int State = 0;
     private bool videoInitCheck = false;
     bool SoundController = false;
+
+    float PlayerDis;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +33,9 @@ public class TvController : MonoBehaviour
 
         State = 0;
         videoInitCheck = false;
-        IconButton.SetActive(true);
+        PlayVideo = false;
+        PlayVideoIconShow = false;
+        IconButton.SetActive(false);
         RemoteController.SetActive(false);
     }
 
@@ -46,6 +51,27 @@ public class TvController : MonoBehaviour
             else
                 vHandler.SetDirectAudioMute(0, true);
         }
+
+        if (!PlayVideo)
+        {
+            PlayerDis = Vector3.Distance(DataInfo.ins.infoController.PlayerObject.position, transform.position);
+            if (2 > PlayerDis)
+            {
+                if (!PlayVideoIconShow)
+                {
+                    PlayVideoIconShow = true;
+                    IconButton.SetActive(true);
+                }
+            }
+            else
+            {
+                if (PlayVideoIconShow)
+                {
+                    PlayVideoIconShow = false;
+                    IconButton.SetActive(false);
+                }
+            }
+        }
     }
 
     public void OnClick_TV()
@@ -54,8 +80,8 @@ public class TvController : MonoBehaviour
         {
             vImage.color = Color.black;
             vHandler.Stop();
+            PlayVideo = false;
             State = 0;
-            IconButton.SetActive(true);
             RemoteController.SetActive(false);
         }
         else
@@ -72,7 +98,6 @@ public class TvController : MonoBehaviour
         //코루틴 실행중 중복 방지
         videoInitCheck = true;
 
-        IconButton.SetActive(false);
         RemoteController.SetActive(true);
         vHandler.clip = videoClip;
 
@@ -95,7 +120,11 @@ public class TvController : MonoBehaviour
 
         yield return null;
 
+        PlayVideo = true;
         videoInitCheck = false;
+        PlayVideoIconShow = false;
+        IconButton.SetActive(false);
+
         State = 1;
     }
 }

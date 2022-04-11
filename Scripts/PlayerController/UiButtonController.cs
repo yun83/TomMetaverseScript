@@ -47,6 +47,7 @@ public class UiButtonController : MonoBehaviour
 
         myAnimator = myPlayer.GetComponentInChildren<Animator>();
         DataInfo.ins.MyPlayerAnimator = myAnimator;
+        DataInfo.ins.GameUI = this;
 
         if (ToastMes == null)
         ToastMes = transform.GetComponentInChildren<UiMessage>();
@@ -74,10 +75,48 @@ public class UiButtonController : MonoBehaviour
                     OnClick_Exit();
                     break;
                 case 1:
-                    DataInfo.ins.RoomOutButtonSetting();
+                    {
+                        DataInfo.ins.OutRoomButton.Clear();
+
+                        ButtonClass item1 = new ButtonClass();
+                        item1.text = "World Map";
+                        item1.addEvent = (() => {
+                            DataInfo.ins.infoController.LoadScene("World_A");
+                        });
+                        DataInfo.ins.OutRoomButton.Add(item1);
+
+                        ButtonClass item2 = new ButtonClass();
+                        item2.text = "Quit Game";
+                        item2.addEvent = (() => {
+                            OnClick_Exit();
+                        });
+                        DataInfo.ins.OutRoomButton.Add(item2);
+
+                        OR_Popup.Title.text = "leave the Room";
+                        OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
+                    }
                     break;
                 case 2:
-                    DataInfo.ins.WorldMapOutButtonSetting();
+                    {
+                        DataInfo.ins.OutRoomButton.Clear();
+
+                        ButtonClass item1 = new ButtonClass();
+                        item1.text = "My Room";
+                        item1.addEvent = (() => {
+                            DataInfo.ins.infoController.LoadScene(DataInfo.ins.MyRoomName);
+                        });
+                        DataInfo.ins.OutRoomButton.Add(item1);
+
+                        ButtonClass item2 = new ButtonClass();
+                        item2.text = "Quit Game";
+                        item2.addEvent = (() => {
+                            OnClick_Exit();
+                        });
+                        DataInfo.ins.OutRoomButton.Add(item2);
+
+                        OR_Popup.Title.text = "leave the Room";
+                        OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
+                    }
                     break;
             }
         });
@@ -434,11 +473,11 @@ public class UiButtonController : MonoBehaviour
 
     public void OnClick_Npc(WorldInteraction wi)
     {
+        WorldInteraction ea = wi;
         if (!DataInfo.ins.CallNpc)
         {
-
             NpcPopupScript.gameObject.SetActive(true);
-            NpcPopupScript.InitNpc(wi);
+            NpcPopupScript.InitNpc(ea);
         }
     }
 }

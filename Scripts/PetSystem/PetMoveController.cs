@@ -34,6 +34,11 @@ public class PetMoveController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("TouchLayer");
         Look = temp.transform;
 
+        myPlayerTrans = DataInfo.ins.infoController.PlayerObject;
+        Vector3 StartPos = myPlayerTrans.position;
+        StartPos.y = 0.05f;
+        transform.position = StartPos;
+
         InteractionObj = Instantiate(Resources.Load<GameObject>("Prefabs/PetInteraction"));
         InteractionObj.transform.parent = transform;
         InteractionObj.transform.position = new Vector3(0, 0.8f, 0);
@@ -44,12 +49,7 @@ public class PetMoveController : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
-        if (myPlayerTrans == null)
-        {
-            return;
-        }
-
+    { 
         if (!MoveStop)
         {
             PlayerDis = Vector3.Distance(transform.position, myPlayerTrans.position);
