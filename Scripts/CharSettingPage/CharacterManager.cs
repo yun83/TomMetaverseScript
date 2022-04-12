@@ -37,6 +37,7 @@ public class CharacterManager : MonoBehaviour
 
         cmLogic = FindObjectOfType<ControllerManager>();
         nicCheck = !DataInfo.ins.OptionInfo.NicNameOpen;
+        DataInfo.ins.myPlayer = this;
     }
 
     private void LateUpdate()
@@ -201,14 +202,14 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
-    void OnControllerColliderHit(ControllerColliderHit cchit)
-    {
-        //Debug.Log("000 On Controller Collider Hit[<color=blue>" + cchit.transform.name + "</color>] Tag [<color=yellow>" + cchit.transform.tag + "</color>]");
-        if (cchit.transform.tag.Equals("GiftBox"))
-        {
-            cmLogic.EventScripts = cchit.transform.GetComponent<WorldInteraction>();
-            cmLogic.EventState = 1;
-            cmLogic.RayCastEventLogic();
-        }
-    }
+    //void OnControllerColliderHit(ControllerColliderHit cchit)
+    //{
+    //    //Debug.Log("000 On Controller Collider Hit[<color=blue>" + cchit.transform.name + "</color>] Tag [<color=yellow>" + cchit.transform.tag + "</color>]");
+    //    if (cchit.transform.tag.Equals("GiftBox"))
+    //    {
+    //        cmLogic.EventScripts = cchit.transform.GetComponent<WorldInteraction>();
+    //        cmLogic.EventState = 1;
+    //        cmLogic.RayCastEventLogic();
+    //    }
+    //}
 }

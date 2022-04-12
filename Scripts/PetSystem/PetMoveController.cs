@@ -8,13 +8,13 @@ public class PetMoveController : MonoBehaviour
     public Transform Look;
     public Animator PetAni;
     public Rigidbody rigid;
+    public GameObject InteractionObj = null;
 
     public int aniMoveState = 0;
     public float PlayerDis;
     public float PlayerMoveSpeed = 2;
     private float SumSpeed = 0;
     public int AniSetIntIndx = 0;
-    private GameObject InteractionObj = null;
     Vector3 movePos;
 
     public bool ShowObject  = false;
@@ -41,11 +41,13 @@ public class PetMoveController : MonoBehaviour
 
         InteractionObj = Instantiate(Resources.Load<GameObject>("Prefabs/PetInteraction"));
         InteractionObj.transform.parent = transform;
-        InteractionObj.transform.position = new Vector3(0, 0.8f, 0);
+        InteractionObj.transform.localPosition = new Vector3(0, 0.8f, 0);
         InteractionObj.SetActive(false);
 
         movePos = transform.position;
         aniMoveState = 0;
+
+        DataInfo.ins.PetController = this;
     }
 
     private void FixedUpdate()
@@ -166,6 +168,10 @@ public class PetMoveController : MonoBehaviour
     {
         ShowObject = (ShowObject == false) ? true : false;
     }
+
+    //Bulldog give paw(손? 하이파이브?)
+    //Bulldog idle happy
+    //Bulldog idle lay down(앉아?)
 
     public void OnClick_Evnet_0()
     {

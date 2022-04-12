@@ -201,6 +201,7 @@ public class WorldInteraction : MonoBehaviour
             //case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
             case InteractionType.Cafe_In:
+            case InteractionType.Gift:
                 if (other.tag == "Player")
                 {
                     DataInfo.ins.infoController.EventScripts = this;

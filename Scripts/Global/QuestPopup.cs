@@ -39,7 +39,7 @@ public class QuestPopup : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        setScroll.totalCount = DataInfo.ins.dailyQuest.QuiteListId.Count;
+        setScroll.totalCount = DataInfo.ins.QuestList.Count;
         setScroll.InitScrollCall();
     }
 
@@ -48,7 +48,7 @@ public class QuestPopup : MonoBehaviour
         if(DataInfo.ins.Quest_WinState == 1)
         {
             DataInfo.ins.Quest_WinState = 2;
-            DataInfo.ins.AddMoney(DataInfo.ins.dailyQuest.GoldReward);
+            //DataInfo.ins.AddMoney(DataInfo.ins.dailyQuest.GoldReward);
             SuccesButton.interactable = false;
         }
     }

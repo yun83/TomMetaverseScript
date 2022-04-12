@@ -33,6 +33,7 @@ public class GestureButtonItem : MonoBehaviour
             Com.ins.AniSetInt(DataInfo.ins.MyPlayerAnimator, "Emotion", ItemInfo.Path + 100);
         else
             Com.ins.AniSetInt(DataInfo.ins.MyPlayerAnimator, "Emotion", ItemInfo.Path);
+
         if (DataInfo.ins.Now_QID == 5)
         {
             DataInfo.ins.QuestData[5].State = 1;

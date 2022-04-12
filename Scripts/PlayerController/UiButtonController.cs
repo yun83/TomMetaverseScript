@@ -20,6 +20,7 @@ public class UiButtonController : MonoBehaviour
     [Header("룰렛")]
     public GameObject RoulettePopup;
     DateTime SpinTime;
+    float CheckTime;
 
     [Header("게임Ui")]
     public Text MoneyText;
@@ -30,7 +31,7 @@ public class UiButtonController : MonoBehaviour
     InitScroll setGestureScroll;
     public GameObject ShopPopup;
     public GameObject InvenPopup;
-    public GameObject QuestPopup;
+    public QuestPopupVer2 QuestPopup;
     public OutRoomPopup OR_Popup;
     public PopupController popupController;
     public UiMessage ToastMes;
@@ -75,6 +76,7 @@ public class UiButtonController : MonoBehaviour
                     OnClick_Exit();
                     break;
                 case 1:
+                case 3:
                     {
                         DataInfo.ins.OutRoomButton.Clear();
 
@@ -137,11 +139,13 @@ public class UiButtonController : MonoBehaviour
                 break;
             case "Room_A":
             case "Room_B":
-            case "CoffeeShop":
                 DataInfo.ins.State = 1;
                 break;
             case "World_A":
                 DataInfo.ins.State = 2;
+                break;
+            case "CoffeeShop":
+                DataInfo.ins.State = 3;
                 break;
         }
     }
@@ -190,13 +194,14 @@ public class UiButtonController : MonoBehaviour
         GestureScroll.SetActive(false);
         OptionPopup.SetActive(false);
         popupController.gameObject.SetActive(false);
-        QuestPopup.SetActive(false);
+        QuestPopup.gameObject.SetActive(false);
         ShopPopup.SetActive(false);
         InvenPopup.SetActive(false);
         CharObj.SetActive(false);
         RoulettePopup.SetActive(false);
         OR_Popup.gameObject.SetActive(false);
         NpcPopupScript.gameObject.SetActive(false);
+        RoulettButtonSetting();
     }
 
     #region UI Button Click Setting
@@ -239,7 +244,7 @@ public class UiButtonController : MonoBehaviour
     public void OnClick_Quest()
     {
         OnClick_CloseAllPopup();
-        QuestPopup.SetActive(true);
+        QuestPopup.gameObject.SetActive(true);
     }
     public void OnClick_Option()
     {
@@ -432,20 +437,21 @@ public class UiButtonController : MonoBehaviour
         {
             TimeSpan RouletteSumTime = SpinTime - DateTime.Now;
 
-            if (RouletteSumTime.Seconds <= 0)
+            if (RouletteSumTime.TotalSeconds <= 0)
             {
                 UiButton[6].interactable = true;
                 DataInfo.ins.deData.RouletteState = 0;
+                DataInfo.ins.DayEvent = JsonUtility.ToJson(DataInfo.ins.deData);
             }
-            //else
-            //    Debug.Log(RouletteSumTime.Hours + "시" + RouletteSumTime.Minutes + "분" + RouletteSumTime.Seconds + "초");
         }
     }
 
     void RoulettButtonSetting()
     {
-        UiButton[6].interactable = true;
-        if (DataInfo.ins.deData.RouletteState == 1)
+        UiButton[6].interactable = false;
+        if (DataInfo.ins.deData.RouletteState == 0)
+            UiButton[6].interactable = true;
+        else if (DataInfo.ins.deData.RouletteState == 1)
         {
             SpinTime = DateTime.ParseExact(DataInfo.ins.deData.RouletteDay, "yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
             DataInfo.ins.deData.RouletteState = 2;
@@ -460,7 +466,11 @@ public class UiButtonController : MonoBehaviour
         //룰렛 돌린 시간 저장
         DataInfo.ins.deData.RouletteState = 1;
 
-        DateTime temp = DateTime.Now.AddDays(1);
+        //일일 퀘스트를 위해 일자 계산
+        //DateTime temp = DateTime.Now.AddDays(1);
+
+        //테스트를 위해 시간당 초기화로 수정
+        DateTime temp = DateTime.Now.AddHours(1);
 
         DataInfo.ins.deData.RouletteDay = //DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");
                                          new System.DateTime(temp.Year, temp.Month, temp.Day, 0, 0, 0).ToString("yyyyMMddHHmmss");

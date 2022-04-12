@@ -6,6 +6,9 @@ public class DataInfo : Single<DataInfo>
 {
     public ControllerManager infoController;
     public UiButtonController GameUI;
+    public PetMoveController PetController;
+    public CharacterManager myPlayer;
+    public Animator myAnimator;
 
     public bool LoginCheck = false;
     public bool LodingCheck = false;
@@ -85,15 +88,29 @@ public class DataInfo : Single<DataInfo>
     public CoustumItemCsv BuyItemSelect = new CoustumItemCsv();
     public bool TotlaMoneySumCheck = false;
 
+    [Header("퀘스트 시스템")]
     //퀘스트 데이터 로딩
     public List<QuestCsv> QuestList = new List<QuestCsv>();
     public QuestCsv dailyQuest = new QuestCsv();
 
-    [Header("퀘스트 시스템")]
     public List<QuestDataCsv> QuestData = new List<QuestDataCsv>();
+
+    public int QuestIdx = 0;
+    public List<QuestVer2Data>[] QVer2 = new List<QuestVer2Data>[4];
     /// <summary>
     /// 현재 진행중이 퀘스트 아이디
-    /// 0 마이룸, 1 월드맵, 2 의자, 3 선물, 4 펫, 5 제스쳐,
+    /// 0	마이룸에 돌아가세요
+    /// 1	월드맵으로 나가세요
+    /// 2	의자에 앉아보세요
+    /// 3	선물상자를 획득하세요
+    /// 4	펫과 교감 하세요
+    /// 5	제스쳐를 취해보세요
+    /// 6	카페에 방문하세요
+    /// 7	침대에 누워 보세요
+    /// 8	TV를 켜 보세요
+    /// 9	커피를 주문해 보세요
+    /// 10	펫을 분양 받으세요
+    /// 11	룰렛을 돌려보세요
     /// </summary>
     public int Now_QID = -1;
     public int Quest_WinState = 0;
@@ -196,56 +213,8 @@ public class DataInfo : Single<DataInfo>
         List<Dictionary<string, object>> QuestGet = CSVReader.Read("Doc/Quest");
         List<Dictionary<string, object>> QuestDataGet = CSVReader.Read("Doc/QuestData");
 
-        List<int> dailyCheck = new List<int>();
-
         QuestList.Clear();
-        dailyCheck.Clear();
         QuestData.Clear();
-
-        //중복 퀘스트 방지
-        int[] indData = new int[QuestDataGet.Count];
-        for (int i = 0; i < indData.Length; i++)
-        {
-            indData[i] = i;
-        }
-
-
-        if (QuestGet != null)
-        {
-            for (int i = 0; i < QuestGet.Count; i++)
-            {
-                QuestCsv temp = new QuestCsv();
-                temp.ID = System.Convert.ToInt32(QuestGet[i]["ID"]); ;
-                temp.QuestID = System.Convert.ToInt32(QuestGet[i]["QuestID"]);
-                temp.State = System.Convert.ToInt32(QuestGet[i]["State"]);
-                temp.NameID = System.Convert.ToInt32(QuestGet[i]["Name"]);
-
-                switch (temp.NameID)
-                {
-                    case 0:
-                        temp.nameText = "일일 퀘스트";
-                        dailyCheck.Add(temp.ID);
-                        break;
-                }
-
-                temp.GoldReward = System.Convert.ToInt32(QuestGet[i]["GoldReward"]);
-
-                temp.Description = System.Convert.ToString(QuestGet[i]["Description"]);
-
-                temp.QuiteListId.Clear();
-                temp.QuiteListState.Clear();
-
-                Com.ins.ShuffleArray(indData);
-
-                for (int j = 0; j < temp.State; j++)
-                {
-                    temp.QuiteListId.Add(indData[j]);
-                    temp.QuiteListState.Add(0);
-                }
-
-                QuestList.Add(temp);
-            }
-        }
 
         if (QuestDataGet.Count > 0)
         {
@@ -253,16 +222,89 @@ public class DataInfo : Single<DataInfo>
             {
                 QuestDataCsv temp = new QuestDataCsv();
 
-                temp.ID = System.Convert.ToInt32(QuestDataGet[i]["ID"]); ;
+                temp.ID = System.Convert.ToInt32(QuestDataGet[i]["ID"]);
                 temp.Name = System.Convert.ToString(QuestDataGet[i]["Name"]);
                 temp.Description = System.Convert.ToString(QuestDataGet[i]["Description"]);
+
+                temp.Reward = System.Convert.ToInt32(QuestDataGet[i]["Reward"]);
+                temp.SceneId = System.Convert.ToInt32(QuestDataGet[i]["SceneID"]);
+                temp.Priority = System.Convert.ToInt32(QuestDataGet[i]["Priority"]);
+
                 temp.State = 0;
 
                 QuestData.Add(temp);
             }
         }
 
-        dailyQuest = QuestList[dailyCheck[Random.Range(0, dailyCheck.Count)]];
+        List<int> QuestIdList = new List<int>();
+        QuestIdList.Clear();
+
+        if (QuestGet != null)
+        {
+            for (int i = 0; i < QuestGet.Count; i++)
+            {
+                QuestCsv temp = new QuestCsv();
+                temp.ID = System.Convert.ToInt32(QuestGet[i]["ID"]); ;
+                temp.SceneID = System.Convert.ToInt32(QuestGet[i]["SceneID"]);
+                temp.State = System.Convert.ToInt32(QuestGet[i]["State"]);
+                temp.nameText = System.Convert.ToString(QuestGet[i]["Name"]);
+                temp.GoldReward = System.Convert.ToInt32(QuestGet[i]["GoldReward"]);
+                temp.Description = System.Convert.ToString(QuestGet[i]["Description"]);
+
+                temp.QuiteListId.Clear();
+                temp.QuiteListState.Clear();
+                for (int cnt = 0; cnt < QuestData.Count; cnt++)
+                {
+                    if (temp.SceneID == QuestData[cnt].SceneId)
+                    {
+                        temp.QuiteListId.Add(QuestData[cnt].ID);
+                        temp.QuiteListState.Add(0);
+                    }
+                }
+                QuestList.Add(temp);
+            }
+        }
+
+        for (int i = 0; i < QVer2.Length; i++)
+        {
+            QVer2[i] = new List<QuestVer2Data>();
+            QVer2[i].Clear();
+        }
+
+        for (int i = 0; i < QVer2.Length; i++)
+        {
+            for (int idx = 0; idx < QuestData.Count; idx++)
+            {
+                if (QuestData[idx].SceneId == i)
+                {
+                    QuestVer2Data tem = new QuestVer2Data();
+                    tem.ID = QuestData[idx].ID;
+                    tem.Name = QuestData[idx].Name;
+                    tem.Description = QuestData[idx].Description;
+                    tem.Reward = QuestData[idx].Reward;
+                    tem.State = 0;
+                    tem.Priority = QuestData[idx].Priority;
+
+                    QVer2[i].Add(tem);
+                }
+            }
+        }
+
+        for (int i = 0; i < QVer2.Length; i++)
+        {
+            //QVer2[i].Sort();
+            SortPriority(QVer2[i]);
+        }
+
+    }
+    public void SortPriority(List<QuestVer2Data> data) //오름 차순으로 정렬하는 함수
+    {
+        data.Sort(delegate (QuestVer2Data A, QuestVer2Data B)
+        {
+            if (A.Priority > B.Priority) return 1;
+            else if (A.Priority < B.Priority) return -1;
+            return 0; //동일한 값일 경우
+        });
     }
 
     public CoustumItemCsv getItemData(int itemId)
@@ -311,30 +353,31 @@ public class DataInfo : Single<DataInfo>
             int WinCheckCount = 0;
 
             Now_QID = -1;
-            for (int i = 0; i < QSize; i++)
-            {
-                if (dailyQuest.QuiteListState[i] == 0)
-                {
-                    Now_QID = dailyQuest.QuiteListId[i];
-                    break;
-                }
-            }
+            //for (int i = 0; i < QSize; i++)
+            //{
+            //    if (dailyQuest.QuiteListState[i] == 0)
+            //    {
+            //        Now_QID = dailyQuest.QuiteListId[i];
+            //        break;
+            //    }
+            //}
 
-            for (int i = 0; i < QSize; i++)
-            {
-                int idx = dailyQuest.QuiteListId[i];
-                dailyQuest.QuiteListState[i] = QuestData[idx].State;
-                if(dailyQuest.QuiteListState[i] > 0)
-                    WinCheckCount++;
-                //Debug.Log(idx + " : 퀘스트 결과 : " + DataInfo.ins.dailyQuest.QuiteListState[i]);
-            }
+            //for (int i = 0; i < QSize; i++)
+            //{
+            //    int idx = dailyQuest.QuiteListId[i];
+            //    dailyQuest.QuiteListState[i] = QuestData[idx].State;
+            //    if(dailyQuest.QuiteListState[i] > 0)
+            //        WinCheckCount++;
+            //    //Debug.Log(idx + " : 퀘스트 결과 : " + DataInfo.ins.dailyQuest.QuiteListState[i]);
+            //}
 
-            if (WinCheckCount >= QSize)
-            {
-                Quest_WinState = 1;
-            }
+            //if (WinCheckCount >= QSize)
+            //{
+            //    Quest_WinState = 1;
+            //}
         }
     }
+
     public void AddMoney(int value)
     {
         CharacterMain.Money += value;

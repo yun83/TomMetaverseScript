@@ -148,10 +148,7 @@ public class QuestCsv
     /// Äù½ºÆ® ¾ÆÀÌµð
     /// </summary>
     public int ID = -1;
-    /// <summary>
-    /// Äù½ºÆ® Á¾·ù
-    /// </summary>
-    public int QuestID = 0;
+    public int SceneID = 0;
     /// <summary>
     /// Äù½ºÆ® °¹¼ö
     /// </summary>
@@ -185,6 +182,20 @@ public class QuestDataCsv{
     public int ID = -1;
     public string Name = "";
     public string Description = "";
+    public int Reward = 0;
+    public int SceneId = 0;
+    public int Priority = 0;
+    public int State = 0;
+}
+
+[Serializable]
+public class QuestVer2Data
+{
+    public int ID = -1;
+    public string Name = "";
+    public string Description = "";
+    public int Priority = 0;
+    public int Reward = 0;
     public int State = 0;
 }
 

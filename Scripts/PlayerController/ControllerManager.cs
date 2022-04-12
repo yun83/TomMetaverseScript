@@ -85,7 +85,6 @@ public class ControllerManager : MonoBehaviour
     [Header("Æê ½Ã½ºÅÛ")]
     public GameObject[] PetObject;
     private GameObject insPetObj;
-    private PetMoveController intPetScript;
     [Tooltip("ÆêÀÌ ¾É¾Æ ÀÖ´Â °ø°£")]
     public Transform PetInTrans;
 
@@ -119,11 +118,13 @@ public class ControllerManager : MonoBehaviour
     {
         string SceneName = SceneManager.GetActiveScene().name;
         DataInfo.ins.infoController = this;
+
+        _manager = DataInfo.ins.myPlayer;
+
         if (PlayerObject == null)
-            PlayerObject = GameObject.FindGameObjectWithTag("Player").transform;
+            PlayerObject = _manager.transform;
 
         _controller = PlayerObject.GetComponent<CharacterController>();
-        _manager = PlayerObject.GetComponent<CharacterManager>();
         _manager.itemEquipment(DataInfo.ins.CharacterMain);
 
         if (cvc == null)
@@ -447,21 +448,21 @@ public class ControllerManager : MonoBehaviour
                         switch (Truk.name)
                         {
                             case "PI_0":
-                                intPetScript.OnClick_Evnet_0();
+                                DataInfo.ins.PetController.OnClick_Evnet_0();
                                 if (DataInfo.ins.Now_QID == 4)
                                 {
                                     DataInfo.ins.QuestData[4].State = 1;
                                 }
                                 break;
                             case "PI_1":
-                                intPetScript.OnClick_Evnet_1();
+                                DataInfo.ins.PetController.OnClick_Evnet_1();
                                 if (DataInfo.ins.Now_QID == 4)
                                 {
                                     DataInfo.ins.QuestData[4].State = 1;
                                 }
                                 break;
                             case "PI_2":
-                                intPetScript.OnClick_Evnet_2();
+                                DataInfo.ins.PetController.OnClick_Evnet_2();
                                 if (DataInfo.ins.Now_QID == 4)
                                 {
                                     DataInfo.ins.QuestData[4].State = 1;
@@ -470,7 +471,7 @@ public class ControllerManager : MonoBehaviour
                         }
                         break;
                     case "Pet":
-                        intPetScript.PetInteraction();
+                        DataInfo.ins.PetController.PetInteraction();
                         break;
                     case "EctPlayer":
                     case "WarpPoint":
