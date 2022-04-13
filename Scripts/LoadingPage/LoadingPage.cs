@@ -22,15 +22,6 @@ public class LoadingPage : MonoBehaviour
     {
         nextScene = sceneName;
         SceneManager.LoadScene(sceneName);
-
-        if (DataInfo.ins.Now_QID == 0 && sceneName.Equals("Room_A"))
-        {
-            DataInfo.ins.QuestData[0].State = 1;
-        }
-        if (DataInfo.ins.Now_QID == 1 && sceneName.Equals("World_A"))
-        {
-            DataInfo.ins.QuestData[1].State = 1;
-        }
     }
 
     IEnumerator LoadScene()

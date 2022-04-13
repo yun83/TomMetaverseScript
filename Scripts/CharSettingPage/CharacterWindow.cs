@@ -244,7 +244,7 @@ public class CharacterWindow : MonoBehaviour
         StartCoroutine(ClickEvnetCall(idx));
 
         Image tempImage = ItemIconButton[idx].GetComponent<Image>();
-        tempImage.color = Color.yellow;
+        tempImage.color = new Color(0.6f, 1, 1, 1);
 
         DataInfo.ins.ItemSelectIndex = -1;
 
@@ -534,14 +534,6 @@ public class CharacterWindow : MonoBehaviour
         PageLodingPopup.SetActive(true);
         nextScene = sceneName;
 
-        if (DataInfo.ins.Now_QID == 0 && sceneName.Equals("Room_A"))
-        {
-            DataInfo.ins.QuestData[0].State = 1;
-        }
-        if (DataInfo.ins.Now_QID == 1 && sceneName.Equals("World_A"))
-        {
-            DataInfo.ins.QuestData[1].State = 1;
-        }
         StartCoroutine(coroutineLoadScene());
     }
 

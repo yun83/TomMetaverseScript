@@ -15,7 +15,6 @@ public class UiButtonController : MonoBehaviour
     [Header("¹öÆ° ¼³Á¤")]
     public Button[] UiButton;
     public GameObject QuestSuccess;
-    private bool SuccesssOn = true;
 
     [Header("·ê·¿")]
     public GameObject RoulettePopup;
@@ -122,8 +121,9 @@ public class UiButtonController : MonoBehaviour
                     break;
             }
         });
-        UiButton[6].onClick.AddListener(OnClick_Roulette);
 
+        QuestSuccess.SetActive(false);
+        UiButton[6].onClick.AddListener(OnClick_Roulette);
         //all popup clase    
         OnClick_CloseAllPopup();
         RoulettButtonSetting();
@@ -139,12 +139,15 @@ public class UiButtonController : MonoBehaviour
                 break;
             case "Room_A":
             case "Room_B":
+                DataInfo.ins.WinQuest(0);
                 DataInfo.ins.State = 1;
                 break;
             case "World_A":
+                DataInfo.ins.WinQuest(1);
                 DataInfo.ins.State = 2;
                 break;
             case "CoffeeShop":
+                DataInfo.ins.WinQuest(6);
                 DataInfo.ins.State = 3;
                 break;
         }
@@ -415,24 +418,7 @@ public class UiButtonController : MonoBehaviour
 
     void RouletteTimeLogin()
     {
-        //Äù½ºÆ® Ã¼Å©
-        if (DataInfo.ins.Quest_WinState == 1)
-        {
-            if (!SuccesssOn)
-            {
-                SuccesssOn = true;
-                QuestSuccess.SetActive(true);
-            }
-        }
-        else
-        {
-            if (SuccesssOn)
-            {
-                SuccesssOn = false;
-                QuestSuccess.SetActive(false);
-            }
-        }
-
+        //·ê·¿ ½Ã°£ °è»ê
         if (DataInfo.ins.deData.RouletteState == 2)
         {
             TimeSpan RouletteSumTime = SpinTime - DateTime.Now;
@@ -477,6 +463,8 @@ public class UiButtonController : MonoBehaviour
         Debug.Log("·ê·¿ µ¹¸° ½Ã°£ ÀúÀå : " + DataInfo.ins.deData.printData());
 
         DataInfo.ins.DayEvent = JsonUtility.ToJson(DataInfo.ins.deData);
+
+        DataInfo.ins.WinQuest(11);
 
         Invoke("RoulettButtonSetting", 0.1f);
     }

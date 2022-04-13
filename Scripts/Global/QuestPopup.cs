@@ -15,14 +15,14 @@ public class QuestPopup : MonoBehaviour
         Title.text = DataInfo.ins.dailyQuest.nameText;
         SuccesText.text = "º¸»ó : "+ DataInfo.ins.dailyQuest.GoldReward + "Gold";
 
-        if (DataInfo.ins.Quest_WinState == 1)
-        {
-            SuccesButton.interactable = true;
-        }
-        else 
-        {
-            SuccesButton.interactable = false;
-        }
+        //if (DataInfo.ins.Quest_WinState == 1)
+        //{
+        //    SuccesButton.interactable = true;
+        //}
+        //else 
+        //{
+        //    SuccesButton.interactable = false;
+        //}
 
         SuccesButton.onClick.RemoveAllListeners();
         SuccesButton.onClick.AddListener(RewardGet);
@@ -45,11 +45,11 @@ public class QuestPopup : MonoBehaviour
 
     void RewardGet()
     {
-        if(DataInfo.ins.Quest_WinState == 1)
-        {
-            DataInfo.ins.Quest_WinState = 2;
-            //DataInfo.ins.AddMoney(DataInfo.ins.dailyQuest.GoldReward);
-            SuccesButton.interactable = false;
-        }
+        //if(DataInfo.ins.Quest_WinState == 1)
+        //{
+        //    DataInfo.ins.Quest_WinState = 2;
+        //    //DataInfo.ins.AddMoney(DataInfo.ins.dailyQuest.GoldReward);
+        //    SuccesButton.interactable = false;
+        //}
     }
 }

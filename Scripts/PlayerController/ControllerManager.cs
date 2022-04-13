@@ -201,6 +201,8 @@ public class ControllerManager : MonoBehaviour
             insPetObj = Instantiate(PetObject[petID]);
             insPetObj.AddComponent<PetMoveController>();
         }
+
+        DataInfo.ins.WinQuest(10);
     }
 
     void MoveUpdate()
@@ -210,10 +212,11 @@ public class ControllerManager : MonoBehaviour
         int mtempState = 0;
         deltaMagnitudeDiff = 0;
 
+#if UNITY_EDITOR || UNITY_WEBGL
 #if UNITY_EDITOR
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
-
+#endif
         if (Input.GetMouseButtonDown(0))
         {
             if (RayCastEvent(Input.mousePosition))
@@ -449,24 +452,12 @@ public class ControllerManager : MonoBehaviour
                         {
                             case "PI_0":
                                 DataInfo.ins.PetController.OnClick_Evnet_0();
-                                if (DataInfo.ins.Now_QID == 4)
-                                {
-                                    DataInfo.ins.QuestData[4].State = 1;
-                                }
                                 break;
                             case "PI_1":
                                 DataInfo.ins.PetController.OnClick_Evnet_1();
-                                if (DataInfo.ins.Now_QID == 4)
-                                {
-                                    DataInfo.ins.QuestData[4].State = 1;
-                                }
                                 break;
                             case "PI_2":
                                 DataInfo.ins.PetController.OnClick_Evnet_2();
-                                if (DataInfo.ins.Now_QID == 4)
-                                {
-                                    DataInfo.ins.QuestData[4].State = 1;
-                                }
                                 break;
                         }
                         break;
@@ -564,10 +555,7 @@ public class ControllerManager : MonoBehaviour
                         else
                             Com.ins.AniSetInt(mAnimator, "Interaction", 1);
 
-                        if (DataInfo.ins.Now_QID == 2)
-                        {
-                            DataInfo.ins.QuestData[2].State = 1;
-                        }
+                        DataInfo.ins.WinQuest(2);
                     }
                     PlayerObject.position = EventScripts.PlayerPos;
                     PlayerObject.eulerAngles = EventScripts.PlayerRotation;
@@ -583,6 +571,8 @@ public class ControllerManager : MonoBehaviour
                             Com.ins.AniSetInt(mAnimator, "Interaction", 102);
                         else
                             Com.ins.AniSetInt(mAnimator, "Interaction", 2);
+
+                        DataInfo.ins.WinQuest(2);
                     }
                     PlayerObject.position = EventScripts.PlayerPos;
                     PlayerObject.eulerAngles = EventScripts.PlayerRotation;
@@ -598,6 +588,8 @@ public class ControllerManager : MonoBehaviour
                             Com.ins.AniSetInt(mAnimator, "Interaction", 104);
                         else
                             Com.ins.AniSetInt(mAnimator, "Interaction", 4);
+
+                        DataInfo.ins.WinQuest(7);
                     }
                     _controller.enabled = false;
                     PlayerObject.position = EventScripts.PlayerPos;
@@ -677,13 +669,9 @@ public class ControllerManager : MonoBehaviour
         //    Com.ins.AniSetInt(mAnimator, "Interaction", 103);
         //else
         //    Com.ins.AniSetInt(mAnimator, "Interaction", 3);
+        DataInfo.ins.WinQuest(3);
 
         RRSpawn.ItemDelet(EventScripts);
-
-        if (DataInfo.ins.Now_QID == 3)
-        {
-            DataInfo.ins.QuestData[3].State = 1;
-        }
 
         DataInfo.ins.AddMoney(getMoney[0]);
 
@@ -807,15 +795,6 @@ public class ControllerManager : MonoBehaviour
         nextScene = sceneName;
 
         StartCoroutine(coroutineSceneLoding());
-
-        if (DataInfo.ins.Now_QID == 0 && sceneName.Equals("Room_A"))
-        {
-            DataInfo.ins.QuestData[0].State = 1;
-        }
-        if (DataInfo.ins.Now_QID == 1 && sceneName.Equals("World_A"))
-        {
-            DataInfo.ins.QuestData[1].State = 1;
-        }
     }
 
     IEnumerator coroutineSceneLoding()

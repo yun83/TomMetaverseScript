@@ -178,7 +178,8 @@ public class QuestCsv
 }
 
 [Serializable]
-public class QuestDataCsv{
+public class QuestDataCsv
+{
     public int ID = -1;
     public string Name = "";
     public string Description = "";
@@ -191,12 +192,47 @@ public class QuestDataCsv{
 [Serializable]
 public class QuestVer2Data
 {
+    /// <summary>
+    /// 퀘스트 아이디
+    /// 0	마이룸에 돌아가세요
+    /// 1	월드맵으로 나가세요
+    /// 2	의자에 앉아보세요
+    /// 3	선물상자를 획득하세요
+    /// 4	펫과 교감 하세요
+    /// 5	제스쳐를 취해보세요
+    /// 6	카페에 방문하세요
+    /// 7	침대에 누워 보세요
+    /// 8	TV를 켜 보세요
+    /// 9	커피를 주문해 보세요
+    /// 10	펫을 분양 받으세요
+    /// 11	룰렛을 돌려보세요
+    /// </summary>
     public int ID = -1;
     public string Name = "";
     public string Description = "";
+    /// <summary>
+    /// 진행 순위 낮을수록 먼저 실행
+    /// </summary>
     public int Priority = 0;
+    /// <summary>
+    /// 보상
+    /// </summary>
     public int Reward = 0;
+    /// <summary>
+    /// 0 - 기본상태
+    /// 1 - 진행 가능 상태
+    /// 2 - 다음 퀘스트로 진행 판단
+    /// 3 - 진행 완료 상태
+    /// 4 - 보상 완료 상태
+    /// </summary>
     public int State = 0;
+
+    public string PrintQuest()
+    {
+        string ret = "";
+        ret = "ID [ " + ID + " ] :: " + Name + "\n" + Description + "\n 보상 : " + Reward + "\n 진행 상태 : " + State;
+        return ret;
+    }
 }
 
 [Serializable] 

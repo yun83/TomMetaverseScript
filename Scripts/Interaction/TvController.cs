@@ -15,7 +15,7 @@ public class TvController : MonoBehaviour
     public GameObject RemoteController;
 
     private bool PlayVideo = false;
-    private bool PlayVideoIconShow = false;
+    private bool PlayVideoIconShow = true;
     private int State = 0;
     private bool videoInitCheck = false;
     bool SoundController = false;
@@ -34,7 +34,7 @@ public class TvController : MonoBehaviour
         State = 0;
         videoInitCheck = false;
         PlayVideo = false;
-        PlayVideoIconShow = false;
+        PlayVideoIconShow = true;
         IconButton.SetActive(false);
         RemoteController.SetActive(false);
     }
@@ -57,9 +57,8 @@ public class TvController : MonoBehaviour
             PlayerDis = Vector3.Distance(DataInfo.ins.infoController.PlayerObject.position, transform.position);
             if (2 > PlayerDis)
             {
-                if (!PlayVideoIconShow)
+                if (PlayVideoIconShow)
                 {
-                    PlayVideoIconShow = true;
                     IconButton.SetActive(true);
                 }
             }
@@ -67,7 +66,6 @@ public class TvController : MonoBehaviour
             {
                 if (PlayVideoIconShow)
                 {
-                    PlayVideoIconShow = false;
                     IconButton.SetActive(false);
                 }
             }
@@ -81,6 +79,7 @@ public class TvController : MonoBehaviour
             vImage.color = Color.black;
             vHandler.Stop();
             PlayVideo = false;
+            PlayVideoIconShow = true;
             State = 0;
             RemoteController.SetActive(false);
         }
@@ -120,11 +119,13 @@ public class TvController : MonoBehaviour
 
         yield return null;
 
-        PlayVideo = true;
         videoInitCheck = false;
         PlayVideoIconShow = false;
         IconButton.SetActive(false);
+        DataInfo.ins.WinQuest(8);
 
+        yield return null;
         State = 1;
+        PlayVideo = true;
     }
 }

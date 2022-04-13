@@ -183,10 +183,10 @@ public class WorldInteraction : MonoBehaviour
 
         switch (nowType)
         {
-            case InteractionType.OnChair: EventIcon.sprite = Resources.Load<Sprite>("Icon/CHAIR"); break;
-            case InteractionType.Meditate: EventIcon.sprite = Resources.Load<Sprite>("Icon/DESK"); break;
-            case InteractionType.Pickup: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
-            case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
+            //case InteractionType.OnChair: EventIcon.sprite = Resources.Load<Sprite>("Icon/CHAIR"); break;
+            //case InteractionType.Meditate: EventIcon.sprite = Resources.Load<Sprite>("Icon/DESK"); break;
+            //case InteractionType.Pickup: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
+            //case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
             case InteractionType.NPC_PetMaster: NicName.text = "Pet Master"; break;
             case InteractionType.NPC_Cafe_0: NicName.text = "Cafe Master"; break;
             case InteractionType.NPC_Cafe_1: NicName.text = "Cafe Manager"; break;

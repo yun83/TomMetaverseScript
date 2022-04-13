@@ -10,6 +10,8 @@ public class QuestBar : MonoBehaviour
     public Text Description;
     public Text Reward;
     public GameObject CheckMark;
+    Image BackGround;
+    Button ClickEvent;
 
     int QuestIdx;
     public int Q_ID;
@@ -18,14 +20,8 @@ public class QuestBar : MonoBehaviour
 
     public void ScrollCellIndex(int idx)
     {
-        //Q_ID = DataInfo.ins.dailyQuest.QuiteListId[idx];
-        //Title.text =DataInfo.ins.QuestData[Q_ID].Name;
-        //Description.text = DataInfo.ins.QuestData[Q_ID].Description;
-
-        //if(DataInfo.ins.dailyQuest.QuiteListState[idx] <= 0)
-        //    CheckMark.SetActive(false);
-        //else
-        //    CheckMark.SetActive(true);
+        BackGround = GetComponent<Image>();
+        ClickEvent = GetComponent<Button>();
 
         QuestIdx = DataInfo.ins.QuestIdx;
         qv2Data = DataInfo.ins.QVer2[QuestIdx][idx];
@@ -34,13 +30,40 @@ public class QuestBar : MonoBehaviour
         Description.text = qv2Data.Description;
         Reward.text = qv2Data.Reward + "Gold";
 
-        if(qv2Data.State <= 0)
+        switch(qv2Data.State)
+        {
+            case 0:
+                BackGround.color = new Color(0.8f, 0.8f, 0.8f);
+                break;
+            case 1:
+            case 2:
+            case 3:
+                BackGround.color = Color.white;
+                break;
+            case 4:
+                BackGround.color = new Color(0.5f, 0.5f, 0.5f);
+                break;
+        }
+
+        if (qv2Data.State < 2)
             CheckMark.SetActive(false);
         else
+        {
             CheckMark.SetActive(true);
+        }
+
+        ClickEvent.onClick.RemoveAllListeners();
+        ClickEvent.onClick.AddListener(OnClick_Evenet);
     }
 
     public void OnClick_Evenet()
     {
+        if (qv2Data.State == 3)
+        {
+            Debug.Log("¸®¿öµå È¹µæ");
+            qv2Data.State = 4;
+
+            BackGround.color = new Color(0.5f, 0.5f, 0.5f);
+        }
     }
 }

@@ -25,6 +25,8 @@ public class DataInfo : Single<DataInfo>
     public int State = 0;
     public bool MoneyChange = false;
 
+    bool DataLodingCheck = false;
+
     //세이브 파일
     public string SaveData
     {
@@ -92,28 +94,17 @@ public class DataInfo : Single<DataInfo>
     //퀘스트 데이터 로딩
     public List<QuestCsv> QuestList = new List<QuestCsv>();
     public QuestCsv dailyQuest = new QuestCsv();
-
     public List<QuestDataCsv> QuestData = new List<QuestDataCsv>();
 
     public int QuestIdx = 0;
-    public List<QuestVer2Data>[] QVer2 = new List<QuestVer2Data>[4];
+    public bool QuestWinCheck = false;
     /// <summary>
-    /// 현재 진행중이 퀘스트 아이디
-    /// 0	마이룸에 돌아가세요
-    /// 1	월드맵으로 나가세요
-    /// 2	의자에 앉아보세요
-    /// 3	선물상자를 획득하세요
-    /// 4	펫과 교감 하세요
-    /// 5	제스쳐를 취해보세요
-    /// 6	카페에 방문하세요
-    /// 7	침대에 누워 보세요
-    /// 8	TV를 켜 보세요
-    /// 9	커피를 주문해 보세요
-    /// 10	펫을 분양 받으세요
-    /// 11	룰렛을 돌려보세요
+    /// 0 일일퀘스트
+    /// 1 룸 퀘스트
+    /// 2 월드 퀘스트
+    /// 3 카페 퀘스트
     /// </summary>
-    public int Now_QID = -1;
-    public int Quest_WinState = 0;
+    public List<QuestVer2Data>[] QVer2 = new List<QuestVer2Data>[4];
 
     public int cWin_OpenBuyPopup = 0;
 
@@ -125,14 +116,23 @@ public class DataInfo : Single<DataInfo>
     private void Awake()
     {
         Application.targetFrameRate = 1000;
-        Quest_WinState = 0;
+
+        DataLodingCheck = false;
 
         SaveDataLoding(); 
         ItemDataLoding();
         QuestDataLoding();
         TimeEventLoding();
 
+        DataLodingCheck = true;
+
         Com.ins.BgmSoundPlay(Resources.Load<AudioClip>("BGM/Progress"));
+    }
+
+    // Update is called once per frame
+    void LateUpdate()
+    {
+        QuestCheckFunction();
     }
 
     private void SaveDataLoding()
@@ -292,10 +292,14 @@ public class DataInfo : Single<DataInfo>
 
         for (int i = 0; i < QVer2.Length; i++)
         {
-            //QVer2[i].Sort();
             SortPriority(QVer2[i]);
         }
 
+        //맨처음 퀘스트들의 시작 가능상태로 변경
+        for (int i = 0; i < QVer2.Length; i++)
+        {
+            QVer2[i][0].State = 1;
+        }
     }
     public void SortPriority(List<QuestVer2Data> data) //오름 차순으로 정렬하는 함수
     {
@@ -337,44 +341,92 @@ public class DataInfo : Single<DataInfo>
         Debug.Log("<color=yellow>Time Event Print</color>" + deData.printData());
     }
 
-    // Update is called once per frame
-    void LateUpdate()
-    {
-        QuestCheckFunction();
-    }
 
     void QuestCheckFunction()
     {
-        //퀘스트 완료에 대한 판단
-        if (Quest_WinState <= 0)
+        if (!DataLodingCheck)
+            return;
+
+        bool ShowQuestWin = false;
+
+        //퀘스트 체크
+        for (int i = 0; i < QVer2.Length; i++)
         {
-            //순차적으로 완료 시켜야 한다
-            int QSize = dailyQuest.QuiteListState.Count;
-            int WinCheckCount = 0;
+            for (int idx = 0; idx < QVer2[i].Count; idx++)
+            {
+                switch (QVer2[i][idx].State)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        //진행 중
+                        break;
+                    case 2:
+                        {
+                            //완료 판단
+                            int NextIdx = idx + 1;
+                            if (NextIdx < QVer2[i].Count)
+                            {//다음 단계 활성화
+                                if(QVer2[i][NextIdx].State == 0)
+                                    QVer2[i][NextIdx].State = 1;
+                            }
+                            QVer2[i][idx].State = 3;
 
-            Now_QID = -1;
-            //for (int i = 0; i < QSize; i++)
-            //{
-            //    if (dailyQuest.QuiteListState[i] == 0)
-            //    {
-            //        Now_QID = dailyQuest.QuiteListId[i];
-            //        break;
-            //    }
-            //}
+                            Debug.Log(QVer2[i][idx].PrintQuest());
+                        }
+                        break;
+                    case 3:
+                        //퀘스트 완료 알림 스테이트
+                        ShowQuestWin = true;
+                        break;
+                }
+            }
+        }
 
-            //for (int i = 0; i < QSize; i++)
-            //{
-            //    int idx = dailyQuest.QuiteListId[i];
-            //    dailyQuest.QuiteListState[i] = QuestData[idx].State;
-            //    if(dailyQuest.QuiteListState[i] > 0)
-            //        WinCheckCount++;
-            //    //Debug.Log(idx + " : 퀘스트 결과 : " + DataInfo.ins.dailyQuest.QuiteListState[i]);
-            //}
+        if (ShowQuestWin)
+        {
+            QuestWinCheck = ShowQuestWin;
+            GameUI.QuestSuccess.SetActive(true);
+        }
 
-            //if (WinCheckCount >= QSize)
-            //{
-            //    Quest_WinState = 1;
-            //}
+        if(QuestWinCheck != ShowQuestWin)
+        {
+            QuestWinCheck = ShowQuestWin;
+            GameUI.QuestSuccess.SetActive(false);
+        }
+    }
+    /// <summary>
+    /// 0	마이룸에 돌아가세요
+    /// 1	월드맵으로 나가세요
+    /// 2	의자에 앉아보세요
+    /// 3	선물상자를 획득하세요
+    /// 4	펫과 교감 하세요
+    /// 5	제스쳐를 취해보세요
+    /// 6	카페에 방문하세요
+    /// 7	침대에 누워 보세요
+    /// 8	TV를 켜 보세요
+    /// 9	커피를 주문해 보세요
+    /// 10	펫을 분양 받으세요
+    /// 11	룰렛을 돌려보세요
+    /// </summary>
+    public void WinQuest(int QuestId)
+    {
+        if (!DataLodingCheck)
+            return;
+
+        for (int i = 0; i < QVer2.Length; i++)
+        {
+            for (int idx = 0; idx < QVer2[i].Count; idx++)
+            {
+                if(QVer2[i][idx].ID == QuestId)
+                {
+                    if (QVer2[i][idx].State == 1)
+                    {
+                        Debug.Log("퀘스트 ID : [" + QVer2[i][idx].ID + " : " + QuestId + "] Name [" + QVer2[i][idx].Name + "] 성공");
+                        QVer2[i][idx].State = 2;
+                    }
+                }
+            }
         }
     }
 

@@ -205,6 +205,7 @@ public class NpcPopup : MonoBehaviour
                     //손에 들수 있는 커피 오브젝트 생성
                     gameObject.SetActive(false);
 
+                    DataInfo.ins.WinQuest(9);
                     GameObject TempObj = Instantiate(Resources.Load<GameObject>("Prefabs/PickUpItem/PickUpHand"));
                     TempObj.transform.localPosition = new Vector3(3, 0.8f, -1.6f);
                     TempObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);

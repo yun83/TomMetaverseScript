@@ -176,13 +176,16 @@ public class PetMoveController : MonoBehaviour
     public void OnClick_Evnet_0()
     {
         Com.ins.AniSetInt(PetAni, "Touch", 1);
+        DataInfo.ins.WinQuest(4);
     }
     public void OnClick_Evnet_1()
     {
         Com.ins.AniSetInt(PetAni, "Touch", 2);
+        DataInfo.ins.WinQuest(4);
     }
     public void OnClick_Evnet_2()
     {
         Com.ins.AniSetInt(PetAni, "Touch", 3);
+        DataInfo.ins.WinQuest(4);
     }
 }
