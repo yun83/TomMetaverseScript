@@ -33,14 +33,17 @@ public class QuestBar : MonoBehaviour
         switch(qv2Data.State)
         {
             case 0:
-                BackGround.color = new Color(0.8f, 0.8f, 0.8f);
+                BackGround.color = new Color(0.85f, 0.85f, 0.85f);
                 break;
             case 1:
-            case 2:
-            case 3:
                 BackGround.color = Color.white;
                 break;
+            case 2:
+            case 3:
+                BackGround.color = new Color(0.65f, 0.9f, 1f);
+                break;
             case 4:
+            case 5:
                 BackGround.color = new Color(0.5f, 0.5f, 0.5f);
                 break;
         }
@@ -48,9 +51,7 @@ public class QuestBar : MonoBehaviour
         if (qv2Data.State < 2)
             CheckMark.SetActive(false);
         else
-        {
             CheckMark.SetActive(true);
-        }
 
         ClickEvent.onClick.RemoveAllListeners();
         ClickEvent.onClick.AddListener(OnClick_Evenet);
@@ -64,6 +65,12 @@ public class QuestBar : MonoBehaviour
             qv2Data.State = 4;
 
             BackGround.color = new Color(0.5f, 0.5f, 0.5f);
+            Invoke("RefillCells", 0.1f);
         }
+    }
+
+    void RefillCells()
+    {
+        DataInfo.ins.GameUI.QuestPopup.Click_CallBack(DataInfo.ins.QuestIdx);
     }
 }

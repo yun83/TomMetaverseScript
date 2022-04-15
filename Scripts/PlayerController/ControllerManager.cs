@@ -106,6 +106,24 @@ public class ControllerManager : MonoBehaviour
         DataInfo.ins.RightTId = -1;
 
         _camera = Camera.main;
+
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        switch (sceneName)
+        {
+            default:
+                DataInfo.ins.State = -1;
+                break;
+            case "Room_A":
+            case "Room_B":
+                DataInfo.ins.State = 1;
+                break;
+            case "World_A":
+                DataInfo.ins.State = 2;
+                break;
+            case "CoffeeShop":
+                DataInfo.ins.State = 3;
+                break;
+        }
     }
 
     // Start is called before the first frame update
@@ -189,6 +207,9 @@ public class ControllerManager : MonoBehaviour
         {
             return;
         }
+
+        if (DataInfo.ins.State == 3)
+            return;
 
         if (insPetObj != null)
         {
@@ -546,19 +567,49 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.OnChair:
                     if (EventState == 1)
                     {
-                        if (EventScripts.ColliderCheck)
+                        ChairAniStart();
+                        if (DataInfo.ins.State == 1)
                         {
-                            EventScripts.OnInteraction();
+                            PlayerObject.position = EventScripts.PlayerPos;
+                            PlayerObject.eulerAngles = EventScripts.PlayerRotation;
                         }
-                        if (DataInfo.ins.CharacterMain.Sex == 1)
-                            Com.ins.AniSetInt(mAnimator, "Interaction", 101);
                         else
-                            Com.ins.AniSetInt(mAnimator, "Interaction", 1);
+                        {
+                            Transform saveParent = PlayerObject.transform.parent;
 
-                        DataInfo.ins.WinQuest(2);
+                            PlayerObject.transform.parent = EventScripts.transform;
+                            PlayerObject.localPosition = new Vector3(0, 0.3f, 0.365f);
+                            PlayerObject.localEulerAngles = Vector3.zero;
+
+                            PlayerObject.transform.parent = saveParent;
+                        }
                     }
-                    PlayerObject.position = EventScripts.PlayerPos;
-                    PlayerObject.eulerAngles = EventScripts.PlayerRotation;
+                    break;
+                case InteractionType.CafeChair_A:
+                    if (EventState == 1)
+                    {
+                        ChairAniStart();
+                        Transform saveParent = PlayerObject.transform.parent;
+
+                        PlayerObject.transform.parent = EventScripts.transform;
+                        PlayerObject.localPosition = new Vector3(0, -0.35f, 0.26f);
+                        PlayerObject.localEulerAngles = new Vector3(90, 0, 0);
+
+                        PlayerObject.transform.parent = saveParent;
+                    }
+                    break;
+                case InteractionType.CafeChair_B:
+                    if (EventState == 1)
+                    {
+                        ChairAniStart();
+                        Transform saveParent = PlayerObject.transform.parent;
+
+                        PlayerObject.transform.parent = EventScripts.transform;
+                        PlayerObject.localPosition = new Vector3(0, -0.46f, 0.275f);
+                        PlayerObject.localEulerAngles = new Vector3(90, 0, 0);
+
+                        PlayerObject.transform.parent = saveParent;
+                    }
                     break;
                 case InteractionType.Meditate:
                     if (EventState == 1)
@@ -629,6 +680,20 @@ public class ControllerManager : MonoBehaviour
         }
     }
 
+    void ChairAniStart()
+    {
+        if (EventScripts.ColliderCheck)
+        {
+            EventScripts.OnInteraction();
+        }
+        if (DataInfo.ins.CharacterMain.Sex == 1)
+            Com.ins.AniSetInt(mAnimator, "Interaction", 101);
+        else
+            Com.ins.AniSetInt(mAnimator, "Interaction", 1);
+
+        DataInfo.ins.WinQuest(2);
+    }
+
     IEnumerator HandObjectSetting()
     {
         if (_manager.PickupTrans.childCount > 0)
@@ -640,16 +705,24 @@ public class ControllerManager : MonoBehaviour
         }
         yield return null;
 
-        GameObject HandObject = Instantiate(EventScripts.gameObject);
-        yield return null;
+        Com.ins.AniSetInt(mAnimator, "Interaction", 7);
 
-        WorldInteraction temp = HandObject.GetComponent<WorldInteraction>();
-        Destroy(temp.EventObj);
-        Destroy(temp);
-        yield return null;
+        GameObject HandObject = null; //Instantiate(EventScripts.gameObject);
+        if (EventScripts.ItemId == 0)
+        {
+            HandObject = Instantiate(Resources.Load<GameObject>("Prefabs/PickUpItem/CoffeeCup_A"));
+            yield return null;
 
-        HandObject.transform.parent = _manager.PickupTrans;
-        HandObject.transform.localPosition = Vector3.zero;
+            //WorldInteraction temp = HandObject.GetComponent<WorldInteraction>();
+            //Destroy(temp.EventObj);
+            //Destroy(temp);
+            //yield return null;
+
+            HandObject.transform.parent = _manager.PickupTrans;
+            HandObject.transform.localPosition = new Vector3(-0.02f, 0.045f, 0.035f);
+            HandObject.transform.localEulerAngles = new Vector3(-186.56f, -259.50f, -159.06f);
+            HandObject.transform.localScale = Vector3.one;
+        }
 
         HandRelease.SetActive(true);
         HandItem = true;
@@ -738,6 +811,10 @@ public class ControllerManager : MonoBehaviour
 
         HandItem = false;
         HandRelease.SetActive(false);
+        if (moveSpeedSum == 0)
+        {
+            Com.ins.AniSetInt(mAnimator, "Interaction", 7);
+        }
     }
 
 
@@ -761,6 +838,9 @@ public class ControllerManager : MonoBehaviour
                         Com.ins.AniSetInt(mAnimator, "MoveState", 100);
                     else
                         Com.ins.AniSetInt(mAnimator, "MoveState", 0);
+
+                    if (HandItem)
+                        Com.ins.AniSetInt(mAnimator, "Interaction", 7);
                     break;
                 case 1:
                     moveSpeedSum = moveSpeed;

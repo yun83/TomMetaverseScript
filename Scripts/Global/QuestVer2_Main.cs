@@ -38,7 +38,7 @@ public class QuestVer2_Main : MonoBehaviour
 
     public void OnClick_Evenet()
     {
-        Debug.Log(QName);
+        //Debug.Log(QName);
         DataInfo.ins.GameUI.QuestPopup.Click_CallBack(Index);
     }
 }

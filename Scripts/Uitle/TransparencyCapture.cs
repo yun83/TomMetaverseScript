@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class TransparencyCapture : MonoBehaviour
@@ -13,6 +14,12 @@ public class TransparencyCapture : MonoBehaviour
     public GameObject BaseObject;
 
     public int AllItemSize = 0;
+    public int AniIndex = 0;
+    public int MaxAniInd = 10;
+
+    public Animator ShowAni;
+    bool ChangeCheck = false;
+    int screenShotCnt = 0;
 
     List<Transform> itemTrans = new List<Transform>();
 
@@ -32,7 +39,7 @@ public class TransparencyCapture : MonoBehaviour
                 itemTrans.Add(Item[i].GetChild(j));
             }
         }
-
+        screenShotCnt = 0;
     }
 
     private void Update()
@@ -40,11 +47,34 @@ public class TransparencyCapture : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             ItemCount = 0;
-            Capture();
+            AllCapture();
+        }
+
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            AniIndex++;
+            if (AniIndex > MaxAniInd)
+                AniIndex = 1;
+
+            ChangeCheck = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            AniIndex--;
+            if (AniIndex < 0)
+                AniIndex = MaxAniInd;
+
+            ChangeCheck = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            CaptureSub();
         }
     }
 
-    private void Capture()
+    private void AllCapture()
     {
         string timeStr = System.DateTime.Now.Year.ToString() +
                   System.DateTime.Now.Month.ToString() +
@@ -89,13 +119,47 @@ public class TransparencyCapture : MonoBehaviour
         ItemCount++;
         if(ItemCount < itemTrans.Count)
         {
-            Invoke("Capture", 0.1f);
+            Invoke("AllCapture", 0.1f);
         }
         else
         {
             ItemCount = 0;
             Debug.Log("<color=blue> 스크린샷 저장 완료</color>");
         }
+    }
+
+    void CaptureSub()
+    {
+        string timeStr = System.DateTime.Now.Year.ToString() +
+                  System.DateTime.Now.Month.ToString() +
+                  System.DateTime.Now.Day.ToString() +
+                  System.DateTime.Now.Hour.ToString() +
+                  System.DateTime.Now.Minute.ToString()  +
+                  System.DateTime.Now.Second.ToString() + "_";
+        string path = Application.dataPath + "/capture_" + timeStr + screenShotCnt.ToString() + ".png";
+
+        StartCoroutine(CoCaptureSub(path));
+    }
+
+    private IEnumerator CoCaptureSub(string path)
+    {
+        if (path == null)
+        {
+            yield break;
+        }
+
+        // ReadPixels을 하기 위해서 쉬어줌
+        yield return new WaitForEndOfFrame();
+
+        Rect rect = new Rect(0f, 0f, Screen.width, Screen.height);
+        Texture2D texture = Capture(Camera.main, rect);
+
+        byte[] bytes = texture.EncodeToPNG();
+        System.IO.File.WriteAllBytes(path, bytes);
+
+        yield return new WaitForEndOfFrame();
+        screenShotCnt++;
+        Debug.Log("<color=blue> 스크린샷 저장 완료</color>");
     }
 
     private Texture2D Capture(Camera camera, Rect pRect)

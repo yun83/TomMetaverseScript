@@ -17,7 +17,6 @@ public class WorldInteraction : MonoBehaviour
     public GameObject EventObj;
     public int UseState = 0;
     public TextMesh NicName;
-    private SpriteRenderer EventIcon;
     private Transform Player;
     public Collider[] mColliders;
     public bool ColliderCheck = false;
@@ -35,9 +34,15 @@ public class WorldInteraction : MonoBehaviour
 
     string SceneName;
     int RoomState = 0;
+    bool useCheck = false;
 
     void Awake()
     {
+        if (EventObj == null)
+            useCheck = true;
+        else
+            useCheck = false;
+
         InitWorldInteraction();
         Player = GameObject.FindGameObjectWithTag("Player").transform;
 
@@ -130,24 +135,22 @@ public class WorldInteraction : MonoBehaviour
 
     public void InitWorldInteraction()
     {
-        if (EventObj != null)
-        {
-            //중복 생성을 막기 위해 제거 후 생성
-            Destroy(EventObj);
-            EventObj = null;
-        }
 
         switch (nowType)
         {
             default:
-                EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
-                EventIcon = EventObj.GetComponentInChildren<SpriteRenderer>();
-                EventObj.name = "상호작용";
+                if (useCheck)
+                {
+                    EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
+                    EventObj.name = "상호작용";
+                }
                 break;
             case InteractionType.Pickup:
-                EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
-                EventIcon = EventObj.GetComponentInChildren<SpriteRenderer>();
-                EventObj.name = "상호작용";
+                if (useCheck)
+                {
+                    EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
+                    EventObj.name = "상호작용";
+                }
 
                 switch (ItemId)
                 {
@@ -163,6 +166,13 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.NPC_PetMaster:
             case InteractionType.NPC_Cafe_0:
             case InteractionType.NPC_Cafe_1:
+                if (EventObj != null)
+                {
+                    //중복 생성을 막기 위해 제거 후 생성
+                    Destroy(EventObj);
+                    EventObj = null;
+                }
+
                 EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/NicName3DText"));
                 NicName = EventObj.GetComponentInChildren<TextMesh>();
                 NicName.text = DataInfo.ins.CharacterMain.NicName;
@@ -174,7 +184,7 @@ public class WorldInteraction : MonoBehaviour
                 break;
         }
 
-        if (EventObj != null)
+        if (useCheck && EventObj != null)
         {
             EventObj.transform.parent = transform;
             EventObj.transform.localPosition = IconPos;
@@ -183,10 +193,6 @@ public class WorldInteraction : MonoBehaviour
 
         switch (nowType)
         {
-            //case InteractionType.OnChair: EventIcon.sprite = Resources.Load<Sprite>("Icon/CHAIR"); break;
-            //case InteractionType.Meditate: EventIcon.sprite = Resources.Load<Sprite>("Icon/DESK"); break;
-            //case InteractionType.Pickup: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
-            //case InteractionType.Gift: EventIcon.sprite = Resources.Load<Sprite>("Icon/GIFT"); break;
             case InteractionType.NPC_PetMaster: NicName.text = "Pet Master"; break;
             case InteractionType.NPC_Cafe_0: NicName.text = "Cafe Master"; break;
             case InteractionType.NPC_Cafe_1: NicName.text = "Cafe Manager"; break;
@@ -236,4 +242,6 @@ public enum InteractionType
     NPC_Cafe_1,
     Cafe_In,
     Sleep,
+    CafeChair_B,
+    CafeChair_A,
 }

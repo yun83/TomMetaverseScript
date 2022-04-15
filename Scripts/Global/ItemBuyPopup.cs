@@ -44,6 +44,10 @@ public class ItemBuyPopup : MonoBehaviour
             }
             iconName += (NowItem.Sex + "_" + NowItem.Path);
 
+            if (NowItem.Type == 100)
+            {
+                iconName = "Emotion/" + NowItem.Path + "_" + NowItem.Description;
+            }
             ItemIcon.sprite = Resources.Load<Sprite>(iconName);
         }
     }

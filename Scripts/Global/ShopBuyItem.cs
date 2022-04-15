@@ -47,6 +47,10 @@ public class ShopBuyItem : MonoBehaviour
         }
         iconName += (NowItem.Sex + "_" + NowItem.Path);
 
+        if (NowItem.Type == 100)
+        {
+            iconName = "Emotion/" + NowItem.Path + "_" + NowItem.Description;
+        }
         IconImage.sprite = Resources.Load<Sprite>(iconName);
 
         button.onClick.RemoveAllListeners();

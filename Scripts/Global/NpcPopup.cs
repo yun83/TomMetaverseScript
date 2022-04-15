@@ -202,17 +202,29 @@ public class NpcPopup : MonoBehaviour
                 }
                 TrunkButtonList[0].onClick.AddListener(() =>
                 {
+                    State = 2;
+                });
+                State = 1;
+                break;
+            case 1:
+                break;
+            case 2:
+                CreatePage("Prefabs/PetNpc/CafeNpc1_1");
+                for (int i = 0; i < TrunkButtonList.Count; i++)
+                {
+                    int idx = i;
+                    TrunkButtonList[idx].onClick.RemoveAllListeners();
+                }
+                TrunkButtonList[0].onClick.AddListener(() =>
+                {
                     //손에 들수 있는 커피 오브젝트 생성
                     gameObject.SetActive(false);
 
                     DataInfo.ins.WinQuest(9);
                     GameObject TempObj = Instantiate(Resources.Load<GameObject>("Prefabs/PickUpItem/PickUpHand"));
-                    TempObj.transform.localPosition = new Vector3(3, 0.8f, -1.6f);
-                    TempObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    TempObj.transform.localPosition = new Vector3(4.6f, 0.81f, -1.55f);
                 });
-                State = 1;
-                break;
-            case 1:
+                State = 3;
                 break;
         }
     }

@@ -32,6 +32,7 @@ public class ShopPopup : MonoBehaviour
     int State = -1;
     int subState = -1;
     int sumMoney = 0;
+    int ItemIndexCheck = 0;
 
     private bool PurchaseUse = false;
     private RectTransform scrollRect;
@@ -40,7 +41,6 @@ public class ShopPopup : MonoBehaviour
     void Start()
     {
         PurchaseUse = false;
-        SubButton.SetActive(false);
 
         Purchase.onClick.RemoveAllListeners();
         PurchaseClose.onClick.RemoveAllListeners();
@@ -76,6 +76,7 @@ public class ShopPopup : MonoBehaviour
         scrollRect = setScroll.GetComponent<RectTransform>();
 
         State = 0;
+        SubButton.SetActive(true);
         SuggestonSetting();
     }
     
@@ -129,6 +130,15 @@ public class ShopPopup : MonoBehaviour
                 Purchase.interactable = true;
             else
                 Purchase.interactable = false;
+        }
+
+        if(DataInfo.ins.ItemSelectIndex != ItemIndexCheck)
+        {
+            ItemIndexCheck = DataInfo.ins.ItemSelectIndex;
+            if (ItemIndexCheck >= 0)
+            {
+                ShopButtonColorChagne();
+            }
         }
     }
 
@@ -355,6 +365,10 @@ public class ShopPopup : MonoBehaviour
     }
     #endregion
 
+    void ShopButtonColorChagne()
+    {
+        //setScroll
+    }
 
     public void OnClick_Gesture()
     {

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ShopItem : MonoBehaviour
 {
     int mIndex = -1;
+    int selectNumber = -1;
     public Text ItemText;
     public Image ItemIcon;
     public CoustumItemCsv NowItem = new CoustumItemCsv();
@@ -22,12 +23,13 @@ public class ShopItem : MonoBehaviour
 
         NowItem = DataInfo.ins.CostumeScrollList[idx];
 
-        ItemText.text = idx + NowItem.Description;
+        ItemText.text = NowItem.Name;
 
         if(NowItem.State == 0)
         {//미구매 아이템
-            ItemText.text += ("\n" + NowItem.price + "Gold");
+            ItemText.text = NowItem.price + "Gold";
         }
+
         switch (NowItem.Type)
         {
             case 0: iconName += "Hair_"; break;
@@ -38,6 +40,11 @@ public class ShopItem : MonoBehaviour
             case 5: iconName += "Accessory_"; break;
         }
         iconName += (NowItem.Sex + "_" + NowItem.Path);
+
+        if(NowItem.Type == 100)
+        {
+            iconName = "Emotion/" + NowItem.Path + "_" + NowItem.Description;
+        }
 
         ItemIcon.sprite = Resources.Load<Sprite>(iconName);
 
@@ -56,9 +63,19 @@ public class ShopItem : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (DataInfo.ins.ItemSelectIndex != NowItem.ItemID && mImage.color != Color.white)
+        {
+            mImage.color = Color.white;
+        }
+    }
+
     void OnClick_Evenet()
     {
         bool itemUse = false;
+        DataInfo.ins.ItemSelectIndex = NowItem.ItemID;
+        mImage.color = new Color(0.6f, 0.9f, 1);
         switch (NowItem.Type)
         {
             case 0: //머리
@@ -143,4 +160,17 @@ public class ShopItem : MonoBehaviour
     }
 
     //PurchaseItemSetting();
+
+    void ItemSelectCheck()
+    {
+        mImage.color = Color.white;
+        for (int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
+        {
+            if (DataInfo.ins.BuyItemSaveList[i].ItemID == NowItem.ItemID)
+            {
+                mImage.color = new Color(0.7f, 0.9f, 1f);
+            }
+        }
+    }
 }
+

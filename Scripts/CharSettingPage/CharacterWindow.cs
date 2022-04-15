@@ -253,7 +253,7 @@ public class CharacterWindow : MonoBehaviour
 
     IEnumerator ClickEvnetCall(int idx)
     {
-        ReSetScrollView();
+        //ReSetScrollView();
 
         yield return null;
 
@@ -432,7 +432,7 @@ public class CharacterWindow : MonoBehaviour
         }
         else
         {
-            ExitPopupText.text = "구매 되지 않은 아이템은 착용 해제 됩니다.\n게임화면으로 나가 시겠습니까?";
+            ExitPopupText.text = "구매 되지 않은 아이템은\n 착용 해제 됩니다.\n해제된 아이템 구매는\n상점에서 가능합니다.\n게임화면으로 나가 시겠습니까?";
             ExitPopupNo.onClick.AddListener(ClosePopup);
             ExitPopupYes.onClick.AddListener(CharCostumSettingOut);
         }
@@ -488,6 +488,9 @@ public class CharacterWindow : MonoBehaviour
 
         for(int i = 0; i < DataInfo.ins.BuyItemSaveList.Count; i++)
         {
+            if (DataInfo.ins.BuyItemSaveList[i].State != 0)
+                continue;
+
             switch (DataInfo.ins.BuyItemSaveList[i].Type)
             {
                 case 0: //머리

@@ -8,7 +8,6 @@ public class DataInfo : Single<DataInfo>
     public UiButtonController GameUI;
     public PetMoveController PetController;
     public CharacterManager myPlayer;
-    public Animator myAnimator;
 
     public bool LoginCheck = false;
     public bool LodingCheck = false;
@@ -162,7 +161,6 @@ public class DataInfo : Single<DataInfo>
 
     private void ItemDataLoding()
     {
-
         List<Dictionary<string, object>> itemCsvDic = CSVReader.Read("Doc/CostumItem");
 
         //현재 아이템 타입이 6가지
@@ -352,6 +350,8 @@ public class DataInfo : Single<DataInfo>
         //퀘스트 체크
         for (int i = 0; i < QVer2.Length; i++)
         {
+            if (QVer2[i] == null)
+                return;
             for (int idx = 0; idx < QVer2[i].Count; idx++)
             {
                 switch (QVer2[i][idx].State)
@@ -371,13 +371,20 @@ public class DataInfo : Single<DataInfo>
                                     QVer2[i][NextIdx].State = 1;
                             }
                             QVer2[i][idx].State = 3;
-
-                            Debug.Log(QVer2[i][idx].PrintQuest());
+                            //Debug.Log(QVer2[i][idx].PrintQuest());
                         }
                         break;
                     case 3:
                         //퀘스트 완료 알림 스테이트
                         ShowQuestWin = true;
+                        break;
+                    case 4:
+                        {
+                            QVer2[i][idx].State = 5;
+                            QuestVer2Data temp = QVer2[i][idx];
+                            QVer2[i].RemoveAt(idx);
+                            QVer2[i].Add(temp);
+                        }
                         break;
                 }
             }
@@ -416,13 +423,15 @@ public class DataInfo : Single<DataInfo>
 
         for (int i = 0; i < QVer2.Length; i++)
         {
+            if (QVer2[i] == null)
+                return;
             for (int idx = 0; idx < QVer2[i].Count; idx++)
             {
                 if(QVer2[i][idx].ID == QuestId)
                 {
                     if (QVer2[i][idx].State == 1)
                     {
-                        Debug.Log("퀘스트 ID : [" + QVer2[i][idx].ID + " : " + QuestId + "] Name [" + QVer2[i][idx].Name + "] 성공");
+                        //Debug.Log("퀘스트 ID : [" + QVer2[i][idx].ID + " : " + QuestId + "] Name [" + QVer2[i][idx].Name + "] 성공");
                         QVer2[i][idx].State = 2;
                     }
                 }

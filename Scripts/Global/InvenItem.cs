@@ -32,6 +32,10 @@ public class InvenItem : MonoBehaviour
         }
         iconName += (NowItem.Sex + "_" + NowItem.Path);
 
+        if (NowItem.Type == 100)
+        {
+            iconName = "Emotion/" + NowItem.Path + "_" + NowItem.Description;
+        }
         ItemIcon.sprite = Resources.Load<Sprite>(iconName);
 
         if (NowItem.State == 0)
@@ -41,6 +45,14 @@ public class InvenItem : MonoBehaviour
 
         NowButton.onClick.RemoveAllListeners();
         NowButton.onClick.AddListener(OnClick_EvnetVer2);
+    }
+
+    private void FixedUpdate()
+    {
+        if (DataInfo.ins.ItemSelectIndex != mIndex && mImage.color != Color.white)
+        {
+            mImage.color = Color.white;
+        }
     }
 
     public void OnClick_EvnetVer2()
@@ -56,6 +68,7 @@ public class InvenItem : MonoBehaviour
         {
             if (mIndex != DataInfo.ins.ItemSelectIndex)
             {
+                mImage.color = new Color(0.6f, 0.9f, 1);
                 DataInfo.ins.ItemSelectIndex = mIndex;
                 switch (DataInfo.ins.InvenNumber)
                 {
@@ -112,7 +125,8 @@ public class InvenItem : MonoBehaviour
                 }
                 else if (NowItem.State == 1)
                 {
-                    DataInfo.ins.ItemSelectIndex = -1;
+                    mImage.color = Color.white;
+                    DataInfo.ins.ItemSelectIndex = 0;
                     //같은 번호 클릭시에 아이템 해제
                     switch (NowItem.Type)
                     {

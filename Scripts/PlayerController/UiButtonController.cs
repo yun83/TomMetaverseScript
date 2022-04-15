@@ -85,13 +85,14 @@ public class UiButtonController : MonoBehaviour
                             DataInfo.ins.infoController.LoadScene("World_A");
                         });
                         DataInfo.ins.OutRoomButton.Add(item1);
-
+#if !UNITY_WEBGL
                         ButtonClass item2 = new ButtonClass();
                         item2.text = "Quit Game";
                         item2.addEvent = (() => {
                             OnClick_Exit();
                         });
                         DataInfo.ins.OutRoomButton.Add(item2);
+#endif
 
                         OR_Popup.Title.text = "leave the Room";
                         OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
@@ -108,12 +109,14 @@ public class UiButtonController : MonoBehaviour
                         });
                         DataInfo.ins.OutRoomButton.Add(item1);
 
+#if !UNITY_WEBGL
                         ButtonClass item2 = new ButtonClass();
                         item2.text = "Quit Game";
                         item2.addEvent = (() => {
                             OnClick_Exit();
                         });
                         DataInfo.ins.OutRoomButton.Add(item2);
+#endif
 
                         OR_Popup.Title.text = "leave the Room";
                         OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
@@ -207,7 +210,7 @@ public class UiButtonController : MonoBehaviour
         RoulettButtonSetting();
     }
 
-    #region UI Button Click Setting
+#region UI Button Click Setting
     public void OnClick_Gesture() {
 
         if (GestureScroll.activeSelf)
@@ -287,7 +290,7 @@ public class UiButtonController : MonoBehaviour
         RoulettePopup.SetActive(true);
     }
 
-    #endregion
+#endregion
 
 
     IEnumerator GestureScrollSetting()
