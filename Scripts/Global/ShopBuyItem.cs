@@ -14,6 +14,7 @@ public class ShopBuyItem : MonoBehaviour
     public GameObject CheckBox;
     public Button button;
     public Button DeletButton;
+    public ShopPopup spScript;
 
     int Index = -1;
     public string nowID;
@@ -21,6 +22,7 @@ public class ShopBuyItem : MonoBehaviour
 
     void Awake()
     {
+        spScript = DataInfo.ins.GameUI.ShopPopup.GetComponent<ShopPopup>();
         button = GetComponent<Button>();
         CheckBox.SetActive(true);
     }
@@ -77,13 +79,13 @@ public class ShopBuyItem : MonoBehaviour
 
     void OnClick_DeletButton()
     {
-        Destroy(gameObject);
-
         if (DataInfo.ins.BuyItemSaveList.Count <= 1)
             DataInfo.ins.BuyItemSaveList.Clear();
         else
             DataInfo.ins.BuyItemSaveList.RemoveAt(Index);
 
         DataInfo.ins.TotlaMoneySumCheck = true;
+
+        spScript.OnClick_Purchase();
     }
 }

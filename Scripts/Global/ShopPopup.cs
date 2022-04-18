@@ -94,7 +94,7 @@ public class ShopPopup : MonoBehaviour
 
         DataInfo.ins.BuyItemSaveList.Clear();
         PurchaseText = Purchase.GetComponentInChildren<Text>();
-        Purchase.enabled = false;
+        Purchase.interactable = false;
         PurchaseText.text = "0";
 
         BuyPopup.SetActive(false);
@@ -167,7 +167,7 @@ public class ShopPopup : MonoBehaviour
 
         if (DataInfo.ins.BuyItemSaveList.Count > 0)
         {
-            Purchase.enabled = true;
+            Purchase.interactable = true;
             PurchaseText.text = DataInfo.ins.BuyItemSaveList.Count.ToString();
         }
     }
@@ -399,7 +399,7 @@ public class ShopPopup : MonoBehaviour
         }
     }
 
-    void OnClick_Purchase()
+    public void OnClick_Purchase()
     {
         BuyPopup.SetActive(true);
         

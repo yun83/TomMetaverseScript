@@ -42,6 +42,7 @@ public class ControllerManager : MonoBehaviour
     public Transform PlayerObject;
     public CharacterController _controller;
     private CharacterManager _manager;
+    private bool TouchEvnetCheck = false;
     [Tooltip("프레임당 점프 높이")]
     public float JumpDis = 0.02f;
     [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
@@ -49,7 +50,7 @@ public class ControllerManager : MonoBehaviour
     [Tooltip("케릭터 이동 속도")]
     [Range(1f, 5f)]
     public float moveSpeed = 2;
-    [Header("Player Grounded")]
+    [Header("Player 바닥체크")]
     [Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
     public bool Grounded = true;
     [Tooltip("Useful for rough ground")]
@@ -631,6 +632,7 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.Sleep:
                     if (EventState == 1)
                     {
+                        TouchEvnetCheck = true;
                         if (EventScripts.ColliderCheck)
                         {
                             EventScripts.OnInteraction();
@@ -640,9 +642,14 @@ public class ControllerManager : MonoBehaviour
                         else
                             Com.ins.AniSetInt(mAnimator, "Interaction", 4);
 
+                        //침대 누울경우의 카메라 위치 문제를 위해 강제 높이 셋팅.
+                        Vector3 getPos = PlayerObject.position;
+                        getPos.y = 0.5f;
+                        Axis.position = getPos;
                         DataInfo.ins.WinQuest(7);
                     }
                     _controller.enabled = false;
+                    
                     PlayerObject.position = EventScripts.PlayerPos;
                     PlayerObject.eulerAngles = EventScripts.PlayerRotation;
                     break;
@@ -708,21 +715,28 @@ public class ControllerManager : MonoBehaviour
         Com.ins.AniSetInt(mAnimator, "Interaction", 7);
 
         GameObject HandObject = null; //Instantiate(EventScripts.gameObject);
-        if (EventScripts.ItemId == 0)
+        string _path = "Prefabs/PickUpItem/";
+        //아이템 픽업
+        switch (EventScripts.ItemId)
         {
-            HandObject = Instantiate(Resources.Load<GameObject>("Prefabs/PickUpItem/CoffeeCup_A"));
-            yield return null;
-
-            //WorldInteraction temp = HandObject.GetComponent<WorldInteraction>();
-            //Destroy(temp.EventObj);
-            //Destroy(temp);
-            //yield return null;
-
-            HandObject.transform.parent = _manager.PickupTrans;
-            HandObject.transform.localPosition = new Vector3(-0.02f, 0.045f, 0.035f);
-            HandObject.transform.localEulerAngles = new Vector3(-186.56f, -259.50f, -159.06f);
-            HandObject.transform.localScale = Vector3.one;
+            default:
+                _path += "CoffeeCup_A";
+                HandObject = InstansObjsetCreate(_path, new Vector3(-0.02f, 0.045f, 0.035f), new Vector3(-186.56f, -259.50f, -159.06f), Vector3.one);
+                break;
+            case 1:
+                _path += "CoffeeLatte_A";
+                HandObject = InstansObjsetCreate(_path, new Vector3(-0.023f, 0.11f, -0.01f), new Vector3(9.517f, -86.722f, 197.432f), Vector3.one);
+                break;
+            case 2:
+                _path += "TeaCup_A";
+                HandObject = InstansObjsetCreate(_path, new Vector3(-0.019f, 0.114f, -0.016f), new Vector3(9.517f, -86.722f, 197.432f), Vector3.one);
+                break;
+            case 3:
+                _path += "Slushie";
+                HandObject = InstansObjsetCreate(_path, new Vector3(-0.02f, 0.045f, 0.035f), new Vector3(-186.56f, -259.50f, -159.06f), Vector3.one);
+                break;
         }
+        yield return null;
 
         HandRelease.SetActive(true);
         HandItem = true;
@@ -730,6 +744,19 @@ public class ControllerManager : MonoBehaviour
         yield return null;
 
         Destroy(EventScripts.gameObject);
+    }
+
+    GameObject InstansObjsetCreate(string _path, Vector3 _pos, Vector3 _rot, Vector3 _scale)
+    {
+        GameObject temp;
+
+        temp = Instantiate(Resources.Load<GameObject>(_path));
+        temp.transform.parent = _manager.PickupTrans;
+        temp.transform.localPosition = _pos;
+        temp.transform.localEulerAngles = _rot;
+        temp.transform.localScale = _scale;
+
+        return temp;
     }
 
     void GiftGet()

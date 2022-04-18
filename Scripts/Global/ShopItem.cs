@@ -75,7 +75,6 @@ public class ShopItem : MonoBehaviour
     {
         bool itemUse = false;
         DataInfo.ins.ItemSelectIndex = NowItem.ItemID;
-        mImage.color = new Color(0.6f, 0.9f, 1);
         switch (NowItem.Type)
         {
             case 0: //¸Ó¸®

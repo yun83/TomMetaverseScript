@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PetMoveController : MonoBehaviour
 {
+    public LayerMask GroundLayers = -1;
     public Transform myPlayerTrans;
     public Transform Look;
     public Animator PetAni;
@@ -17,10 +18,11 @@ public class PetMoveController : MonoBehaviour
     public int AniSetIntIndx = 0;
     Vector3 movePos;
 
-    public bool ShowObject  = false;
+    public bool ShowObject = false;
     float NonAniTime = 0;
     int NonMoveAniState = 0;
 
+    float CheckTime = 0;
     public bool MoveStop = false;
     // Start is called before the first frame update
     void Start()
@@ -36,7 +38,7 @@ public class PetMoveController : MonoBehaviour
 
         myPlayerTrans = DataInfo.ins.infoController.PlayerObject;
         Vector3 StartPos = myPlayerTrans.position;
-        StartPos.y = 0.05f;
+        StartPos.y = 0.08f;
         transform.position = StartPos;
 
         InteractionObj = Instantiate(Resources.Load<GameObject>("Prefabs/PetInteraction"));
@@ -51,7 +53,7 @@ public class PetMoveController : MonoBehaviour
     }
 
     private void FixedUpdate()
-    { 
+    {
         if (!MoveStop)
         {
             PlayerDis = Vector3.Distance(transform.position, myPlayerTrans.position);
@@ -59,6 +61,8 @@ public class PetMoveController : MonoBehaviour
         }
         //NonAniTime //움직임 없는 시간 판단후 에니메이션
         PetNonMoveAni();
+        
+        //GroundCheck();
     }
 
     private void PetMove()
@@ -132,7 +136,7 @@ public class PetMoveController : MonoBehaviour
         {
             float offset = Time.deltaTime * SumSpeed;
             movePos += transform.forward * offset;
-            movePos.y = 0.05f;
+            movePos.y = 0.08f;
             transform.position = movePos;
         }
     }
@@ -142,9 +146,9 @@ public class PetMoveController : MonoBehaviour
         //NonMoveAniState
         //NonAniTime
 
-        if(NonMoveAniState == 0)
+        if (NonMoveAniState == 0)
         {
-            if(NonAniTime > Time.time + 5)
+            if (NonAniTime > Time.time + 5)
             {
 
             }
@@ -167,6 +171,24 @@ public class PetMoveController : MonoBehaviour
     public void PetInteraction()
     {
         ShowObject = (ShowObject == false) ? true : false;
+    }
+
+    void GroundCheck()
+    {
+        if (CheckTime > Time.time)
+            return;
+        
+        RaycastHit rayHit;
+        bool ret = false;
+
+        float distance = 50f;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out rayHit, distance, GroundLayers))
+        {
+            Debug.Log(rayHit.transform.name + " :: " + rayHit.point);
+
+        }
+        CheckTime = Time.time + 1;
     }
 
     //Bulldog give paw(손? 하이파이브?)

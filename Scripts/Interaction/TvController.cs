@@ -31,6 +31,9 @@ public class TvController : MonoBehaviour
         vImage = mCanvas.GetComponentInChildren<RawImage>();
         vImage.color = Color.black;
 
+        SoundController = (DataInfo.ins.OptionInfo.EffectSound == true) ? false : true;
+        Debug.Log(SoundController + " :: " + DataInfo.ins.OptionInfo.EffectSound);
+
         State = 0;
         videoInitCheck = false;
         PlayVideo = false;

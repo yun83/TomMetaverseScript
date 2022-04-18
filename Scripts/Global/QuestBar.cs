@@ -64,6 +64,7 @@ public class QuestBar : MonoBehaviour
             Debug.Log("¸®¿öµå È¹µæ");
             qv2Data.State = 4;
 
+            //DataInfo.ins.AddMoney(qv2Data.Reward);
             BackGround.color = new Color(0.5f, 0.5f, 0.5f);
             Invoke("RefillCells", 0.1f);
         }

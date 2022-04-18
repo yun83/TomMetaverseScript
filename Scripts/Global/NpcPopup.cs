@@ -217,16 +217,41 @@ public class NpcPopup : MonoBehaviour
                 }
                 TrunkButtonList[0].onClick.AddListener(() =>
                 {
-                    //손에 들수 있는 커피 오브젝트 생성
-                    gameObject.SetActive(false);
-
-                    DataInfo.ins.WinQuest(9);
-                    GameObject TempObj = Instantiate(Resources.Load<GameObject>("Prefabs/PickUpItem/PickUpHand"));
-                    TempObj.transform.localPosition = new Vector3(4.6f, 0.81f, -1.55f);
+                    Npc_Cafe1_ButtonSetting("CoffeeCup_A", 0.834f, 0);
+                });
+                TrunkButtonList[1].onClick.AddListener(() =>
+                {
+                    Npc_Cafe1_ButtonSetting("CoffeeLatte_A", 0.792f, 1);
+                });
+                TrunkButtonList[2].onClick.AddListener(() =>
+                {
+                    Npc_Cafe1_ButtonSetting("TeaCup_A", 0.791f, 2);
+                });
+                TrunkButtonList[3].onClick.AddListener(() =>
+                {
+                    Npc_Cafe1_ButtonSetting("Slushie", 0.873f, 3);
                 });
                 State = 3;
                 break;
         }
+    }
+    void Npc_Cafe1_ButtonSetting(string adr, float posy, int itemId)
+    {
+        string _path = "Prefabs/PickUpItem/";
+
+        GameObject TempObj = Instantiate(Resources.Load<GameObject>(_path + "PickUpHand"));
+        GameObject SubObj = Instantiate(Resources.Load<GameObject>(_path + adr));
+
+        TempObj.transform.localPosition = new Vector3(4.5f, 0.76f, -1.6f);
+        SubObj.transform.localPosition = new Vector3(4.5f, posy, -1.6f);
+        SubObj.transform.parent = TempObj.transform;
+
+        WorldInteraction wiData = TempObj.GetComponent<WorldInteraction>();
+        wiData.ItemId = itemId;
+        wiData.PickUpObj = SubObj;
+
+        DataInfo.ins.WinQuest(9);
+        gameObject.SetActive(false);
     }
 
     public void OnClick_EctClick()

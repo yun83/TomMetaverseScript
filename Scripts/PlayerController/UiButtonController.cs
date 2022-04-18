@@ -428,7 +428,6 @@ public class UiButtonController : MonoBehaviour
 
             if (RouletteSumTime.TotalSeconds <= 0)
             {
-                UiButton[6].interactable = true;
                 DataInfo.ins.deData.RouletteState = 0;
                 DataInfo.ins.DayEvent = JsonUtility.ToJson(DataInfo.ins.deData);
             }
@@ -462,7 +461,7 @@ public class UiButtonController : MonoBehaviour
         DateTime temp = DateTime.Now.AddHours(1);
 
         DataInfo.ins.deData.RouletteDay = //DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss");
-                                         new System.DateTime(temp.Year, temp.Month, temp.Day, 0, 0, 0).ToString("yyyyMMddHHmmss");
+                                         new System.DateTime(temp.Year, temp.Month, temp.Day, temp.Hour, 0, 0).ToString("yyyyMMddHHmmss");
         Debug.Log("·ê·¿ µ¹¸° ½Ã°£ ÀúÀå : " + DataInfo.ins.deData.printData());
 
         DataInfo.ins.DayEvent = JsonUtility.ToJson(DataInfo.ins.deData);

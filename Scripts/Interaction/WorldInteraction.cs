@@ -25,12 +25,13 @@ public class WorldInteraction : MonoBehaviour
     public float PlayerDis = 0;
 
     [Header("픽업 아이템")]
-    public GameObject TempObj;
+    public GameObject PickUpObj;
     [Tooltip("보조용 PickUp 일경우 아이템 ID")]
     public int ItemId = -1;
 
     [Header("NPC 일경우 OnOff")]
     public GameObject OnOffObject;
+    public GameObject[] InstantObj;
 
     string SceneName;
     int RoomState = 0;
@@ -145,23 +146,6 @@ public class WorldInteraction : MonoBehaviour
                     EventObj.name = "상호작용";
                 }
                 break;
-            case InteractionType.Pickup:
-                if (useCheck)
-                {
-                    EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
-                    EventObj.name = "상호작용";
-                }
-
-                switch (ItemId)
-                {
-                    case 0:
-                        TempObj = Instantiate(Resources.Load<GameObject>("Prefabs/PickUpItem/CoffeeCup_A"));
-                        TempObj.transform.SetParent(transform);
-                        TempObj.transform.localPosition = new Vector3(0, 0.3f, 0);
-                        TempObj.transform.localScale = new Vector3(10, 10, 10);
-                        break;
-                }
-                break;
             case InteractionType.NicName:
             case InteractionType.NPC_PetMaster:
             case InteractionType.NPC_Cafe_0:
@@ -179,6 +163,7 @@ public class WorldInteraction : MonoBehaviour
                 EventObj.name = "닉네임";
                 break;
             //case InteractionType.OutRoom:
+            case InteractionType.Gift:
             case InteractionType.WorldMapOut:
             case InteractionType.Cafe_In:
                 break;

@@ -27,6 +27,10 @@ public class CharacterWindow : MonoBehaviour
     private Vector2 movePosDiff;
 
     public NicNamePopup NicPopup;
+    [Header("옵션")]
+    public Button OptionButton;
+    public GameObject Popup_Option;
+
     [Header("설정완료")]
     public GameObject ExitPopupObj;
     public Text ExitPopupText;
@@ -103,6 +107,7 @@ public class CharacterWindow : MonoBehaviour
         ExitPopupObj.SetActive(false);
         BuyPopup.gameObject.SetActive(false);
         MyRoomSelectPopup.SetActive(false);
+        Popup_Option.SetActive(false);
 
         playerManger.itemEquipment(DataInfo.ins.CharacterSub);
 
@@ -135,6 +140,11 @@ public class CharacterWindow : MonoBehaviour
                     break;
                 case 4:
                     OnClick_BuyPopupClose();
+                    break;
+                case 10:
+                    Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
+                    PopupOpenCheck = 0;
+                    Popup_Option.SetActive(false);
                     break;
             }
         }
@@ -614,5 +624,12 @@ public class CharacterWindow : MonoBehaviour
                 break;
         }
         LoadScene(DataInfo.ins.MyRoomName);
+    }
+
+    public void OnClick_OptionOpen()
+    {
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
+        PopupOpenCheck = 10;
+        Popup_Option.SetActive(true);
     }
 }
