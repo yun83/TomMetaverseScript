@@ -13,7 +13,7 @@ public class MoneyShow : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if (DataInfo.ins.MoneyChange) { 
             ShowMoneyText();
@@ -22,7 +22,7 @@ public class MoneyShow : MonoBehaviour
 
     void ShowMoneyText()
     {
-        MoneyText.text = DataInfo.ins.CharacterMain.Money.ToString();
+        MoneyText.text = string.Format("{0:#,###}", DataInfo.ins.CharacterMain.Money);
         DataInfo.ins.MoneyChange = false;
     }
 }

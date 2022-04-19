@@ -11,6 +11,9 @@ public class QuestVer2_Main : MonoBehaviour
     Button NowButton;
     int Index = -1;
 
+    public Color Select = Color.white;
+    public Color nonSelect = Color.gray;
+
     public void ScrollCellIndex(int idx)
     {
         outlineImg = GetComponent<Image>();
@@ -31,9 +34,9 @@ public class QuestVer2_Main : MonoBehaviour
         NowButton.onClick.AddListener(OnClick_Evenet);
 
         if (DataInfo.ins.QuestIdx == Index)
-            outlineImg.color = Color.blue;
+            outlineImg.color = Select;
         else
-            outlineImg.color = Color.white;
+            outlineImg.color = nonSelect;
     }
 
     public void OnClick_Evenet()

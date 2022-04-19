@@ -10,6 +10,7 @@ public class CharacterWindow : MonoBehaviour
 {
     public GameObject InvenScrollView;
     public Transform ItemOpenTrans;
+    public Color SelectColor = new Color(0.6f, 1, 1, 1);
     public Button[] ItemIconButton;
     public Button[] SexSelectButton;
     InitScroll setScroll;
@@ -25,6 +26,7 @@ public class CharacterWindow : MonoBehaviour
 
     private Vector2 nowPos, prePos;
     private Vector2 movePosDiff;
+
 
     public NicNamePopup NicPopup;
     [Header("¿É¼Ç")]
@@ -254,7 +256,7 @@ public class CharacterWindow : MonoBehaviour
         StartCoroutine(ClickEvnetCall(idx));
 
         Image tempImage = ItemIconButton[idx].GetComponent<Image>();
-        tempImage.color = new Color(0.6f, 1, 1, 1);
+        tempImage.color = SelectColor;
 
         DataInfo.ins.ItemSelectIndex = -1;
 
@@ -545,7 +547,26 @@ public class CharacterWindow : MonoBehaviour
     {
         progressBar.fillAmount = 0;
         PageLodingPopup.SetActive(true);
+
+        DataInfo.ins.OldScneName = SceneManager.GetActiveScene().name;
+
         nextScene = sceneName;
+        switch (sceneName)
+        {
+            default:
+                DataInfo.ins.State = -1;
+                break;
+            case "Room_A":
+            case "Room_B":
+                DataInfo.ins.State = 1;
+                break;
+            case "World_A":
+                DataInfo.ins.State = 2;
+                break;
+            case "CoffeeShop":
+                DataInfo.ins.State = 3;
+                break;
+        }
 
         StartCoroutine(coroutineLoadScene());
     }

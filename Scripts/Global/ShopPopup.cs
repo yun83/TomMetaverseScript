@@ -15,6 +15,7 @@ public class ShopPopup : MonoBehaviour
     private Vector2 movePosDiff;
 
     public Button[] ShopButton;
+    public Color ShopButtonSelectColor = Color.yellow;
     public GameObject SubButton;
     public GameObject[] SelectDetailedMenu;
 
@@ -246,7 +247,7 @@ public class ShopPopup : MonoBehaviour
 
     void SuggestonSetting()
     {
-        ShopButton[State].GetComponent<Image>().color = Color.yellow;
+        ShopButton[State].GetComponent<Image>().color = ShopButtonSelectColor;
         subState = State;
 
         //아이템 리스트 셋팅
@@ -282,7 +283,7 @@ public class ShopPopup : MonoBehaviour
             //이전에 클릭된 버튼이 존재한다
             if (subState >= 0)
                 ShopButton[subState].GetComponent<Image>().color = Color.white;
-            ShopButton[State].GetComponent<Image>().color = Color.yellow;
+            ShopButton[State].GetComponent<Image>().color = ShopButtonSelectColor;
             subState = State;
 
             setScroll.totalCount = 0;
@@ -378,7 +379,7 @@ public class ShopPopup : MonoBehaviour
             //이전에 클릭된 버튼이 존재한다
             if (subState >= 0)
                 ShopButton[subState].GetComponent<Image>().color = Color.white;
-            ShopButton[State].GetComponent<Image>().color = Color.yellow;
+            ShopButton[State].GetComponent<Image>().color = ShopButtonSelectColor;
             subState = State;
 
             setScroll.totalCount = 0;
@@ -545,7 +546,7 @@ public class ShopPopup : MonoBehaviour
             //이전에 클릭된 버튼이 존재한다
             if (subState >= 0)
                 ShopButton[subState].GetComponent<Image>().color = Color.white;
-            ShopButton[State].GetComponent<Image>().color = Color.yellow;
+            ShopButton[State].GetComponent<Image>().color = ShopButtonSelectColor;
             subState = State;
 
             setScroll.totalCount = 0;

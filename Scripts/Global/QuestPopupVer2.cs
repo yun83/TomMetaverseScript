@@ -20,12 +20,21 @@ public class QuestPopupVer2 : MonoBehaviour
         });
 
         DataInfo.ins.QuestIdx = 0;
-
-        MainQuestScroll.totalCount = 4;
-        MainQuestScroll.InitScrollCall();
-
-        SubQuestScroll.totalCount = DataInfo.ins.QVer2[0].Count;
-        SubQuestScroll.InitScrollCall();
+        switch (DataInfo.ins.State)
+        {
+            default:
+                Click_CallBack(0);
+                break;
+            case 1:
+                Click_CallBack(1);
+                break;
+            case 2:
+                Click_CallBack(2);
+                break;
+            case 3:
+                Click_CallBack(3);
+                break;
+        }
     }
 
     private void OnEnable()

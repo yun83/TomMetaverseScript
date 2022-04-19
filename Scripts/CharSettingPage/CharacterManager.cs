@@ -22,7 +22,6 @@ public class CharacterManager : MonoBehaviour
     void Awake()
     {
         DataInfo.ins.LodingCheck = true;
-
         if (NicNameUse)
         {
             if (WoIn == null)
@@ -38,6 +37,14 @@ public class CharacterManager : MonoBehaviour
         cmLogic = FindObjectOfType<ControllerManager>();
         nicCheck = !DataInfo.ins.OptionInfo.NicNameOpen;
         DataInfo.ins.myPlayer = this;
+
+        //switch (DataInfo.ins.OldState)
+        //{
+        //    case 3:
+        //        transform.position = new Vector3(18, 0.15f, -52.9f);
+        //        DataInfo.ins.infoController.AxisRtt = new Vector2(20, 180);
+        //        break;
+        //}
     }
 
     private void LateUpdate()

@@ -62,6 +62,7 @@ public class NpcPopup : MonoBehaviour
             case InteractionType.NPC_PetMaster:
                 PetNpcStateLogic();
                 break;
+            case InteractionType.Cafe_In:
             case InteractionType.NPC_Cafe_0:
                 CafeNpc_0_StateLogic();
                 break;

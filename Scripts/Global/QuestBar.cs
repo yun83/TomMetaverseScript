@@ -9,9 +9,19 @@ public class QuestBar : MonoBehaviour
     public Text Title;
     public Text Description;
     public Text Reward;
+    public GameObject CheckMarkBox;
     public GameObject CheckMark;
+
     Image BackGround;
     Button ClickEvent;
+
+    public Color NonStart = new Color(0.85f, 0.85f, 0.85f);
+    public Color Start = Color.white;
+    public Color Win = new Color(0.65f, 0.9f, 1f);
+    public Color End = new Color(0.5f, 0.5f, 0.5f);
+
+    public Color textColor_Non = new Color(0.2f, 0.2f, 0.2f, 1f);
+    public Color textColor_End = new Color(0.2f, 0.2f, 0.2f, 0.5f);
 
     int QuestIdx;
     public int Q_ID;
@@ -30,21 +40,32 @@ public class QuestBar : MonoBehaviour
         Description.text = qv2Data.Description;
         Reward.text = qv2Data.Reward + "Gold";
 
-        switch(qv2Data.State)
+        Title.color = textColor_Non;
+        Description.color = textColor_Non;
+        Reward.color = textColor_Non;
+
+        ClickEvent.interactable = true;
+        switch (qv2Data.State)
         {
             case 0:
-                BackGround.color = new Color(0.85f, 0.85f, 0.85f);
+                BackGround.color = NonStart;
                 break;
             case 1:
-                BackGround.color = Color.white;
+                BackGround.color = Start;
                 break;
             case 2:
+                break;
             case 3:
-                BackGround.color = new Color(0.65f, 0.9f, 1f);
+                BackGround.color = Win;
                 break;
             case 4:
+                break;
             case 5:
-                BackGround.color = new Color(0.5f, 0.5f, 0.5f);
+                BackGround.color = End;
+                Title.color = textColor_End;
+                Description.color = textColor_End;
+                Reward.color = textColor_End;
+                ClickEvent.interactable = false;
                 break;
         }
 
@@ -61,10 +82,10 @@ public class QuestBar : MonoBehaviour
     {
         if (qv2Data.State == 3)
         {
-            Debug.Log("府况靛 裙垫");
+            Debug.Log("府况靛 裙垫 :: " + qv2Data.Reward);
             qv2Data.State = 4;
 
-            //DataInfo.ins.AddMoney(qv2Data.Reward);
+            DataInfo.ins.AddMoney(qv2Data.Reward);
             BackGround.color = new Color(0.5f, 0.5f, 0.5f);
             Invoke("RefillCells", 0.1f);
         }

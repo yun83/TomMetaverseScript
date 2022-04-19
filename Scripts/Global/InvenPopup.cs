@@ -24,8 +24,9 @@ public class InvenPopup : MonoBehaviour
     private void OnEnable()
     {
         scrollRect = ScrollView.GetComponent<RectTransform>();
-        scrollViewSetting();
+
         CharacterSetting();
+        scrollViewSetting();
     }
 
     void FixedUpdate()

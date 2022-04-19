@@ -21,7 +21,9 @@ public class DataInfo : Single<DataInfo>
     /// 1:마이룸
     /// 2:월드맵
     /// </summary>
-    public int State = 0;
+    public int State = -1;
+    public int OldState = -1;
+    public string OldScneName = "";
     public bool MoneyChange = false;
 
     bool DataLodingCheck = false;
@@ -118,13 +120,34 @@ public class DataInfo : Single<DataInfo>
 
         DataLodingCheck = false;
 
+        SceneNameCheck();
         SaveDataLoding(); 
         ItemDataLoding();
         QuestDataLoding();
         TimeEventLoding();
 
-        DataLodingCheck = true;
+    }
 
+    void SceneNameCheck()
+    {
+        DataLodingCheck = true;
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        switch (sceneName)
+        {
+            default:
+                State = -1;
+                break;
+            case "Room_A":
+            case "Room_B":
+                State = 1;
+                break;
+            case "World_A":
+                State = 2;
+                break;
+            case "CoffeeShop":
+                State = 3;
+                break;
+        }
         Com.ins.BgmSoundPlay(Resources.Load<AudioClip>("BGM/Progress"));
     }
 
@@ -293,12 +316,18 @@ public class DataInfo : Single<DataInfo>
             SortPriority(QVer2[i]);
         }
 
-        //맨처음 퀘스트들의 시작 가능상태로 변경
+        ////맨처음 퀘스트들의 시작 가능상태로 변경
+        //for (int i = 0; i < QVer2.Length; i++)
+        //{
+        //    QVer2[i][0].State = 1;
+        //}
         for (int i = 0; i < QVer2.Length; i++)
         {
-            QVer2[i][0].State = 1;
+            for (int idx = 0; idx < QVer2[i].Count; idx++)
+                QVer2[i][idx].State = 1;
         }
     }
+
     public void SortPriority(List<QuestVer2Data> data) //오름 차순으로 정렬하는 함수
     {
         data.Sort(delegate (QuestVer2Data A, QuestVer2Data B)
@@ -338,7 +367,6 @@ public class DataInfo : Single<DataInfo>
         }
         Debug.Log("<color=yellow>Time Event Print</color>" + deData.printData());
     }
-
 
     void QuestCheckFunction()
     {
@@ -445,5 +473,8 @@ public class DataInfo : Single<DataInfo>
         SaveData = JsonUtility.ToJson(CharacterMain);
         MoneyChange = true;
     }
-
+    public string GetThousandCommaText(int data)
+    {
+        return string.Format("{0:#,###}", data);
+    }
 }

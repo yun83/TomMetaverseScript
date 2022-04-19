@@ -60,7 +60,7 @@ public class ControllerManager : MonoBehaviour
     [Tooltip("What layers the character uses as ground")]
     public LayerMask GroundLayers;
 
-    private Vector2 AxisRtt;
+    public Vector2 AxisRtt;
     private int MoveAniState = -1;
     private float moveSpeedSum = 0;
     private float deltaMagnitudeDiff = 0;
@@ -107,24 +107,6 @@ public class ControllerManager : MonoBehaviour
         DataInfo.ins.RightTId = -1;
 
         _camera = Camera.main;
-
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        switch (sceneName)
-        {
-            default:
-                DataInfo.ins.State = -1;
-                break;
-            case "Room_A":
-            case "Room_B":
-                DataInfo.ins.State = 1;
-                break;
-            case "World_A":
-                DataInfo.ins.State = 2;
-                break;
-            case "CoffeeShop":
-                DataInfo.ins.State = 3;
-                break;
-        }
     }
 
     // Start is called before the first frame update
@@ -440,7 +422,6 @@ public class ControllerManager : MonoBehaviour
         {
             WorldInteraction temp = null;
             Transform Truk = rayHit.transform;
-            Debug.Log("Ray Cast Event Trigger [<color=blue> Name : " + Truk.name + "</color> ] [<color=yellow> Tag : " + Truk.tag + "</color> ]");
             try
             {
                 if (Truk.parent != null)
@@ -456,49 +437,47 @@ public class ControllerManager : MonoBehaviour
                 Debug.LogWarning(e.ToString());
             }
 
-            if (temp != null)
+            //Debug.Log("Ray Cast Event Trigger [<color=blue> Name : " + Truk.name + "</color> ] [<color=yellow> Tag : " + Truk.tag + "</color> ]");
+
+            switch (Truk.tag)
             {
-                if (EventScripts != null)
-                {
-                    EventScripts.OutInteraction();
-                }
-                EventScripts = temp;
-                EventState = 1;
-            }
-            else
-            {
-                switch (Truk.tag)
-                {
-                    default:
-                        switch (Truk.name)
-                        {
-                            case "PI_0":
-                                DataInfo.ins.PetController.OnClick_Evnet_0();
-                                break;
-                            case "PI_1":
-                                DataInfo.ins.PetController.OnClick_Evnet_1();
-                                break;
-                            case "PI_2":
-                                DataInfo.ins.PetController.OnClick_Evnet_2();
-                                break;
-                        }
-                        break;
-                    case "Pet":
-                        DataInfo.ins.PetController.PetInteraction();
-                        break;
-                    case "EctPlayer":
-                    case "WarpPoint":
-                        {
+                default:
+                    switch (Truk.name)
+                    {
+                        default:
                             if (EventScripts != null)
                             {
                                 EventScripts.OutInteraction();
                             }
-                            temp = Truk.GetComponent<WorldInteraction>();
                             EventScripts = temp;
                             EventState = 1;
+                            break;
+                        case "PI_0":
+                            DataInfo.ins.PetController.OnClick_Evnet_0();
+                            break;
+                        case "PI_1":
+                            DataInfo.ins.PetController.OnClick_Evnet_1();
+                            break;
+                        case "PI_2":
+                            DataInfo.ins.PetController.OnClick_Evnet_2();
+                            break;
+                    }
+                    break;
+                case "Pet":
+                    DataInfo.ins.PetController.PetInteraction();
+                    break;
+                case "EctPlayer":
+                case "WarpPoint":
+                    {
+                        if (EventScripts != null)
+                        {
+                            EventScripts.OutInteraction();
                         }
-                        break;
-                }
+                        temp = Truk.GetComponent<WorldInteraction>();
+                        EventScripts = temp;
+                        EventState = 1;
+                    }
+                    break;
             }
             ret = true;
         }
@@ -550,19 +529,22 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.Cafe_In:
                     if (EventState == 1)
                     {
-                        //LoadScene("CoffeeShop");
-                        DataInfo.ins.OutRoomButton.Clear();
+                        ////LoadScene("CoffeeShop");
+                        //DataInfo.ins.OutRoomButton.Clear();
 
-                        ButtonClass item1 = new ButtonClass();
-                        item1.text = "CoffeeShop";
-                        item1.addEvent = (() =>
-                        {
-                            LoadScene("CoffeeShop");
-                        });
-                        DataInfo.ins.OutRoomButton.Add(item1);
+                        //ButtonClass item1 = new ButtonClass();
+                        //item1.text = "CoffeeShop";
+                        //item1.addEvent = (() =>
+                        //{
+                        //    LoadScene("CoffeeShop");
+                        //});
+                        //DataInfo.ins.OutRoomButton.Add(item1);
 
-                        DataInfo.ins.GameUI.OR_Popup.Title.text = "카페 들어가기";
-                        DataInfo.ins.GameUI.OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
+                        //DataInfo.ins.GameUI.OR_Popup.Title.text = "카페 들어가기";
+                        //DataInfo.ins.GameUI.OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
+
+                        //카페 NPC 찾아서 넣어줘야 함
+                        DataInfo.ins.GameUI.OnClick_Npc(EventScripts);
                     }
                     break;
                 case InteractionType.OnChair:
@@ -590,26 +572,21 @@ public class ControllerManager : MonoBehaviour
                     if (EventState == 1)
                     {
                         ChairAniStart();
-                        Transform saveParent = PlayerObject.transform.parent;
-
-                        PlayerObject.transform.parent = EventScripts.transform;
-                        PlayerObject.localPosition = new Vector3(0, -0.35f, 0.26f);
-                        PlayerObject.localEulerAngles = new Vector3(90, 0, 0);
-
-                        PlayerObject.transform.parent = saveParent;
+                        ChairPosStting(new Vector3(0, -0.35f, 0.26f));
                     }
                     break;
                 case InteractionType.CafeChair_B:
                     if (EventState == 1)
                     {
                         ChairAniStart();
-                        Transform saveParent = PlayerObject.transform.parent;
-
-                        PlayerObject.transform.parent = EventScripts.transform;
-                        PlayerObject.localPosition = new Vector3(0, -0.46f, 0.275f);
-                        PlayerObject.localEulerAngles = new Vector3(90, 0, 0);
-
-                        PlayerObject.transform.parent = saveParent;
+                        ChairPosStting(new Vector3(0, -0.46f, 0.275f));
+                    }
+                    break;
+                case InteractionType.CafeChair_C:
+                    if (EventState == 1)
+                    {
+                        ChairAniStart();
+                        ChairPosStting(new Vector3(0, -0.675f, 0.048f));
                     }
                     break;
                 case InteractionType.Meditate:
@@ -701,6 +678,18 @@ public class ControllerManager : MonoBehaviour
         DataInfo.ins.WinQuest(2);
     }
 
+    void ChairPosStting(Vector3 mPos)
+    {
+        Transform saveParent = PlayerObject.transform.parent;
+
+        PlayerObject.transform.parent = EventScripts.transform;
+        PlayerObject.localPosition = mPos;
+        PlayerObject.localEulerAngles = new Vector3(90, 0, 0);
+
+        PlayerObject.transform.parent = saveParent;
+
+    }
+
     IEnumerator HandObjectSetting()
     {
         if (_manager.PickupTrans.childCount > 0)
@@ -733,7 +722,7 @@ public class ControllerManager : MonoBehaviour
                 break;
             case 3:
                 _path += "Slushie";
-                HandObject = InstansObjsetCreate(_path, new Vector3(-0.02f, 0.045f, 0.035f), new Vector3(-186.56f, -259.50f, -159.06f), Vector3.one);
+                HandObject = InstansObjsetCreate(_path, new Vector3(-0.06f, 0.04f, 0.046f), new Vector3(-184.345f, 97.798f, -72.89f), Vector3.one);
                 break;
         }
         yield return null;
@@ -899,7 +888,26 @@ public class ControllerManager : MonoBehaviour
     {
         progressBar.fillAmount = 0;
         PageLodingPopup.SetActive(true);
+
+        DataInfo.ins.OldScneName = SceneManager.GetActiveScene().name;
+        DataInfo.ins.OldState = DataInfo.ins.State;
         nextScene = sceneName;
+        switch (sceneName)
+        {
+            default:
+                DataInfo.ins.State = -1;
+                break;
+            case "Room_A":
+            case "Room_B":
+                DataInfo.ins.State = 1;
+                break;
+            case "World_A":
+                DataInfo.ins.State = 2;
+                break;
+            case "CoffeeShop":
+                DataInfo.ins.State = 3;
+                break;
+        }
 
         StartCoroutine(coroutineSceneLoding());
     }

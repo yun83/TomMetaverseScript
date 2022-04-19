@@ -31,7 +31,6 @@ public class WorldInteraction : MonoBehaviour
 
     [Header("NPC ÀÏ°æ¿ì OnOff")]
     public GameObject OnOffObject;
-    public GameObject[] InstantObj;
 
     string SceneName;
     int RoomState = 0;
@@ -68,7 +67,7 @@ public class WorldInteraction : MonoBehaviour
             case "Room_A":
             case "Room_B":
             case "CoffeeShop":
-                area = 2;
+                area = 2.1f;
                 RoomState = 1;
                 break;
         }
@@ -126,7 +125,6 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.NPC_PetMaster:
             case InteractionType.NPC_Cafe_0:
             case InteractionType.NPC_Cafe_1:
-                break;
             case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
             case InteractionType.Cafe_In:
@@ -229,4 +227,5 @@ public enum InteractionType
     Sleep,
     CafeChair_B,
     CafeChair_A,
+    CafeChair_C,
 }

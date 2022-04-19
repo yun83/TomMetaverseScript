@@ -132,29 +132,6 @@ public class UiButtonController : MonoBehaviour
         RoulettButtonSetting();
     }
 
-    void OnEnable()
-    {
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        switch (sceneName)
-        {
-            default:
-                DataInfo.ins.State = -1;
-                break;
-            case "Room_A":
-            case "Room_B":
-                DataInfo.ins.WinQuest(0);
-                DataInfo.ins.State = 1;
-                break;
-            case "World_A":
-                DataInfo.ins.WinQuest(1);
-                DataInfo.ins.State = 2;
-                break;
-            case "CoffeeShop":
-                DataInfo.ins.WinQuest(6);
-                DataInfo.ins.State = 3;
-                break;
-        }
-    }
 
     void Update()
     {

@@ -39,6 +39,7 @@ public class PetMoveController : MonoBehaviour
         myPlayerTrans = DataInfo.ins.infoController.PlayerObject;
         Vector3 StartPos = myPlayerTrans.position;
         StartPos.y = 0.08f;
+        StartPos.z += 1f;
         transform.position = StartPos;
 
         InteractionObj = Instantiate(Resources.Load<GameObject>("Prefabs/PetInteraction"));
