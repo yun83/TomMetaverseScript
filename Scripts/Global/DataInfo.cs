@@ -120,8 +120,8 @@ public class DataInfo : Single<DataInfo>
 
         DataLodingCheck = false;
 
+        SaveDataLoding();
         SceneNameCheck();
-        SaveDataLoding(); 
         ItemDataLoding();
         QuestDataLoding();
         TimeEventLoding();

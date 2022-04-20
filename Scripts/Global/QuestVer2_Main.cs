@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class QuestVer2_Main : MonoBehaviour
 {
     public Text Title;
+    public GameObject WinObject;
     string QName = "";
     Image outlineImg;
     Button NowButton;
@@ -37,6 +38,17 @@ public class QuestVer2_Main : MonoBehaviour
             outlineImg.color = Select;
         else
             outlineImg.color = nonSelect;
+
+        WinObject.SetActive(false);
+
+        for (int i = 0; i < DataInfo.ins.QVer2[idx].Count; i++)
+        {
+            if (DataInfo.ins.QVer2[idx][i].State == 3)
+            {
+                WinObject.SetActive(true);
+                break;
+            }
+        }
     }
 
     public void OnClick_Evenet()

@@ -20,7 +20,7 @@ public class WorldInteraction : MonoBehaviour
     private Transform Player;
     public Collider[] mColliders;
     public bool ColliderCheck = false;
-    Collider EventCollider = null;
+    public Collider EventCollider = null;
     private float area = 10;
     public float PlayerDis = 0;
 
@@ -61,7 +61,7 @@ public class WorldInteraction : MonoBehaviour
         switch (SceneName)
         {
             default:
-                area = 10;
+                area = 7;
                 RoomState = 0;
                 break;
             case "Room_A":
@@ -119,7 +119,9 @@ public class WorldInteraction : MonoBehaviour
                     mColliders[i].isTrigger = false;
 
                 if (EventCollider != null)
+                {
                     EventCollider.isTrigger = true;
+                }
                 break;
             case InteractionType.NicName:
             case InteractionType.NPC_PetMaster:
@@ -141,6 +143,7 @@ public class WorldInteraction : MonoBehaviour
                 if (useCheck)
                 {
                     EventObj = Instantiate(Resources.Load<GameObject>("Prefabs/Interaction2DObj"));
+                    EventCollider = EventObj.GetComponent<Collider>();
                     EventObj.name = "상호작용";
                 }
                 break;
@@ -228,4 +231,6 @@ public enum InteractionType
     CafeChair_B,
     CafeChair_A,
     CafeChair_C,
+    On_Car_A,
+    Lay_Down_A,
 }

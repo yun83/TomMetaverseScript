@@ -34,9 +34,7 @@ public class ControllerManager : MonoBehaviour
     [Tooltip("카메라 각도 최대 제한")]
     [Range(0, 80)]
     public float RotationDisMax = 70;
-
     public bool BoostKey = false;
-    public bool JumpKey = false;
 
     [Header("케릭터")]
     public Transform PlayerObject;
@@ -45,6 +43,8 @@ public class ControllerManager : MonoBehaviour
     private bool TouchEvnetCheck = false;
     [Tooltip("프레임당 점프 높이")]
     public float JumpDis = 0.02f;
+    public bool JumpKey = false;
+    private float JumpStartTime = 0;
     [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
     public float Gravity = -1.5f;
     [Tooltip("케릭터 이동 속도")]
@@ -138,12 +138,7 @@ public class ControllerManager : MonoBehaviour
         if (mAnimator == null)
             mAnimator = PlayerObject.GetComponentInChildren<Animator>();
 
-        //if (DataInfo.ins.CharacterMain.Sex == 0)
-        //    mAnimator.runtimeAnimatorController = AniType[0];
-        //else
-        //    mAnimator.runtimeAnimatorController = AniType[1];
-
-        RRSpawn = GameObject.FindObjectOfType<RandomRespawn>();
+        RRSpawn = FindObjectOfType<RandomRespawn>();
 
         HandRelease.SetActive(false);
         PageLodingPopup.SetActive(false);
@@ -401,9 +396,14 @@ public class ControllerManager : MonoBehaviour
             Vector3 spherePosition = new Vector3(PlayerObject.position.x, PlayerObject.position.y - GroundedOffset, PlayerObject.position.z);
             Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
 
+            //바닥에 닿으면 점프 해제
             if (Grounded)
             {
-                JumpKey = false;
+                if (JumpKey)
+                {
+                    if (JumpStartTime < Time.time)
+                        JumpKey = false;
+                }
             }
             // 중력의 영향을 받아 아래쪽으로 하강합니다.
             _verticalVelocity -= Gravity * Time.deltaTime;
@@ -589,6 +589,17 @@ public class ControllerManager : MonoBehaviour
                         ChairPosStting(new Vector3(0, -0.675f, 0.048f));
                     }
                     break;
+                case InteractionType.On_Car_A:
+                    if (EventState == 1)
+                    {
+                        if (EventScripts.ColliderCheck)
+                        {
+                            EventScripts.OnInteraction();
+                        }
+                        Com.ins.AniSetInt(mAnimator, "Interaction", 6);
+                        ChairPosStting(new Vector3(0.843f, 0.574f, 1.59f), new Vector3(0, 90, 0));
+                    }
+                    break;
                 case InteractionType.Meditate:
                     if (EventState == 1)
                     {
@@ -605,6 +616,20 @@ public class ControllerManager : MonoBehaviour
                     }
                     PlayerObject.position = EventScripts.PlayerPos;
                     PlayerObject.eulerAngles = EventScripts.PlayerRotation;
+                    break;
+                case InteractionType.Lay_Down_A:
+                    if (EventState == 1)
+                    {
+                        TouchEvnetCheck = true;
+                        if (EventScripts.ColliderCheck)
+                        {
+                            EventScripts.OnInteraction();
+                        }
+                        Com.ins.AniSetInt(mAnimator, "Interaction", 5);
+
+                    }
+                    _controller.enabled = false;
+                    PlayerObject.position = EventScripts.transform.position;
                     break;
                 case InteractionType.Sleep:
                     if (EventState == 1)
@@ -680,6 +705,7 @@ public class ControllerManager : MonoBehaviour
 
     void ChairPosStting(Vector3 mPos)
     {
+        _controller.enabled = false;
         Transform saveParent = PlayerObject.transform.parent;
 
         PlayerObject.transform.parent = EventScripts.transform;
@@ -687,7 +713,17 @@ public class ControllerManager : MonoBehaviour
         PlayerObject.localEulerAngles = new Vector3(90, 0, 0);
 
         PlayerObject.transform.parent = saveParent;
+    }
+    void ChairPosStting(Vector3 mPos, Vector3 mRot)
+    {
+        _controller.enabled = false;
+        Transform saveParent = PlayerObject.transform.parent;
 
+        PlayerObject.transform.parent = EventScripts.transform;
+        PlayerObject.localPosition = mPos;
+        PlayerObject.localEulerAngles = mRot;
+
+        PlayerObject.transform.parent = saveParent;
     }
 
     IEnumerator HandObjectSetting()
@@ -803,6 +839,7 @@ public class ControllerManager : MonoBehaviour
         if (!JumpKey)
         {
             JumpKey = true;
+            JumpStartTime = Time.time + 0.7f;
             if (DataInfo.ins.CharacterMain.Sex == 1)
                 mAnimator.SetTrigger("ManJump");
             else

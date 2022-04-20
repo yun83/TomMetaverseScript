@@ -87,6 +87,7 @@ public class PetMoveController : MonoBehaviour
                     InteractionObj.SetActive(true);
                 break;
             case 1:
+                ShowObject = false;
                 InteractionObj.SetActive(false);
                 if (AniSetIntIndx != 1)
                 {
@@ -117,8 +118,6 @@ public class PetMoveController : MonoBehaviour
                 }
 
                 SumSpeed = PlayerMoveSpeed + PlayerMoveSpeed + PlayerMoveSpeed + 1f;
-                //if (PlayerDis < 5)
-                //    aniMoveState = 2;
                 break;
         }
 
