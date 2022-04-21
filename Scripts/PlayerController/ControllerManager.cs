@@ -40,7 +40,7 @@ public class ControllerManager : MonoBehaviour
     public Transform PlayerObject;
     public CharacterController _controller;
     private CharacterManager _manager;
-    private bool TouchEvnetCheck = false;
+
     [Tooltip("프레임당 점프 높이")]
     public float JumpDis = 0.02f;
     public bool JumpKey = false;
@@ -82,6 +82,7 @@ public class ControllerManager : MonoBehaviour
     private bool HandItem = false;
     public GameObject HandRelease;
     private bool EventStartCheck = false;
+    private bool InteractionEndPosCheck = false;
 
     [Header("펫 시스템")]
     public GameObject[] PetObject;
@@ -147,11 +148,37 @@ public class ControllerManager : MonoBehaviour
 
         //추후 NPC 대화를 통해서 획득
         CreatePetObject();
+        DataInfo.ins.SceneNameCheck();
 
         if (SceneName.Equals("Room_A") || SceneName.Equals("Room_B"))
         {
             RoomCheck = 1;
         }
+
+        startPointSetting();
+    }
+
+    void startPointSetting()
+    {
+        _controller.enabled = false;
+        if (DataInfo.ins.State == 2)
+        {
+            switch (DataInfo.ins.OldState)
+            {
+                case 1:
+                    //룸에서 나올때는 기본 배치 된 위치
+                    //PlayerObject.position = new Vector3(1.58f, 0.16f, -16.38f);
+                    //PlayerObject.eulerAngles = new Vector3(0, 90, 0);
+                    AxisRtt = new Vector2(20, 270);
+                    break;
+                case 3:
+                    PlayerObject.position = new Vector3(17.5f, 0.16f, -52.7f);
+                    PlayerObject.eulerAngles = Vector3.zero;
+                    AxisRtt = new Vector2(20, 180);
+                    break;
+            }
+        }
+        _controller.enabled = true;
     }
 
     // Update is called once per frame
@@ -160,10 +187,6 @@ public class ControllerManager : MonoBehaviour
         MoveUpdate();
         GroundedCheck();
         RayCastEventLogic();
-    }
-
-    private void FixedUpdate()
-    {
     }
 
     private void OnDrawGizmosSelected()
@@ -351,6 +374,26 @@ public class ControllerManager : MonoBehaviour
         float offset = Time.deltaTime * moveSpeedSum;
         if (moveH != 0 || moveV != 0)
         {
+            if (InteractionEndPosCheck)
+            {
+                _controller.enabled = false;
+                switch (EventScripts.nowType)
+                {
+                    case InteractionType.CafeChair_B:
+                    case InteractionType.CafeChair_C:
+                        PlayerObject.position = new Vector3(-1, 0.2f, -0.97f);
+                        break;
+                    case InteractionType.Sleep:
+                        if (DataInfo.ins.NowSceneName.Equals("Room_A"))
+                            PlayerObject.position = new Vector3(0.47f, 0.2f, -2.7f);
+                        else
+                            PlayerObject.position = new Vector3(-2f, 0.2f, -1.24f);
+                        break;
+                }
+
+                InteractionEndPosCheck = false;
+            }
+
             Vector3 tempAngles = new Vector3();
             tempAngles.x = offset;
             tempAngles.y = Axis.eulerAngles.y;
@@ -526,27 +569,6 @@ public class ControllerManager : MonoBehaviour
                         DataInfo.ins.GameUI.OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
                     }
                     break;
-                case InteractionType.Cafe_In:
-                    if (EventState == 1)
-                    {
-                        ////LoadScene("CoffeeShop");
-                        //DataInfo.ins.OutRoomButton.Clear();
-
-                        //ButtonClass item1 = new ButtonClass();
-                        //item1.text = "CoffeeShop";
-                        //item1.addEvent = (() =>
-                        //{
-                        //    LoadScene("CoffeeShop");
-                        //});
-                        //DataInfo.ins.OutRoomButton.Add(item1);
-
-                        //DataInfo.ins.GameUI.OR_Popup.Title.text = "카페 들어가기";
-                        //DataInfo.ins.GameUI.OnClick_OutRoomPopup(DataInfo.ins.OutRoomButton);
-
-                        //카페 NPC 찾아서 넣어줘야 함
-                        DataInfo.ins.GameUI.OnClick_Npc(EventScripts);
-                    }
-                    break;
                 case InteractionType.OnChair:
                     if (EventState == 1)
                     {
@@ -580,6 +602,7 @@ public class ControllerManager : MonoBehaviour
                     {
                         ChairAniStart();
                         ChairPosStting(new Vector3(0, -0.46f, 0.275f));
+                        InteractionEndPosCheck = true;
                     }
                     break;
                 case InteractionType.CafeChair_C:
@@ -587,6 +610,7 @@ public class ControllerManager : MonoBehaviour
                     {
                         ChairAniStart();
                         ChairPosStting(new Vector3(0, -0.675f, 0.048f));
+                        InteractionEndPosCheck = true;
                     }
                     break;
                 case InteractionType.On_Car_A:
@@ -620,7 +644,6 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.Lay_Down_A:
                     if (EventState == 1)
                     {
-                        TouchEvnetCheck = true;
                         if (EventScripts.ColliderCheck)
                         {
                             EventScripts.OnInteraction();
@@ -634,7 +657,6 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.Sleep:
                     if (EventState == 1)
                     {
-                        TouchEvnetCheck = true;
                         if (EventScripts.ColliderCheck)
                         {
                             EventScripts.OnInteraction();
@@ -643,6 +665,8 @@ public class ControllerManager : MonoBehaviour
                             Com.ins.AniSetInt(mAnimator, "Interaction", 104);
                         else
                             Com.ins.AniSetInt(mAnimator, "Interaction", 4);
+
+                        InteractionEndPosCheck = true;
 
                         //침대 누울경우의 카메라 위치 문제를 위해 강제 높이 셋팅.
                         Vector3 getPos = PlayerObject.position;
@@ -666,6 +690,13 @@ public class ControllerManager : MonoBehaviour
                     if (EventState == 1)
                     {
                         StartCoroutine(HandObjectSetting());
+                    }
+                    break;
+                case InteractionType.getPoolPotal:
+                case InteractionType.Cafe_In:
+                    if (EventState == 1)
+                    {//카페 NPC 찾아서 넣어줘야 함
+                        DataInfo.ins.GameUI.OnClick_Npc(EventScripts);
                     }
                     break;
                 case InteractionType.NPC_PetMaster:

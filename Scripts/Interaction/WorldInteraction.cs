@@ -130,6 +130,7 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.OutRoom:
             case InteractionType.WorldMapOut:
             case InteractionType.Cafe_In:
+            case InteractionType.getPoolPotal:
                 break;
         }
     }
@@ -167,6 +168,7 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.Gift:
             case InteractionType.WorldMapOut:
             case InteractionType.Cafe_In:
+            case InteractionType.getPoolPotal:
                 break;
         }
 
@@ -194,6 +196,7 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.WorldMapOut:
             case InteractionType.Cafe_In:
             case InteractionType.Gift:
+            case InteractionType.getPoolPotal:
                 if (other.tag == "Player")
                 {
                     DataInfo.ins.infoController.EventScripts = this;
@@ -233,4 +236,5 @@ public enum InteractionType
     CafeChair_C,
     On_Car_A,
     Lay_Down_A,
+    getPoolPotal,
 }

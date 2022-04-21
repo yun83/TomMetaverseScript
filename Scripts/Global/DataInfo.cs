@@ -22,6 +22,7 @@ public class DataInfo : Single<DataInfo>
     /// 2:¿ùµå¸Ê
     /// </summary>
     public int State = -1;
+    public string NowSceneName = "";
     public int OldState = -1;
     public string OldScneName = "";
     public bool MoneyChange = false;
@@ -121,18 +122,18 @@ public class DataInfo : Single<DataInfo>
         DataLodingCheck = false;
 
         SaveDataLoding();
-        SceneNameCheck();
-        ItemDataLoding();
         QuestDataLoding();
         TimeEventLoding();
+        ItemDataLoding();
+        SceneNameCheck();
 
     }
 
-    void SceneNameCheck()
+    public void SceneNameCheck()
     {
         DataLodingCheck = true;
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        switch (sceneName)
+        NowSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        switch (NowSceneName)
         {
             default:
                 State = -1;
@@ -140,15 +141,20 @@ public class DataInfo : Single<DataInfo>
             case "Room_A":
             case "Room_B":
                 State = 1;
+                WinQuest(0);
                 break;
             case "World_A":
                 State = 2;
+                WinQuest(1);
                 break;
             case "CoffeeShop":
                 State = 3;
+                WinQuest(6);
                 break;
         }
-        Com.ins.BgmSoundPlay(Resources.Load<AudioClip>("BGM/Progress"));
+
+        if(State > 0)
+            Com.ins.BgmSoundPlay(Resources.Load<AudioClip>("BGM/Progress"));
     }
 
     // Update is called once per frame

@@ -48,7 +48,9 @@ public class OptionPopup : MonoBehaviour
 
         switch (idx)
         {
-            case 0: DataInfo.ins.OptionInfo.EffectSound = (DataInfo.ins.OptionInfo.EffectSound == true) ? false : true; ; break;
+            case 0:
+                DataInfo.ins.OptionInfo.EffectSound = (DataInfo.ins.OptionInfo.EffectSound == true) ? false : true;
+                break;
             case 1:
                 DataInfo.ins.OptionInfo.BgmSound = (DataInfo.ins.OptionInfo.BgmSound == true) ? false : true;
 

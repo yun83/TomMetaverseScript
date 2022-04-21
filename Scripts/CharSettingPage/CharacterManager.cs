@@ -17,6 +17,8 @@ public class CharacterManager : MonoBehaviour
     public WorldInteraction WoIn = null;
     private bool nicCheck = false;
 
+    public bool UICharCheck = false;
+
     public ControllerManager cmLogic;
 
     void Awake()
@@ -36,15 +38,11 @@ public class CharacterManager : MonoBehaviour
 
         cmLogic = FindObjectOfType<ControllerManager>();
         nicCheck = !DataInfo.ins.OptionInfo.NicNameOpen;
-        DataInfo.ins.myPlayer = this;
 
-        //switch (DataInfo.ins.OldState)
-        //{
-        //    case 3:
-        //        transform.position = new Vector3(18, 0.15f, -52.9f);
-        //        DataInfo.ins.infoController.AxisRtt = new Vector2(20, 180);
-        //        break;
-        //}
+        if (!UICharCheck)
+        {
+            DataInfo.ins.myPlayer = this;
+        }
     }
 
     private void LateUpdate()

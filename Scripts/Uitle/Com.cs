@@ -192,10 +192,19 @@ public class Com : Single<Com>
     public void BgmSoundPlay(AudioClip SoundSrc, bool Loop = true)
     {
         if (SoundSrc == null)
+        {
             return;
+        }
 
         if (!DataInfo.ins.OptionInfo.BgmSound)
+        {
             return;
+        }
+
+        if (BgmSound != null)
+        {
+            return;
+        }
 
         BgmSound = new GameObject("Bgm");
 

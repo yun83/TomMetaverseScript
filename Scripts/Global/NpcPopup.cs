@@ -60,6 +60,7 @@ public class NpcPopup : MonoBehaviour
         switch (EventScripts.nowType)
         {
             case InteractionType.NPC_PetMaster:
+            case InteractionType.getPoolPotal:
                 PetNpcStateLogic();
                 break;
             case InteractionType.Cafe_In:
