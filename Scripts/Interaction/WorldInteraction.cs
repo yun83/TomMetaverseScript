@@ -236,5 +236,6 @@ public enum InteractionType
     CafeChair_C,
     On_Car_A,
     Lay_Down_A,
+    Lay_Down_B,
     getPoolPotal,
 }

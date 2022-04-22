@@ -82,7 +82,7 @@ public class QuestBar : MonoBehaviour
     {
         if (qv2Data.State == 3)
         {
-            Debug.Log("府况靛 裙垫 :: " + qv2Data.Reward);
+            //Debug.Log("府况靛 裙垫 :: " + qv2Data.Reward);
             qv2Data.State = 4;
 
             DataInfo.ins.AddMoney(qv2Data.Reward);

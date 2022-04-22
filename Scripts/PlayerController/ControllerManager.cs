@@ -572,6 +572,7 @@ public class ControllerManager : MonoBehaviour
                 case InteractionType.OnChair:
                     if (EventState == 1)
                     {
+                        DataInfo.ins.WinQuest(2);
                         ChairAniStart();
                         if (DataInfo.ins.State == 1)
                         {
@@ -642,6 +643,19 @@ public class ControllerManager : MonoBehaviour
                     PlayerObject.eulerAngles = EventScripts.PlayerRotation;
                     break;
                 case InteractionType.Lay_Down_A:
+                    if (EventState == 1)
+                    {
+                        if (EventScripts.ColliderCheck)
+                        {
+                            EventScripts.OnInteraction();
+                        }
+                        Com.ins.AniSetInt(mAnimator, "Interaction", 5);
+                        DataInfo.ins.WinQuest(13);
+                    }
+                    _controller.enabled = false;
+                    PlayerObject.position = EventScripts.transform.position;
+                    break;
+                case InteractionType.Lay_Down_B:
                     if (EventState == 1)
                     {
                         if (EventScripts.ColliderCheck)
@@ -730,8 +744,6 @@ public class ControllerManager : MonoBehaviour
             Com.ins.AniSetInt(mAnimator, "Interaction", 101);
         else
             Com.ins.AniSetInt(mAnimator, "Interaction", 1);
-
-        DataInfo.ins.WinQuest(2);
     }
 
     void ChairPosStting(Vector3 mPos)
@@ -743,6 +755,7 @@ public class ControllerManager : MonoBehaviour
         PlayerObject.localPosition = mPos;
         PlayerObject.localEulerAngles = new Vector3(90, 0, 0);
 
+        DataInfo.ins.WinQuest(12);
         PlayerObject.transform.parent = saveParent;
     }
     void ChairPosStting(Vector3 mPos, Vector3 mRot)
@@ -769,6 +782,8 @@ public class ControllerManager : MonoBehaviour
         yield return null;
 
         Com.ins.AniSetInt(mAnimator, "Interaction", 7);
+        //에니메이션 자체의 축이 틀어져서 강제로 각도 셋팅
+        mAnimator.transform.localEulerAngles = new Vector3(8.3f, 0, 0);
 
         GameObject HandObject = null; //Instantiate(EventScripts.gameObject);
         string _path = "Prefabs/PickUpItem/";
@@ -821,10 +836,6 @@ public class ControllerManager : MonoBehaviour
         Com.ins.ShuffleArray(getMoney);
 
         //선물 줍는 에니메이션 삭제
-        //if (DataInfo.ins.CharacterMain.Sex == 1)
-        //    Com.ins.AniSetInt(mAnimator, "Interaction", 103);
-        //else
-        //    Com.ins.AniSetInt(mAnimator, "Interaction", 3);
         DataInfo.ins.WinQuest(3);
 
         RRSpawn.ItemDelet(EventScripts);
@@ -833,7 +844,7 @@ public class ControllerManager : MonoBehaviour
 
         DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterMain);
         //아이템 획득
-        DataInfo.ins.GameUI.CallToastMassage("선물 획득 하였습니다. [" + getMoney[0] + "] Gold", 0.8f);
+        DataInfo.ins.GameUI.CallToastMassage("선물 획득 하였습니다. [" + getMoney[0] + "] Gold", 2f);
     }
 
     public void RouletteEndEvent()
@@ -895,10 +906,6 @@ public class ControllerManager : MonoBehaviour
 
         HandItem = false;
         HandRelease.SetActive(false);
-        if (moveSpeedSum == 0)
-        {
-            Com.ins.AniSetInt(mAnimator, "Interaction", 7);
-        }
     }
 
 
@@ -913,6 +920,7 @@ public class ControllerManager : MonoBehaviour
         if (mState != MoveAniState)
         {
             MoveAniState = mState;
+            mAnimator.transform.localEulerAngles = Vector3.zero;
 
             switch (MoveAniState)
             {
@@ -924,7 +932,11 @@ public class ControllerManager : MonoBehaviour
                         Com.ins.AniSetInt(mAnimator, "MoveState", 0);
 
                     if (HandItem)
+                    {
                         Com.ins.AniSetInt(mAnimator, "Interaction", 7);
+                        //에니메이션 자체의 축이 틀어져서 강제로 셋팅
+                        mAnimator.transform.localEulerAngles = new Vector3(8.3f, 0, 0);
+                    }
                     break;
                 case 1:
                     moveSpeedSum = moveSpeed;

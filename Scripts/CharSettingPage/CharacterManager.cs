@@ -19,8 +19,6 @@ public class CharacterManager : MonoBehaviour
 
     public bool UICharCheck = false;
 
-    public ControllerManager cmLogic;
-
     void Awake()
     {
         DataInfo.ins.LodingCheck = true;
@@ -36,7 +34,6 @@ public class CharacterManager : MonoBehaviour
             }
         }
 
-        cmLogic = FindObjectOfType<ControllerManager>();
         nicCheck = !DataInfo.ins.OptionInfo.NicNameOpen;
 
         if (!UICharCheck)
@@ -87,7 +84,7 @@ public class CharacterManager : MonoBehaviour
 
     public void OnClick_SceneChanger()
     {
-        cmLogic.LoadScene(NectSceneName);
+        DataInfo.ins.infoController.LoadScene(NectSceneName);
     }
 
 
@@ -205,16 +202,7 @@ public class CharacterManager : MonoBehaviour
                 }
             }
         }
-    }
 
-    //void OnControllerColliderHit(ControllerColliderHit cchit)
-    //{
-    //    //Debug.Log("000 On Controller Collider Hit[<color=blue>" + cchit.transform.name + "</color>] Tag [<color=yellow>" + cchit.transform.tag + "</color>]");
-    //    if (cchit.transform.tag.Equals("GiftBox"))
-    //    {
-    //        cmLogic.EventScripts = cchit.transform.GetComponent<WorldInteraction>();
-    //        cmLogic.EventState = 1;
-    //        cmLogic.RayCastEventLogic();
-    //    }
-    //}
+        //Debug.Log(DebugMsg);
+    }
 }

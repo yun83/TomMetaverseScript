@@ -141,11 +141,13 @@ public class DataInfo : Single<DataInfo>
             case "Room_A":
             case "Room_B":
                 State = 1;
-                WinQuest(0);
+                if(OldState == 2)
+                    WinQuest(0);
                 break;
             case "World_A":
                 State = 2;
-                WinQuest(1);
+                if (OldState == 1)
+                    WinQuest(1);
                 break;
             case "CoffeeShop":
                 State = 3;
