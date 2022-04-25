@@ -28,13 +28,8 @@ public class PetRoomPoint : MonoBehaviour
             PetManager = trunk.GetComponent<PetMoveController>();
             PetManager.MoveStop = true;
 
-            //tempPos.y += 0.5f;
-
             PetManager.transform.position = tempPos;
             PetManager.transform.rotation = transform.rotation;
-
-            //PetManager.gameObject.GetComponent<Collider>().isTrigger = false;
-            //PetManager.gameObject.AddComponent<Rigidbody>();
 
             State = 1;
         }

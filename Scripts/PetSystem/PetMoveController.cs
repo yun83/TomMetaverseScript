@@ -36,7 +36,7 @@ public class PetMoveController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("TouchLayer");
         Look = temp.transform;
 
-        myPlayerTrans = DataInfo.ins.infoController.PlayerObject;
+        myPlayerTrans = DataInfo.ins.myPlayer.PetLookPos;
         Vector3 StartPos = myPlayerTrans.position;
         StartPos.y = 0.08f;
         StartPos.z += 1f;
@@ -53,21 +53,21 @@ public class PetMoveController : MonoBehaviour
         DataInfo.ins.PetController = this;
     }
 
-    private void FixedUpdate()
+    //private void FixedUpdate(){ }
+    private void Update()
     {
         if (!MoveStop)
         {
-            PlayerDis = Vector3.Distance(transform.position, myPlayerTrans.position);
-            PetMove();
+            PetMoveVer3();
         }
-        //NonAniTime //움직임 없는 시간 판단후 에니메이션
-        PetNonMoveAni();
-        
-        //GroundCheck();
     }
 
-    private void PetMove()
+    private void PetMoveVer3()
     {
+        Vector3 StartPos = myPlayerTrans.position;
+        StartPos.y = 0.08f;
+        PlayerDis = Vector3.Distance(transform.position, StartPos);
+
         if (PlayerDis > 0.7f)
             LookPlayer();
 
@@ -75,9 +75,9 @@ public class PetMoveController : MonoBehaviour
         {
             case 0:
                 SumSpeed = 0;
-                if (PlayerDis > 3)
+                if (PlayerDis > 0.8f)
                     aniMoveState = 1;
-                else if (PlayerDis > 6)
+                else if (PlayerDis > 1.5f)
                     aniMoveState = 2;
 
 
@@ -96,7 +96,7 @@ public class PetMoveController : MonoBehaviour
                 }
 
                 SumSpeed = PlayerMoveSpeed;
-                if (PlayerDis > 5)
+                if (PlayerDis > 1.5f)
                     aniMoveState = 2;
                 break;
             case 2:
@@ -107,8 +107,10 @@ public class PetMoveController : MonoBehaviour
                 }
 
                 SumSpeed = PlayerMoveSpeed + PlayerMoveSpeed;
-                if (PlayerDis > 7)
+                if (PlayerDis > 2)
                     aniMoveState = 3;
+                else if (PlayerDis <= 1f)
+                    aniMoveState = 1;
                 break;
             case 3:
                 if (AniSetIntIndx != 2)
@@ -118,10 +120,12 @@ public class PetMoveController : MonoBehaviour
                 }
 
                 SumSpeed = PlayerMoveSpeed + PlayerMoveSpeed + PlayerMoveSpeed + 1f;
+                if (PlayerDis <= 1.5f)
+                    aniMoveState = 2;
                 break;
         }
 
-        if (aniMoveState != 0 && PlayerDis < 2f)
+        if (aniMoveState != 0 && PlayerDis < 0.6f)
         {
             if (AniSetIntIndx != 0)
             {
@@ -141,24 +145,28 @@ public class PetMoveController : MonoBehaviour
         }
     }
 
-    void PetNonMoveAni()
+    void PetMoveVer2()
     {
-        //NonMoveAniState
-        //NonAniTime
+        int getAniState = DataInfo.ins.infoController.PlayerMoveAniState;
+        transform.rotation = DataInfo.ins.infoController.PlayerObject.rotation;
 
-        if (NonMoveAniState == 0)
-        {
-            if (NonAniTime > Time.time + 5)
-            {
+        myPlayerTrans = DataInfo.ins.infoController.PlayerObject;
+        Vector3 StartPos = myPlayerTrans.position;
+        StartPos.y = 0.08f;
+        StartPos.z += 1f;
+        transform.position = StartPos;
 
-            }
-        }
+        if (getAniState == 3)
+            getAniState = 2;
+        Com.ins.AniSetInt(PetAni, "Move", getAniState);
     }
 
     void LookPlayer()
     {
+        Vector3 StartPos = myPlayerTrans.position;
+        StartPos.y = 0.08f;
         //플레이어 바라보기
-        Look.LookAt(myPlayerTrans);
+        Look.LookAt(StartPos);
 
         Vector3 tempAngles = new Vector3();
         tempAngles.x = 0;

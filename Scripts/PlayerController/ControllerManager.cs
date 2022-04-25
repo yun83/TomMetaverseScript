@@ -40,6 +40,7 @@ public class ControllerManager : MonoBehaviour
     public Transform PlayerObject;
     public CharacterController _controller;
     private CharacterManager _manager;
+    public int PlayerMoveAniState = 0;
 
     [Tooltip("프레임당 점프 높이")]
     public float JumpDis = 0.02f;
@@ -355,6 +356,8 @@ public class ControllerManager : MonoBehaviour
                     mtempState = 2;
             }
         }
+
+        PlayerMoveAniState = mtempState;
         //에니메이션 셋팅
         MoveAniStateSetting(mtempState);
 
@@ -758,6 +761,7 @@ public class ControllerManager : MonoBehaviour
         DataInfo.ins.WinQuest(12);
         PlayerObject.transform.parent = saveParent;
     }
+
     void ChairPosStting(Vector3 mPos, Vector3 mRot)
     {
         _controller.enabled = false;
@@ -871,6 +875,7 @@ public class ControllerManager : MonoBehaviour
     {
         BoostKey = true;
     }
+
     public void PointUp_Boost()
     {
         BoostKey = false;

@@ -18,6 +18,7 @@ public class CharacterManager : MonoBehaviour
     private bool nicCheck = false;
 
     public bool UICharCheck = false;
+    public Transform PetLookPos;
 
     void Awake()
     {
