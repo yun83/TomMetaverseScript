@@ -228,18 +228,19 @@ public class UiButtonController : MonoBehaviour
     {
         OnClick_CloseAllPopup();
         QuestPopup.gameObject.SetActive(true);
+
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
     }
     public void OnClick_Option()
     {
         OnClick_CloseAllPopup();
 
         OptionPopup.SetActive(true);
+
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
     }
     public void OnClick_Exit()
     {
-        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
-
         OnClick_CloseAllPopup();
 
         //현재 위치에 관련하여 분기 하여야 한다. 마이룸일 경우는 종료
@@ -254,6 +255,8 @@ public class UiButtonController : MonoBehaviour
                 Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
                 popupController.gameObject.SetActive(false);
             });
+
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
     }
 
     public void OnClick_OutRoomPopup(List<ButtonClass> array)
@@ -265,6 +268,7 @@ public class UiButtonController : MonoBehaviour
     public void OnClick_Roulette()
     {
         RoulettePopup.SetActive(true);
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
     }
 
 #endregion
@@ -446,6 +450,11 @@ public class UiButtonController : MonoBehaviour
         DataInfo.ins.WinQuest(11);
 
         Invoke("RoulettButtonSetting", 0.1f);
+    }
+
+    public void ClickSound()
+    {
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
     }
 
     public void OnClick_Npc(WorldInteraction wi)

@@ -366,8 +366,9 @@ public class CharacterWindow : MonoBehaviour
 
     public void OnClick_ItemRestButton() {
         //Debug.Log("착용 아이템 초기화");
-        
-        if(DataInfo.ins.SaveData != "" && DataInfo.ins.SaveData != null)
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
+
+        if (DataInfo.ins.SaveData != "" && DataInfo.ins.SaveData != null)
             DataInfo.ins.CharacterSub = JsonUtility.FromJson<Info_Char>(DataInfo.ins.SaveData);
         else
             DataInfo.ins.CharacterSub.iniEqtData();
@@ -644,6 +645,7 @@ public class CharacterWindow : MonoBehaviour
                 DataInfo.ins.MyRoomName = "Room_B";
                 break;
         }
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
         LoadScene(DataInfo.ins.MyRoomName);
     }
 

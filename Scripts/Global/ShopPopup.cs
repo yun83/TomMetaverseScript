@@ -63,6 +63,7 @@ public class ShopPopup : MonoBehaviour
 
         PurchaseClose.onClick.AddListener(() =>
         {
+            Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
             BuyPopup.SetActive(false);
         });
 
@@ -240,6 +241,7 @@ public class ShopPopup : MonoBehaviour
             if (subState >= 0)
                 ShopButton[subState].GetComponent<Image>().color = Color.white;
 
+            Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
             SuggestonSetting();
 
         }
@@ -299,6 +301,7 @@ public class ShopPopup : MonoBehaviour
                         DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.CoustumList[i][k]);
                 }
             }
+            Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
 
             SubButton.SetActive(true);
             scrollRect.offsetMax = (new Vector2(0, -150));
@@ -396,6 +399,7 @@ public class ShopPopup : MonoBehaviour
                     DataInfo.ins.CostumeScrollList.Add(DataInfo.ins.EctItemData[i]);
                 }
             }
+            Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
             StartCoroutine(ScrollViewSetting());
         }
     }
@@ -409,6 +413,7 @@ public class ShopPopup : MonoBehaviour
         BuyPopupInitScroll.totalCount = DataInfo.ins.BuyItemSaveList.Count;
         BuyPopupInitScroll.InitScrollCall();
 
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
         DataInfo.ins.TotlaMoneySumCheck = true;
 
     }
@@ -555,6 +560,7 @@ public class ShopPopup : MonoBehaviour
             SubButton.SetActive(false);
             scrollRect.offsetMax = (new Vector2(0, -90));
 
+            Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
             StartCoroutine(ScrollViewSetting());
         }
     }

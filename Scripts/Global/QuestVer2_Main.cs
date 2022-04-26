@@ -55,5 +55,6 @@ public class QuestVer2_Main : MonoBehaviour
     {
         //Debug.Log(QName);
         DataInfo.ins.GameUI.QuestPopup.Click_CallBack(Index);
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
     }
 }

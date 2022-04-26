@@ -17,6 +17,7 @@ public class QuestPopupVer2 : MonoBehaviour
         EscButton.onClick.RemoveAllListeners();
         EscButton.onClick.AddListener(() => {
             DataInfo.ins.GameUI.OnClick_CloseAllPopup();
+            Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
         });
 
         DataInfo.ins.QuestIdx = 0;

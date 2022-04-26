@@ -66,12 +66,12 @@ public class OptionPopup : MonoBehaviour
 
         //Debug.Log("Click Check [ " + idx + " ] :: " + tempCheck);
         DataInfo.ins.saveOption = JsonUtility.ToJson(DataInfo.ins.OptionInfo);
-        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
     }
 
     public void OnClick_Esc()
     {
-        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
         gameObject.SetActive(false);
     }
 }

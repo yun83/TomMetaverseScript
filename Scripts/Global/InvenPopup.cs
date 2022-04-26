@@ -75,11 +75,14 @@ public class InvenPopup : MonoBehaviour
         scrollRect.offsetMax = (new Vector2(0, -150));
     }
 
-    void OnClick_Item() {
+    void OnClick_Item()
+    {
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
         scrollViewSetting();
     }
     void OnClick_Gesture()
     {
+        Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Click"));
         //아이템 리스트 셋팅
         DataInfo.ins.CostumeScrollList.Clear();
         for (int i = 0; i < DataInfo.ins.EctItemData.Count; i++)
