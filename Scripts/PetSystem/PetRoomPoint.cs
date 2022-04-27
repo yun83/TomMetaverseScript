@@ -31,6 +31,7 @@ public class PetRoomPoint : MonoBehaviour
             PetManager.transform.position = tempPos;
             PetManager.transform.rotation = transform.rotation;
 
+            Com.ins.AniSetInt(PetManager.PetAni, "Move", 0);
             State = 1;
         }
         else
@@ -41,29 +42,45 @@ public class PetRoomPoint : MonoBehaviour
 
     void PetAniLogig()
     {
+        int rand2 = 3;
         switch (State)
         {
             case 1:
                 {
-                    int rand = Random.Range(0, 100);
-                    int rand2 = Random.Range(5, 15);
-                    if (rand < 50)
-                    {
+                    int rand = Random.Range(0, 1000);
+                    if (rand < 400)
                         State = 2;
-                    }
-                    else
-                    {
+                    else if (rand < 800)
                         State = 3;
-                    }
-                    AniCheckTime = Time.time + rand2;
+                    else if (rand < 900)
+                        State = 4;
+                    else// if (rand < 1000)
+                        State = 5;
+
                 }
                 break;
             case 2:
                 Com.ins.AniSetInt(PetManager.PetAni, "Touch", 11);
+                rand2 = Random.Range(10, 20);
+                AniCheckTime = Time.time + rand2;
                 State = 10;
                 break;
             case 3:
                 Com.ins.AniSetInt(PetManager.PetAni, "Touch", 12);
+                rand2 = Random.Range(5, 10);
+                AniCheckTime = Time.time + rand2;
+                State = 10;
+                break;
+            case 4:
+                Com.ins.AniSetInt(PetManager.PetAni, "Touch", 13);
+                rand2 = Random.Range(5, 8);
+                AniCheckTime = Time.time + rand2;
+                State = 10;
+                break;
+            case 5:
+                Com.ins.AniSetInt(PetManager.PetAni, "Touch", 14);
+                rand2 = Random.Range(3, 5);
+                AniCheckTime = Time.time + rand2;
                 State = 10;
                 break;
             case 10:

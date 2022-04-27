@@ -188,6 +188,9 @@ public class ControllerManager : MonoBehaviour
         MoveUpdate();
         GroundedCheck();
         RayCastEventLogic();
+#if UNITY_EDITOR
+
+#endif
     }
 
     private void OnDrawGizmosSelected()
