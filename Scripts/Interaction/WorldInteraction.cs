@@ -33,7 +33,6 @@ public class WorldInteraction : MonoBehaviour
     public GameObject OnOffObject;
 
     string SceneName;
-    int RoomState = 0;
     bool useCheck = false;
 
     void Awake()
@@ -62,13 +61,14 @@ public class WorldInteraction : MonoBehaviour
         {
             default:
                 area = 7;
-                RoomState = 0;
                 break;
             case "Room_A":
             case "Room_B":
             case "CoffeeShop":
                 area = 2.1f;
-                RoomState = 1;
+                break;
+            case "Demo_A":
+                area = 7;
                 break;
         }
     }

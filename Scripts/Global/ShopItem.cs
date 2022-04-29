@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class ShopItem : MonoBehaviour
 {
     int mIndex = -1;
-    int selectNumber = -1;
     public Text ItemText;
     public Image ItemIcon;
     public CoustumItemCsv NowItem = new CoustumItemCsv();

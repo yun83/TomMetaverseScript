@@ -20,7 +20,6 @@ public class PetMoveController : MonoBehaviour
 
     public bool ShowObject = false;
     float NonAniTime = 0;
-    int NonMoveAniState = 0;
 
     float CheckTime = 0;
     public bool MoveStop = false;
@@ -187,7 +186,6 @@ public class PetMoveController : MonoBehaviour
             return;
         
         RaycastHit rayHit;
-        bool ret = false;
 
         float distance = 50f;
 

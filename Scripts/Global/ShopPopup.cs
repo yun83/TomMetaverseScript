@@ -220,7 +220,7 @@ public class ShopPopup : MonoBehaviour
         movePosDiff = Vector3.zero;
 
         nowPos = Input.mousePosition;
-        movePosDiff = (Vector2)((prePos - nowPos) * Time.deltaTime);
+        movePosDiff = ((prePos - nowPos) * Time.deltaTime);
 
         if (movePosDiff.x < 0)
         {

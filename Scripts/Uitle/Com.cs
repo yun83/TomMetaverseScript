@@ -100,12 +100,12 @@ public class Com : Single<Com>
     public float percentIncrease(float num, float percent){
         return ((num * (1+percent)) / 100);
     }
-
+    
     ///<summary>
     ///숫자를 몇 퍼센트 감소하는 공식
     ///</summary>
     public int percentReduce(int num, int percent){
-        //숫자를 몇 퍼센트 감소하는 공식
+        //숫자를 몇 퍼센트 감소하는 공식.
         //숫자 X (1 - 퍼센트 ÷ 100)
         return ((num * (1-percent)) / 100);
     }

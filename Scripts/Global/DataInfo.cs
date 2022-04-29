@@ -153,6 +153,9 @@ public class DataInfo : Single<DataInfo>
                 State = 3;
                 WinQuest(6);
                 break;
+            case "Demo_A":
+                State = 100;
+                break;
         }
 
         if(State > 0)

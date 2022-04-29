@@ -18,6 +18,7 @@ public class UiButtonController : MonoBehaviour
 
     [Header("∑Í∑ø")]
     public GameObject RoulettePopup;
+    public Image RouletteIcon;
     DateTime SpinTime;
     float CheckTime;
 
@@ -127,6 +128,7 @@ public class UiButtonController : MonoBehaviour
 
         QuestSuccess.SetActive(false);
         UiButton[6].onClick.AddListener(OnClick_Roulette);
+
         //all popup clase    
         OnClick_CloseAllPopup();
         RoulettButtonSetting();
@@ -417,21 +419,27 @@ public class UiButtonController : MonoBehaviour
 
     void RoulettButtonSetting()
     {
+        RouletteIcon.color = new Color(1, 1, 1, 0.3f);
         UiButton[6].interactable = false;
         if (DataInfo.ins.deData.RouletteState == 0)
+        {
             UiButton[6].interactable = true;
+            RouletteIcon.color = new Color(1, 1, 1, 1f);
+        }
         else if (DataInfo.ins.deData.RouletteState == 1)
         {
             SpinTime = DateTime.ParseExact(DataInfo.ins.deData.RouletteDay, "yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
             DataInfo.ins.deData.RouletteState = 2;
 
             UiButton[6].interactable = false;
+            RouletteIcon.color = new Color(1, 1, 1, 0.3f);
         }
     }
 
     public void OnClick_RoletteSpin()
     {
         UiButton[6].interactable = false;
+        RouletteIcon.color = new Color(1, 1, 1, 0.3f);
         //∑Í∑ø µπ∏∞ Ω√∞£ ¿˙¿Â
         DataInfo.ins.deData.RouletteState = 1;
 
@@ -462,6 +470,7 @@ public class UiButtonController : MonoBehaviour
         WorldInteraction ea = wi;
         if (!DataInfo.ins.CallNpc)
         {
+            OnClick_CloseAllPopup();
             NpcPopupScript.gameObject.SetActive(true);
             NpcPopupScript.InitNpc(ea);
         }

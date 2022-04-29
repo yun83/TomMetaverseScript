@@ -567,6 +567,9 @@ public class CharacterWindow : MonoBehaviour
             case "CoffeeShop":
                 DataInfo.ins.State = 3;
                 break;
+            case "Demo_A":
+                DataInfo.ins.State = 100;
+                break;
         }
 
         StartCoroutine(coroutineLoadScene());

@@ -13,7 +13,6 @@ public class NpcPopup : MonoBehaviour
     public GameObject Trunk;
     List<Button> TrunkButtonList = new List<Button>();
 
-    int MsgCount = 0;
     bool EctClickCheck = false;
     /// <summary>
     /// 0-갯풀, 1-카페
@@ -22,7 +21,7 @@ public class NpcPopup : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        EctClickCheck = false;
     }
 
     private void OnDisable()
@@ -43,7 +42,6 @@ public class NpcPopup : MonoBehaviour
 
     public void InitNpc(WorldInteraction wi) {
         EventScripts = wi;
-        MsgCount = 0;
         State = 0;
         DataInfo.ins.CallNpc = true;
         EventScripts.OnOffObject.SetActive(true);

@@ -8,6 +8,9 @@ using UnityEngine.SceneManagement;
 
 public class ControllerManager : MonoBehaviour
 {
+    private RaycastHit rayHit;
+    private Vector3 hitPoint = Vector3.zero;
+
     [Header("Ui Canvase")]
     public VirtualJoystick LeftHand;
     public UiMessage MessgaeBox;
@@ -41,6 +44,7 @@ public class ControllerManager : MonoBehaviour
     public CharacterController _controller;
     private CharacterManager _manager;
     public int PlayerMoveAniState = 0;
+    private bool moveCheck = false;
 
     [Tooltip("프레임당 점프 높이")]
     public float JumpDis = 0.02f;
@@ -96,11 +100,6 @@ public class ControllerManager : MonoBehaviour
     public Image progressBar = null;
     public Text ToolTipText;
     public string nextScene = "";
-    /// <summary>
-    /// 0 - Ect,
-    /// 1 - MyRoom,
-    /// </summary>
-    public int RoomCheck = 0;
 
     private void Awake()
     {
@@ -151,11 +150,6 @@ public class ControllerManager : MonoBehaviour
         CreatePetObject();
         DataInfo.ins.SceneNameCheck();
 
-        if (SceneName.Equals("Room_A") || SceneName.Equals("Room_B"))
-        {
-            RoomCheck = 1;
-        }
-
         startPointSetting();
     }
 
@@ -166,11 +160,12 @@ public class ControllerManager : MonoBehaviour
         {
             switch (DataInfo.ins.OldState)
             {
-                case 1:
+                default:
                     //룸에서 나올때는 기본 배치 된 위치
                     //PlayerObject.position = new Vector3(1.58f, 0.16f, -16.38f);
                     //PlayerObject.eulerAngles = new Vector3(0, 90, 0);
-                    AxisRtt = new Vector2(20, 270);
+                    PlayerObject.position = new Vector3(2.5f, 0.16f, -16f);
+                    AxisRtt = new Vector2(14.25f, 136.75f);
                     break;
                 case 3:
                     PlayerObject.position = new Vector3(17.5f, 0.16f, -52.7f);
@@ -188,9 +183,6 @@ public class ControllerManager : MonoBehaviour
         MoveUpdate();
         GroundedCheck();
         RayCastEventLogic();
-#if UNITY_EDITOR
-
-#endif
     }
 
     private void OnDrawGizmosSelected()
@@ -430,10 +422,16 @@ public class ControllerManager : MonoBehaviour
             }
             //이동
             //PlayerObject.position += PlayerObject.forward * offset;
-            Vector3 MoveVec3 = PlayerObject.forward * offset;
-            MoveVec3.y = _verticalVelocity;
-            _controller.Move(MoveVec3);
-            Axis.position = PlayerObject.position;
+            //if (offset != 0)
+            {
+                Vector3 MoveVec3 = PlayerObject.forward * offset;
+                MoveVec3.y = _verticalVelocity;
+                _controller.Move(MoveVec3);
+                Axis.position = PlayerObject.position;
+
+                hitPoint = PlayerObject.position;
+                moveCheck = false;
+            }
         }
     }
 
@@ -459,7 +457,6 @@ public class ControllerManager : MonoBehaviour
         }
     }
 
-    RaycastHit rayHit;
     bool RayCastEvent(Vector3 inPos)
     {
         bool ret = false;
@@ -471,6 +468,7 @@ public class ControllerManager : MonoBehaviour
         {
             WorldInteraction temp = null;
             Transform Truk = rayHit.transform;
+
             try
             {
                 if (Truk.parent != null)
@@ -994,6 +992,9 @@ public class ControllerManager : MonoBehaviour
                 break;
             case "CoffeeShop":
                 DataInfo.ins.State = 3;
+                break;
+            case "Demo_A":
+                DataInfo.ins.State = 100;
                 break;
         }
 
