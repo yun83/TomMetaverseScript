@@ -888,6 +888,12 @@ public class ControllerManager : MonoBehaviour
         {
             JumpKey = true;
             JumpStartTime = Time.time + 0.7f;
+
+            if(DataInfo.ins.State == 100)
+            {
+                return;
+            }
+
             if (DataInfo.ins.CharacterMain.Sex == 1)
                 mAnimator.SetTrigger("ManJump");
             else
@@ -978,25 +984,8 @@ public class ControllerManager : MonoBehaviour
         DataInfo.ins.OldScneName = SceneManager.GetActiveScene().name;
         DataInfo.ins.OldState = DataInfo.ins.State;
         nextScene = sceneName;
-        switch (sceneName)
-        {
-            default:
-                DataInfo.ins.State = -1;
-                break;
-            case "Room_A":
-            case "Room_B":
-                DataInfo.ins.State = 1;
-                break;
-            case "World_A":
-                DataInfo.ins.State = 2;
-                break;
-            case "CoffeeShop":
-                DataInfo.ins.State = 3;
-                break;
-            case "Demo_A":
-                DataInfo.ins.State = 100;
-                break;
-        }
+
+        DataInfo.ins.SceneNameCheck();
 
         StartCoroutine(coroutineSceneLoding());
     }

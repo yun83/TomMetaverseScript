@@ -206,4 +206,11 @@ public class CharacterManager : MonoBehaviour
 
         //Debug.Log(DebugMsg);
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawSphere(PetLookPos.position, 0.05f);
+    }
+#endif
 }

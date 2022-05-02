@@ -550,27 +550,9 @@ public class CharacterWindow : MonoBehaviour
         PageLodingPopup.SetActive(true);
 
         DataInfo.ins.OldScneName = SceneManager.GetActiveScene().name;
-
         nextScene = sceneName;
-        switch (sceneName)
-        {
-            default:
-                DataInfo.ins.State = -1;
-                break;
-            case "Room_A":
-            case "Room_B":
-                DataInfo.ins.State = 1;
-                break;
-            case "World_A":
-                DataInfo.ins.State = 2;
-                break;
-            case "CoffeeShop":
-                DataInfo.ins.State = 3;
-                break;
-            case "Demo_A":
-                DataInfo.ins.State = 100;
-                break;
-        }
+
+        DataInfo.ins.SceneNameCheck();
 
         StartCoroutine(coroutineLoadScene());
     }

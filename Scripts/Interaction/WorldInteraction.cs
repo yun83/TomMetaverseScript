@@ -55,20 +55,14 @@ public class WorldInteraction : MonoBehaviour
         if (OnOffObject != null)
             OnOffObject.SetActive(false);
 
-        SceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-
-        switch (SceneName)
+        switch (DataInfo.ins.State)
         {
             default:
                 area = 7;
                 break;
-            case "Room_A":
-            case "Room_B":
-            case "CoffeeShop":
+            case 1:
+            case 3:
                 area = 2.1f;
-                break;
-            case "Demo_A":
-                area = 7;
                 break;
         }
     }
@@ -207,10 +201,12 @@ public class WorldInteraction : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawSphere(transform.position, 0.05f);
     }
+#endif
 }
 
 //데모 버전에서 한글 변수 테스트
