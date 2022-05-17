@@ -148,8 +148,11 @@ public class ShopItem : MonoBehaviour
                     if (!itemUse)
                     {//저장 되어 있지 않으면 저장
                         CoustumItemCsv temp = NowItem;
-                        temp.inGameUse = 1;
-                        DataInfo.ins.BuyItemSaveList.Add(NowItem);
+                        if (NowItem.State == 0)
+                        {
+                            temp.inGameUse = 1;
+                            DataInfo.ins.BuyItemSaveList.Add(NowItem);
+                        }
                     }
                 }
                 break;

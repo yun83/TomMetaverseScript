@@ -485,7 +485,8 @@ public class CharacterWindow : MonoBehaviour
     public void SaveExitCharSettingPage() {
         
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Select"));
-
+        Debug.Log("---------- Save Exit CharSetting Page --------");
+        DataInfo.ins.CharacterSub.Money = DataInfo.ins.CharacterMain.Money;
         DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterSub);
 
         Debug.Log(DataInfo.ins.SaveData);
@@ -537,8 +538,12 @@ public class CharacterWindow : MonoBehaviour
             }
         }
 
-        Debug.Log(DataInfo.ins.SaveData);
+        Debug.Log("---------- Char Costum Setting Out --------");
+        DataInfo.ins.CharacterSub.Money = DataInfo.ins.CharacterMain.Money;
+        DataInfo.ins.SaveData = JsonUtility.ToJson(DataInfo.ins.CharacterSub);
         DataInfo.ins.CharacterMain = DataInfo.ins.CharacterSub;
+
+        Debug.Log(DataInfo.ins.SaveData);
 
         //LoadScene(NectSceneName);
         MyRoomSelectPopup.SetActive(true);

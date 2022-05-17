@@ -38,6 +38,10 @@ public class ShopPopup : MonoBehaviour
     private bool PurchaseUse = false;
     private RectTransform scrollRect;
 
+    bool NoMoneyPopupOpen = false;
+    public GameObject NoMoneyPopup;
+    public Button NMP_OK;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -67,8 +71,8 @@ public class ShopPopup : MonoBehaviour
             BuyPopup.SetActive(false);
         });
 
-        PurchaseBuy.onClick.AddListener(() => { 
-            if(!PurchaseUse)
+        PurchaseBuy.onClick.AddListener(() => {
+            if (!PurchaseUse)
                 StartCoroutine(OnClick_purchaseBuy()); 
         });
 
@@ -100,13 +104,26 @@ public class ShopPopup : MonoBehaviour
         PurchaseText.text = "0";
 
         BuyPopup.SetActive(false);
-        
-        if(State != 1)
+        NoMoneyPopup.SetActive(false);
+        NoMoneyPopupOpen = false;
+
+        NMP_OK.onClick.RemoveAllListeners();
+        NMP_OK.onClick.AddListener(noMoneyPopupClose);
+
+        if (State != 1)
             SubButton.SetActive(false);
     }
 
     void FixedUpdate()
     {
+        if (NoMoneyPopupOpen)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                noMoneyPopupClose();
+            }
+            return;
+        }
         if (DataInfo.ins.CharacterChangeCheck)
         {
             ShopCharacter.itemEquipment(DataInfo.ins.CharacterSub);
@@ -513,32 +530,36 @@ public class ShopPopup : MonoBehaviour
         if (DataInfo.ins.CharacterMain.Money >= sumMoney)
         {
             DataInfo.ins.AddMoney(-sumMoney);
+
+
+            yield return null;
+
+            DataInfo.ins.BuyItemSaveList.Clear();
+
+            switch (State)
+            {
+                case 1:
+                    State = -1;
+                    OnClick_Item();
+                    break;
+                case 2:
+                    State = -1;
+                    OnClick_Gesture();
+                    break;
+                default:
+                    State = -1;
+                    OnClick_Suggestion();
+                    break;
+            }
+
+            PurchaseText.text = "0";
+
+            yield return null;
         }
-
-
-        yield return null;
-
-        DataInfo.ins.BuyItemSaveList.Clear();
-
-        switch (State)
+        else
         {
-            case 1:
-                State = -1;
-                OnClick_Item();
-                break;
-            case 2:
-                State = -1;
-                OnClick_Gesture();
-                break;
-            default:
-                State = -1;
-                OnClick_Suggestion();
-                break;
+            noMoneyPopup();
         }
-
-        PurchaseText.text = "0";
-
-        yield return null;
 
         PurchaseUse = false;
     }
@@ -633,17 +654,19 @@ public class ShopPopup : MonoBehaviour
         StartCoroutine(ScrollViewSetting());
     }
 
+    void noMoneyPopup()
+    {
+        NoMoneyPopup.SetActive(true);
+        NoMoneyPopupOpen = true;
+    }
+
+    void noMoneyPopupClose()
+    {
+        NoMoneyPopup.SetActive(false);
+        NoMoneyPopupOpen = false;
+    }
+
     public void OnClick_Exit()
-    {
-
-    }
-
-    void OnClick_AllSelectButton()
-    {
-
-    }
-
-    void OnClick_AllDeletButton()
     {
 
     }

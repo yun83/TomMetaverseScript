@@ -230,8 +230,8 @@ public class ControllerManager : MonoBehaviour
         int mtempState = 0;
         deltaMagnitudeDiff = 0;
 
-#if UNITY_EDITOR || UNITY_WEBGL
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_WEBGL || UNITY_STANDALONE_WIN
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
 #endif
@@ -888,12 +888,6 @@ public class ControllerManager : MonoBehaviour
         {
             JumpKey = true;
             JumpStartTime = Time.time + 0.7f;
-
-            if(DataInfo.ins.State == 100)
-            {
-                return;
-            }
-
             if (DataInfo.ins.CharacterMain.Sex == 1)
                 mAnimator.SetTrigger("ManJump");
             else

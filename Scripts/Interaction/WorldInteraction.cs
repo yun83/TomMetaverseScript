@@ -55,14 +55,16 @@ public class WorldInteraction : MonoBehaviour
         if (OnOffObject != null)
             OnOffObject.SetActive(false);
 
+        DataInfo.ins.SceneNameCheck();
         switch (DataInfo.ins.State)
         {
-            default:
-                area = 7;
-                break;
             case 1:
             case 3:
                 area = 2.1f;
+                break;
+            case 2:
+            default:
+                area = 7;
                 break;
         }
     }

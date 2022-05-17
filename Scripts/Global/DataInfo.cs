@@ -132,7 +132,6 @@ public class DataInfo : Single<DataInfo>
     public void SceneNameCheck()
     {
         DataLodingCheck = true;
-
         NowSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         switch (NowSceneName)
         {
@@ -154,7 +153,7 @@ public class DataInfo : Single<DataInfo>
                 State = 3;
                 WinQuest(6);
                 break;
-            case "TestScene":
+            case "Demo_A":
                 State = 100;
                 break;
         }
