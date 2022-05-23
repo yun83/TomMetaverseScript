@@ -25,6 +25,7 @@ public class UiButtonController : MonoBehaviour
     [Header("∞‘¿”Ui")]
     public Text MoneyText;
     public GameObject CharObj;
+    private RectTransform CharObjRectTrans;
     public GameObject GestureScroll;
     public GameObject OptionPopup;
     RectTransform rtGestureScroll;
@@ -49,6 +50,8 @@ public class UiButtonController : MonoBehaviour
         myAnimator = myPlayer.GetComponentInChildren<Animator>();
         DataInfo.ins.MyPlayerAnimator = myAnimator;
         DataInfo.ins.GameUI = this;
+
+        CharObjRectTrans = CharObj.GetComponent<RectTransform>();
 
         if (ToastMes == null)
         ToastMes = transform.GetComponentInChildren<UiMessage>();
@@ -212,6 +215,11 @@ public class UiButtonController : MonoBehaviour
         InvenPopup.SetActive(true);
         CharObj.SetActive(true);
 
+        if (DataInfo.ins.State == 3)
+            CharObjRectTrans.anchoredPosition = new Vector2(2.5f, 2.5f);
+        else
+            CharObjRectTrans.anchoredPosition = new Vector2(1.5f, 1.5f);
+
         UiPopupState = 2;
 
         Com.ins.SoundPlay(Resources.Load<AudioClip>("Sound/Pop Up"));
@@ -221,6 +229,11 @@ public class UiButtonController : MonoBehaviour
         OnClick_CloseAllPopup();
         ShopPopup.SetActive(true);
         CharObj.SetActive(true);
+
+        if (DataInfo.ins.State == 3)
+            CharObjRectTrans.anchoredPosition = new Vector2(2.5f, 2.5f);
+        else
+            CharObjRectTrans.anchoredPosition = new Vector2(1.5f, 1.5f);
 
         UiPopupState = 1;
 
