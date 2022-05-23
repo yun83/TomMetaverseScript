@@ -73,17 +73,7 @@ public class ShopPopup : MonoBehaviour
 
         PurchaseBuy.onClick.AddListener(() => {
             if (!PurchaseUse)
-            {
-                if (DataInfo.ins.CharacterMain.Money >= sumMoney)
-                {
-                    StartCoroutine(OnClick_purchaseBuy());
-                }
-                else
-                {
-                    noMoneyPopup();
-                }
-
-            }
+                StartCoroutine(OnClick_purchaseBuy()); 
         });
 
         AllSelect.onClick.AddListener(() => { });
@@ -537,32 +527,39 @@ public class ShopPopup : MonoBehaviour
 
         yield return null;
 
-        DataInfo.ins.AddMoney(-sumMoney);
-
-
-        yield return null;
-
-        DataInfo.ins.BuyItemSaveList.Clear();
-
-        switch (State)
+        if (DataInfo.ins.CharacterMain.Money >= sumMoney)
         {
-            case 1:
-                State = -1;
-                OnClick_Item();
-                break;
-            case 2:
-                State = -1;
-                OnClick_Gesture();
-                break;
-            default:
-                State = -1;
-                OnClick_Suggestion();
-                break;
+            DataInfo.ins.AddMoney(-sumMoney);
+
+
+            yield return null;
+
+            DataInfo.ins.BuyItemSaveList.Clear();
+
+            switch (State)
+            {
+                case 1:
+                    State = -1;
+                    OnClick_Item();
+                    break;
+                case 2:
+                    State = -1;
+                    OnClick_Gesture();
+                    break;
+                default:
+                    State = -1;
+                    OnClick_Suggestion();
+                    break;
+            }
+
+            PurchaseText.text = "0";
+
+            yield return null;
         }
-
-        PurchaseText.text = "0";
-
-        yield return null;
+        else
+        {
+            noMoneyPopup();
+        }
 
         PurchaseUse = false;
     }

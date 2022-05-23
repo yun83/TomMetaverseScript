@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public class Info_Char
 {
-    public int Money = 1000;
+    public int Money = 2000;
     /// <summary>
     /// ´Ð³×ÀÓ
     /// </summary>
