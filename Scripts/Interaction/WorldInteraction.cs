@@ -193,7 +193,7 @@ public class WorldInteraction : MonoBehaviour
             case InteractionType.Cafe_In:
             case InteractionType.Gift:
             case InteractionType.getPoolPotal:
-                if (other.tag == "Player")
+                if (other.CompareTag( "Player"))
                 {
                     DataInfo.ins.infoController.EventScripts = this;
                     DataInfo.ins.infoController.EventState = 1;

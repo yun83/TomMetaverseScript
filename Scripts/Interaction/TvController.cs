@@ -55,22 +55,22 @@ public class TvController : MonoBehaviour
                 vHandler.SetDirectAudioMute(0, true);
         }
 
-        if (!PlayVideo)
+        if (PlayVideo)
+            return;
+        
+        PlayerDis = Vector3.Distance(DataInfo.ins.infoController.PlayerObject.position, transform.position);
+        if (2 > PlayerDis)
         {
-            PlayerDis = Vector3.Distance(DataInfo.ins.infoController.PlayerObject.position, transform.position);
-            if (2 > PlayerDis)
+            if (PlayVideoIconShow)
             {
-                if (PlayVideoIconShow)
-                {
-                    IconButton.SetActive(true);
-                }
+                IconButton.SetActive(true);
             }
-            else
+        }
+        else
+        {
+            if (PlayVideoIconShow)
             {
-                if (PlayVideoIconShow)
-                {
-                    IconButton.SetActive(false);
-                }
+                IconButton.SetActive(false);
             }
         }
     }

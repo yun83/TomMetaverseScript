@@ -437,24 +437,24 @@ public class ControllerManager : MonoBehaviour
 
     private void GroundedCheck()
     {
-        if (EventState == 0)
-        {
-            // set sphere position, with offset
-            Vector3 spherePosition = new Vector3(PlayerObject.position.x, PlayerObject.position.y - GroundedOffset, PlayerObject.position.z);
-            Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+        if (EventState != 0)
+            return;
 
-            //바닥에 닿으면 점프 해제
-            if (Grounded)
+        // set sphere position, with offset
+        Vector3 spherePosition = new Vector3(PlayerObject.position.x, PlayerObject.position.y - GroundedOffset, PlayerObject.position.z);
+        Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+
+        //바닥에 닿으면 점프 해제
+        if (Grounded)
+        {
+            if (JumpKey)
             {
-                if (JumpKey)
-                {
-                    if (JumpStartTime < Time.time)
-                        JumpKey = false;
-                }
+                if (JumpStartTime < Time.time)
+                    JumpKey = false;
             }
-            // 중력의 영향을 받아 아래쪽으로 하강합니다.
-            _verticalVelocity -= Gravity * Time.deltaTime;
         }
+        // 중력의 영향을 받아 아래쪽으로 하강합니다.
+        _verticalVelocity -= Gravity * Time.deltaTime;
     }
 
     bool RayCastEvent(Vector3 inPos)
