@@ -414,24 +414,20 @@ public class ControllerManager : MonoBehaviour
         {
             if (EventStartCheck)
             {
-                if(EventScripts != null)
+                if (EventScripts != null)
                 {
                     EventScripts.OutInteraction();
                 }
                 EventStartCheck = false;
             }
             //¿Ãµø
-            //PlayerObject.position += PlayerObject.forward * offset;
-            //if (offset != 0)
-            {
-                Vector3 MoveVec3 = PlayerObject.forward * offset;
-                MoveVec3.y = _verticalVelocity;
-                _controller.Move(MoveVec3);
-                Axis.position = PlayerObject.position;
+            Vector3 MoveVec3 = PlayerObject.forward * offset;
+            MoveVec3.y = _verticalVelocity;
+            _controller.Move(MoveVec3);
+            Axis.position = PlayerObject.position;
 
-                hitPoint = PlayerObject.position;
-                moveCheck = false;
-            }
+            hitPoint = PlayerObject.position;
+            moveCheck = false;
         }
     }
 

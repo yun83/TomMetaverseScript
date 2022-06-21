@@ -5,28 +5,46 @@ using UnityEngine.UI;
 
 public class UiMessage : MonoBehaviour
 {
+    public Image PopupBackGround;
     public Text Msg;
-
-    public float useTime = 0.1f;
-    float startTime;
-
-    private void OnEnable()
-    {
-        startTime = Time.time;
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        if(startTime + useTime < Time.time)
-        {
-            gameObject.SetActive(false);
-        }
-    }
-
+    bool AlphaAniCheck = false;
+    Color SetColor = new Color(1, 1, 1, 1);
+    
     public void OnMessage(string getMsg , float mTime = 1f)
     {
         Msg.text = getMsg;
-        useTime = mTime;
         gameObject.SetActive(true);
+        AlphaAniCheck = false;
+        SetColor.a = 1;
+        PopupBackGround.color = SetColor;
+
+        mTime -= 0.5f;
+        Invoke("PopupOff", mTime);
+    }
+
+    void PopupOff()
+    {
+        if (!AlphaAniCheck)
+            StartCoroutine(OffAni());
+    }
+
+    IEnumerator OffAni()
+    {
+        var callTime = new WaitForSeconds(0.1f);
+
+        AlphaAniCheck = true;
+        yield return null;
+
+        while (SetColor.a > 0)
+        {
+            SetColor.a -= 0.2f;
+            PopupBackGround.color = SetColor;
+            yield return callTime;
+        }
+
+        yield return null;
+
+        AlphaAniCheck = false;
+        gameObject.SetActive(false);
     }
 }
